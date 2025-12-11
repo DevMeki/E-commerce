@@ -21,76 +21,8 @@
     <div class="min-h-screen flex flex-col">
 
         <!-- HEADER / NAVBAR -->
-        <header class="border-b border-white/10 bg-black/60 backdrop-blur">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-
-                    <!-- Logo -->
-                    <a href="#" class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                            style="background-color: var(--lt-orange);">
-                            <!-- simple cart icon -->
-                            <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
-                                <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 left-0.5"></span>
-                                <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 right-0.5"></span>
-                            </div>
-                        </div>
-                        <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
-                    </a>
-
-                    <!-- Desktop nav -->
-                    <nav class="hidden md:flex items-center gap-8 text-sm">
-                        <a href="#" class="hover:text-orange-400 transition">Home</a>
-                        <a href="#" class="hover:text-orange-400 transition">Categories</a>
-                        <a href="#" class="hover:text-orange-400 transition">Brands</a>
-                        <a href="#" class="hover:text-orange-400 transition">Sell on LocalTrade</a>
-                    </nav>
-
-                    <!-- Right side -->
-                    <div class="hidden md:flex items-center gap-3 text-sm">
-                        <button class="px-3 py-1.5 rounded-full border border-white/20 hover:border-orange-400">
-                            Log in
-                        </button>
-                        <button class="px-4 py-1.5 rounded-full text-sm font-semibold"
-                            style="background-color: var(--lt-orange);">
-                            Sign up
-                        </button>
-                    </div>
-
-                    <!-- Mobile menu button -->
-                    <button id="mobileMenuBtn"
-                        class="md:hidden inline-flex items-center justify-center p-2 rounded-md border border-white/20">
-                        <span class="sr-only">Open main menu</span>
-                        <!-- simple hamburger -->
-                        <div class="space-y-1">
-                            <span class="block w-5 h-0.5 bg-white"></span>
-                            <span class="block w-5 h-0.5 bg-white"></span>
-                            <span class="block w-5 h-0.5 bg-white"></span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile menu -->
-            <div id="mobileMenu" class="md:hidden hidden border-t border-white/10 bg-black">
-                <div class="px-4 pt-2 pb-4 space-y-2 text-sm">
-                    <a href="#" class="block py-1 hover:text-orange-400">Home</a>
-                    <a href="#" class="block py-1 hover:text-orange-400">Categories</a>
-                    <a href="#" class="block py-1 hover:text-orange-400">Brands</a>
-                    <a href="#" class="block py-1 hover:text-orange-400">Sell on LocalTrade</a>
-
-                    <div class="pt-2 flex gap-2">
-                        <button class="flex-1 px-3 py-1.5 rounded-full border border-white/20">
-                            Log in
-                        </button>
-                        <button class="flex-1 px-3 py-1.5 rounded-full font-semibold"
-                            style="background-color: var(--lt-orange);">
-                            Sign up
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <?php $currentPage = 'home';
+        include 'header.php'; ?>
 
         <!-- MAIN CONTENT -->
         <main class="flex-1">
@@ -422,13 +354,6 @@
     </div>
 
     <script>
-        // Mobile menu toggle
-        const btn = document.getElementById('mobileMenuBtn');
-        const menu = document.getElementById('mobileMenu');
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
-
         // Year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>

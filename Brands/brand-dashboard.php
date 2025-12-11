@@ -93,31 +93,10 @@ function moneyNaira($n) {
 <body class="bg-[#0D0D0D] text-white min-h-screen flex flex-col">
 
 <!-- HEADER -->
-<header class="border-b border-white/10 bg-black/60 backdrop-blur">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <a href="index.php" class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                 style="background-color: var(--lt-orange);">
-                <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
-                    <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 left-0.5"></span>
-                    <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 right-0.5"></span>
-                </div>
-            </div>
-            <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
-        </a>
-
-        <div class="flex items-center gap-4 text-xs sm:text-sm">
-            <a href="store.php?brand=<?= urlencode($brand['slug']) ?>"
-               class="text-gray-300 hover:text-orange-400">
-                View store
-            </a>
-            <a href="logout.php"
-               class="text-gray-400 hover:text-red-400">
-                Logout
-            </a>
-        </div>
-    </div>
-</header>
+<?php
+$currentBrandPage = 'dashboard';
+include 'brand-header.php';
+?>
 
 <!-- MAIN -->
 <main class="flex-1 py-6 sm:py-8">

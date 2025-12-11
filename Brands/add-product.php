@@ -88,8 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
         </a>
         <div class="flex items-center gap-4 text-xs sm:text-sm">
-            <a href="brand_dashboard.php" class="text-gray-300 hover:text-orange-400">Dashboard</a>
-            <a href="store.php" class="text-gray-300 hover:text-orange-400">Store</a>
+            <a href="brand-dashboard.php" class="text-gray-300 hover:text-orange-400">Dashboard</a>
+            <a href="../store.php" class="text-gray-300 hover:text-orange-400">Store</a>
         </div>
     </div>
 </header>
