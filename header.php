@@ -1,6 +1,15 @@
 <?php
 // Page name passed from each file, e.g. $currentPage = 'home';
 $currentPage = $currentPage ?? '';
+// Load local config if present (returns array). Use `config.php` for DB credentials, env overrides.
+$config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php' : [];
+// Start session if not started and determine login state
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isLoggedIn = !empty($_SESSION['user']);
+// Optionally get user info
+$currentUser = $_SESSION['user'] ?? null;
 ?>
 
 <header class="border-b border-white/10 bg-black/60 backdrop-blur sticky top-0 z-40">
@@ -11,7 +20,7 @@ $currentPage = $currentPage ?? '';
             <div class="flex items-center gap-6">
 
                 <!-- Logo -->
-                <a href="index.php" class="flex items-center gap-2">
+                <a href="index" class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center"
                         style="background-color:#F36A1D;">
                         <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -31,35 +40,35 @@ $currentPage = $currentPage ?? '';
                 <nav class="hidden md:flex items-center gap-5 text-xs sm:text-sm">
 
                     <!-- Home -->
-                    <a href="index.php" class="<?= $currentPage === 'home'
+                    <a href="index" class="<?= $currentPage === 'home'
                         ? 'text-orange-400 font-semibold'
                         : 'text-gray-300 hover:text-orange-400'; ?>">
                         Home
                     </a>
 
                     <!-- Marketplace -->
-                    <a href="marketplace.php" class="<?= $currentPage === 'marketplace'
+                    <a href="marketplace" class="<?= $currentPage === 'marketplace'
                         ? 'text-orange-400 font-semibold'
                         : 'text-gray-300 hover:text-orange-400'; ?>">
                         Marketplace
                     </a>
 
                     <!-- Categories -->
-                    <a href="categories.php" class="<?= $currentPage === 'categories'
+                    <a href="categories" class="<?= $currentPage === 'categories'
                         ? 'text-orange-400 font-semibold'
                         : 'text-gray-300 hover:text-orange-400'; ?>">
                         Categories
                     </a>
 
                     <!-- Brands -->
-                    <a href="brands.php" class="<?= $currentPage === 'brands'
+                    <a href="brands_page" class="<?= $currentPage === 'brands_page'
                         ? 'text-orange-400 font-semibold'
                         : 'text-gray-300 hover:text-orange-400'; ?>">
                         Brands
                     </a>
 
                     <!-- Help -->
-                    <a href="help.php" class="<?= $currentPage === 'help'
+                    <a href="help" class="<?= $currentPage === 'help'
                         ? 'text-orange-400 font-semibold'
                         : 'text-gray-400 hover:text-orange-400'; ?>">
                         Help
@@ -70,28 +79,31 @@ $currentPage = $currentPage ?? '';
             <!-- RIGHT: Cart + Login/Signup + Mobile menu -->
             <div class="flex items-center gap-2 sm:gap-3">
 
-                <a href="cart.php"
+                <a href="cart"
                     class="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#0B0B0B] border border-white/10 hover:border-orange-400">
                     <span class="text-xs">🛒</span>
                 </a>
 
-                <?php $isLoggedIn = false; ?>
-
                 <?php if ($isLoggedIn): ?>
-                    <a href="account.php"
-                        class="hidden xs:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0B0B0B] border border-white/15 hover:border-orange-400 text-[11px] sm:text-xs">
-                        <div
-                            class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[11px] font-semibold">
-                            U
+                    <a href="account" title="Account"
+                        class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0B0B0B] border border-white/15 hover:border-orange-400 text-[11px] sm:text-xs">
+                        <div class="w-8 h-8 rounded-full bg-[#0B0B0B] border border-white/10 flex items-center justify-center overflow-hidden">
+                            <!-- user avatar (fallback to simple person SVG) -->
+                            <?php if (!empty($currentUser['avatar'])): ?>
+                                <img src="<?= htmlspecialchars($currentUser['avatar']) ?>" alt="user" class="w-full h-full object-cover" />
+                            <?php else: ?>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.607 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            <?php endif; ?>
                         </div>
-                        <span>Account</span>
                     </a>
                 <?php else: ?>
-                    <a href="login.php"
+                    <a href="login"
                         class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[11px] sm:text-xs bg-[#0B0B0B] border border-white/20 hover:border-orange-400">
                         Login
                     </a>
-                    <a href="signup.php"
+                    <a href="signup"
                         class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold text-black"
                         style="background-color:#F36A1D;">
                         Sign up
@@ -110,23 +122,23 @@ $currentPage = $currentPage ?? '';
         <!-- Mobile nav (Active Highlight Applied) -->
         <div id="mobileMenu" class="md:hidden hidden border-t border-white/10 mt-2 pt-3 pb-3 space-y-3">
             <nav class="flex flex-col gap-1 text-xs">
-                <a href="index.php"
+                <a href="index"
                     class="py-1.5 <?= $currentPage === 'home' ? 'text-orange-400 font-semibold' : 'text-gray-200'; ?>">
                     Home
                 </a>
-                <a href="marketplace.php"
+                <a href="marketplace"
                     class="py-1.5 <?= $currentPage === 'marketplace' ? 'text-orange-400 font-semibold' : 'text-gray-300'; ?>">
                     Marketplace
                 </a>
-                <a href="categories.php"
+                <a href="categories"
                     class="py-1.5 <?= $currentPage === 'categories' ? 'text-orange-400 font-semibold' : 'text-gray-300'; ?>">
                     Categories
                 </a>
-                <a href="brands.php"
-                    class="py-1.5 <?= $currentPage === 'brands' ? 'text-orange-400 font-semibold' : 'text-gray-300'; ?>">
+                <a href="brands_page"
+                    class="py-1.5 <?= $currentPage === 'brands_page' ? 'text-orange-400 font-semibold' : 'text-gray-300'; ?>">
                     Brands
                 </a>
-                <a href="help.php"
+                <a href="help"
                     class="py-1.5 <?= $currentPage === 'help' ? 'text-orange-400 font-semibold' : 'text-gray-400'; ?>">
                     Help / Support
                 </a>

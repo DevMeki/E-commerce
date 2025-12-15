@@ -72,7 +72,7 @@ $relatedProducts = [
         <!-- Top bar (simple) -->
         <header class="border-b border-white/10 bg-black/60 backdrop-blur">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <a href="index.php" class="flex items-center gap-2">
+                <a href="index" class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center"
                         style="background-color: var(--lt-orange);">
                         <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -82,7 +82,7 @@ $relatedProducts = [
                     </div>
                     <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
                 </a>
-                <a href="#" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
+                <a href="marketplace" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
                     Back to marketplace
                 </a>
             </div>

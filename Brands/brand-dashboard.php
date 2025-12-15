@@ -155,25 +155,25 @@ include 'brand-header.php';
             <div class="w-full lg:w-64 bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 text-xs">
                 <p class="text-xs font-semibold mb-1">Quick actions</p>
 
-                <a href="add-product.php"
+                <a href="add-product"
                    class="flex items-center justify-between px-3 py-2 rounded-xl bg-orange-500 text-black text-xs font-semibold">
                     <span>+ Add new product</span>
                     <span>→</span>
                 </a>
 
-                <a href="products.php"
+                <a href="products"
                    class="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0B0B0B] border border-white/15 hover:border-orange-400">
                     <span>Manage products</span>
                     <span class="text-gray-400">→</span>
                 </a>
 
-                <a href="orders.php"
+                                <a href="orders"
                    class="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0B0B0B] border border-white/15 hover:border-orange-400">
                     <span>View orders</span>
                     <span class="text-gray-400">→</span>
                 </a>
 
-                <a href="onboarding.php"
+                                <a href="onboarding"
                    class="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0B0B0B] border border-white/15 hover:border-orange-400">
                     <span>Edit store profile & policies</span>
                     <span class="text-gray-400">→</span>
@@ -224,7 +224,7 @@ include 'brand-header.php';
             <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col">
                 <div class="flex items-center justify-between mb-3 text-xs">
                     <p class="text-xs font-semibold">Top products</p>
-                    <a href="products.php" class="text-[11px] text-orange-300 hover:underline">View all</a>
+                    <a href="products" class="text-[11px] text-orange-300 hover:underline">View all</a>
                 </div>
 
                 <div class="space-y-3 text-xs">
@@ -260,7 +260,7 @@ include 'brand-header.php';
                         Latest activity across your store
                     </p>
                 </div>
-                <a href="orders.php" class="text-[11px] text-orange-300 hover:underline">View all orders</a>
+                <a href="orders" class="text-[11px] text-orange-300 hover:underline">View all orders</a>
             </div>
 
             <div class="overflow-x-auto text-xs">

@@ -184,8 +184,7 @@ function statusBadgeClass(string $status): string {
                     We couldn’t find any order with ID
                     <span class="font-mono text-gray-200"><?= htmlspecialchars($orderId ?: '(none provided)'); ?></span>.
                 </p>
-                <a href="orders.php"
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border border-white/20 bg-[#0B0B0B] hover:border-orange-400">
+                <a href="orders" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border border-white/20 bg-[#0B0B0B] hover:border-orange-400">
                     ← Back to orders
                 </a>
             </section>
@@ -208,7 +207,7 @@ function statusBadgeClass(string $status): string {
             <section class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <div class="flex items-center gap-2 text-[11px] text-gray-500 mb-1">
-                        <a href="orders.php" class="hover:text-orange-400">Orders</a>
+                        <a href="orders" class="hover:text-orange-400">Orders</a>
                         <span>/</span>
                         <span class="text-gray-300"><?= htmlspecialchars($order['id']); ?></span>
                     </div>

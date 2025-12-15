@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- HEADER -->
 <header class="border-b border-white/10 bg-black/60 backdrop-blur">
     <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-        <a href="index.php" class="flex items-center gap-2">
+        <a href="index" class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                  style="background-color: var(--lt-orange);">
                 <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <span class="font-semibold text-lg">LocalTrade</span>
         </a>
-        <a href="dashboard.php" class="text-xs text-gray-300 hover:text-orange-400">
+        <a href="dashboard" class="text-xs text-gray-300 hover:text-orange-400">
             Skip for now →
         </a>
     </div>

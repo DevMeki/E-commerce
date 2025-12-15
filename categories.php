@@ -168,7 +168,7 @@ ksort($brandsByCategory);
                 <section>
                     <div id="categoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                         <?php foreach ($categories as $cat): ?>
-                            <a href="marketplace.php?category=<?php echo urlencode($cat['slug']); ?>"
+                            <a href="marketplace?category=<?php echo urlencode($cat['slug']); ?>"
                                 class="category-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition"
                                 data-name="<?php echo htmlspecialchars($cat['name']); ?>">
                                 <!-- Top: label + product count -->
@@ -219,7 +219,7 @@ ksort($brandsByCategory);
                     <div class="max-w-6xl mx-auto">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg sm:text-xl font-semibold">All brands by category</h2>
-                            <a href="brands.php" class="text-xs text-orange-400 hover:underline">
+                            <a href="brands" class="text-xs text-orange-400 hover:underline">
                                 View all brands
                             </a>
                         </div>
@@ -237,7 +237,7 @@ ksort($brandsByCategory);
                                                 brand<?php echo count($catBrands) === 1 ? '' : 's'; ?> in this category
                                             </p>
                                         </div>
-                                        <a href="marketplace.php?category=<?php echo urlencode($catName); ?>"
+                                        <a href="marketplace?category=<?php echo urlencode($catName); ?>"
                                             class="hidden sm:inline text-[11px] text-orange-300 hover:underline">
                                             View products →
                                         </a>
@@ -246,7 +246,7 @@ ksort($brandsByCategory);
                                     <!-- Brand chips -->
                                     <div class="flex flex-wrap gap-2">
                                         <?php foreach ($catBrands as $brand): ?>
-                                            <a href="store.php?brand=<?php echo urlencode($brand['slug']); ?>"
+                                            <a href="store?brand=<?php echo urlencode($brand['slug']); ?>"
                                                 class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-orange-400 text-[11px] text-gray-100">
                                                 <span
                                                     class="w-5 h-5 rounded-full bg-[#0D0D0D] flex items-center justify-center text-[10px]">
@@ -263,7 +263,7 @@ ksort($brandsByCategory);
                                     </div>
 
                                     <!-- Mobile "view products" link -->
-                                    <a href="marketplace.php?category=<?php echo urlencode($catName); ?>"
+                                    <a href="marketplace?category=<?php echo urlencode($catName); ?>"
                                         class="mt-3 inline-block sm:hidden text-[11px] text-orange-300 hover:underline">
                                         View products in <?php echo htmlspecialchars($catName); ?> →
                                     </a>

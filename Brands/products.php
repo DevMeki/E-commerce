@@ -132,7 +132,7 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                 </div>
 
                 <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
-                    <a href="add-product.php"
+                    <a href="add-product"
                         class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-semibold text-black"
                         style="background-color: var(--lt-orange);">
                         <span>+ Add product</span>
@@ -255,7 +255,7 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                                         <!-- Product info -->
                                         <td class="px-3 py-2 rounded-l-xl align-top">
                                             <div class="flex flex-col">
-                                                <a href="edit-product.php?id=<?= urlencode($p['id']); ?>"
+                                                <a href="edit-product?id=<?= urlencode($p['id']); ?>"
                                                     class="font-semibold text-gray-100 hover:text-orange-400">
                                                     <?= htmlspecialchars($p['name']); ?>
                                                 </a>
@@ -308,7 +308,21 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                                         <!-- Actions -->
                                         <td class="px-3 py-2 rounded-r-xl align-top">
                                             <div class="flex flex-wrap gap-1.5 text-[11px]">
-                                                <a href="edit-product.php?id=<?= urlencode($p['id']); ?>"
+                                                <?php
+                                                // Build an edit URL that pre-fills the add-product form with available values
+                                                $editParams = http_build_query([
+                                                    'edit' => 1,
+                                                    'id' => $p['id'],
+                                                    'name' => $p['name'],
+                                                    'sku' => $p['sku'] ?? '',
+                                                    'category' => $p['category'] ?? '',
+                                                    'price' => $p['price'] ?? '',
+                                                    'stock' => $p['stock'] ?? '',
+                                                    'status' => $p['status'] ?? '',
+                                                    'visibility' => $p['visibility'] ?? '',
+                                                ]);
+                                                ?>
+                                                <a href="add-product?<?= $editParams; ?>"
                                                     class="px-2 py-1 rounded-full border border-white/20 bg-[#111111] hover:border-orange-400">
                                                     Edit
                                                 </a>

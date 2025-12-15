@@ -1,21 +1,4 @@
-<?php
-// Simple placeholder for handling login submission
-// In real usage, you'd validate $_POST['email'] and $_POST['password'] against your database.
-$loginError = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email    = trim($_POST['email'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    // TODO: replace with real authentication logic
-    if ($email === '' || $password === '') {
-        $loginError = 'Please enter both email and password.';
-    } else {
-        // Example: if login is successful, redirect:
-        // header('Location: dashboard.php'); exit;
-        $loginError = 'Invalid credentials (demo only – connect to real auth here).';
-    }
-}
-?>
+<?php ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Optional minimal header -->
 <header class="border-b border-white/10 bg-black/60 backdrop-blur">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <a href="index.php" class="flex items-center gap-2">
+        <a href="index" class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                  style="background-color: var(--lt-orange);">
                 <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -46,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
         </a>
-        <a href="index.php" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
+        <a href="index" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
             ← Back home
         </a>
     </div>
@@ -66,13 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </p>
             </div>
 
-            <?php if (!empty($loginError)): ?>
-                <div class="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
-                    <?php echo htmlspecialchars($loginError); ?>
-                </div>
-            <?php endif; ?>
+            <div id="loginMessages"></div>
 
-            <form method="post" class="space-y-4">
+            <form method="post" class="space-y-4" id="loginForm">
                 <!-- Email -->
                 <div>
                     <label for="email" class="block text-xs font-medium text-gray-200 mb-1">
@@ -83,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="email"
                         name="email"
                         required
-                        value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>"
+                        value=""
                         class="w-full rounded-xl bg-[#0B0B0B] border border-white/15 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         placeholder="you@example.com"
                     >
@@ -99,14 +78,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             Forgot password?
                         </a>
                     </div>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        class="w-full rounded-xl bg-[#0B0B0B] border border-white/15 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                        placeholder="Enter your password"
-                    >
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            class="w-full rounded-xl bg-[#0B0B0B] border border-white/15 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                            placeholder="Enter your password"
+                        >
+                        <button type="button" class="absolute right-2 top-2 text-gray-300 toggle-password-login" aria-label="Toggle password visibility">
+                            <svg id="loginPassEye" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Remember me -->
@@ -122,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- Submit -->
+                <input type="hidden" name="redirect_to" id="redirectToInput" value="">
                 <button
                     type="submit"
                     class="w-full mt-1 px-4 py-2.5 rounded-full text-sm font-semibold flex items-center justify-center gap-2"
@@ -149,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Sign up link -->
             <p class="mt-4 text-[11px] sm:text-xs text-center text-gray-400">
                 Don’t have an account?
-                <a href="signup.php" class="text-orange-400 hover:underline">
+                <a href="signup" class="text-orange-400 hover:underline">
                     Create a seller or buyer account
                 </a>
             </p>
@@ -163,6 +151,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     </div>
 </main>
+
+<script>
+    // AJAX login
+    const loginForm = document.getElementById('loginForm');
+    const loginMessages = document.getElementById('loginMessages');
+    const redirectInput = document.getElementById('redirectToInput');
+
+    // set redirect_to to document.referrer so we can return user to previous page
+    try { redirectInput.value = document.referrer || '/'; } catch(e) { redirectInput.value = '/'; }
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        loginMessages.innerHTML = '';
+        const btn = loginForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+
+        const fd = new FormData(loginForm);
+        try {
+            const res = await fetch('process/process-login', { method: 'POST', body: fd, credentials: 'same-origin' });
+            const json = await res.json();
+            if (json.success) {
+                // redirect to provided URL
+                window.location.href = json.redirect || '/';
+            } else {
+                const errs = json.errors || ['Login failed.'];
+                loginMessages.innerHTML = `
+                    <div class="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                        <ul class="list-disc list-inside">${errs.map(e => `<li>${e}</li>`).join('')}</ul>
+                    </div>`;
+            }
+        } catch (err) {
+            loginMessages.innerHTML = `
+                <div class="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                    Network or server error. Please try again.
+                </div>`;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    // Password visibility toggle for login
+    const passwordInput = document.getElementById('password');
+    const toggleLoginBtn = document.querySelector('.toggle-password-login');
+    if (toggleLoginBtn && passwordInput) {
+        toggleLoginBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            toggleLoginBtn.classList.toggle('text-orange-400');
+        });
+    }
+</script>
 
 </body>
 </html>

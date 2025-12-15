@@ -1,0 +1,24 @@
+# LocalTrade repository ignores
+
+# Local configuration (stores DB credentials / secrets) - DO NOT commit
+/config.php
+
+# Environment files
+.env
+
+# IDE / Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs_analysis.dat
+
+# Node / dependencies
+node_modules/
+vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

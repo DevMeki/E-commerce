@@ -104,7 +104,7 @@ foreach ($brands as $b) {
 <div class="min-h-screen flex flex-col">
 
     <!-- HEADER -->
-    <?php $currentPage = 'brands'; include 'header.php'; ?>
+    <?php $currentPage = 'brands_page'; include 'header.php'; ?>
 
     <!-- MAIN -->
     <main class="flex-1 py-6 sm:py-10">
@@ -161,8 +161,8 @@ foreach ($brands as $b) {
             <section>
                 <div id="brandsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                     <?php foreach ($brands as $b): ?>
-                        <a
-                            href="store.php?brand=<?php echo urlencode($b['slug']); ?>"
+                            <a
+                                href="store?brand=<?php echo urlencode($b['slug']); ?>"
                             class="brand-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition"
                             data-name="<?php echo htmlspecialchars($b['name']); ?>"
                             data-location="<?php echo htmlspecialchars($b['location']); ?>"

@@ -4,13 +4,16 @@
 // $currentBrandPage = 'dashboard' | 'products' | 'orders' | 'help';
 
 $currentBrandPage = $currentBrandPage ?? '';
+// Load root config if present
+$brandConfigPath = __DIR__ . '/../config.php';
+$config = file_exists($brandConfigPath) ? include $brandConfigPath : [];
 ?>
 
 <header class="border-b border-white/10 bg-black/60 backdrop-blur sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex h-14 items-center justify-between gap-3">
             <!-- LEFT: Logo -->
-            <a href="brand-dashboard.php" class="flex items-center gap-2">
+            <a href="brand-dashboard" class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center"
                      style="background-color:#F36A1D;">
                     <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -26,28 +29,28 @@ $currentBrandPage = $currentBrandPage ?? '';
 
             <!-- DESKTOP NAV -->
             <nav class="hidden md:flex items-center gap-5 text-xs sm:text-sm">
-                <a href="brand-dashboard.php"
+                     <a href="brand-dashboard"
                    class="<?= $currentBrandPage === 'dashboard'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300 hover:text-orange-400'; ?>">
                     Dashboard
                 </a>
 
-                <a href="products.php"
+                     <a href="products"
                    class="<?= $currentBrandPage === 'products'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300 hover:text-orange-400'; ?>">
                     Products
                 </a>
 
-                <a href="orders.php"
+                     <a href="orders"
                    class="<?= $currentBrandPage === 'orders'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300 hover:text-orange-400'; ?>">
                     Orders
                 </a>
 
-                <a href="brand-help.php"
+                     <a href="brand-help"
                    class="<?= $currentBrandPage === 'help'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300 hover:text-orange-400'; ?>">
@@ -58,7 +61,7 @@ $currentBrandPage = $currentBrandPage ?? '';
             <!-- RIGHT: Brand chip + mobile button -->
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Brand avatar / name (placeholder) -->
-                <a href="brand-dashboard.php"
+                     <a href="brand-dashboard"
                    class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0B0B0B] border border-white/15 hover:border-orange-400 text-[11px] sm:text-xs">
                     <div class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[11px] font-semibold">
                         B
@@ -82,35 +85,35 @@ $currentBrandPage = $currentBrandPage ?? '';
         <!-- MOBILE NAV -->
         <div id="brandMobileMenu" class="md:hidden hidden border-t border-white/10 mt-2 pt-2 pb-3 space-y-2">
             <nav class="flex flex-col gap-1 text-xs">
-                <a href="brand-dashboard.php"
+                                <a href="brand-dashboard"
                    class="py-1.5 <?= $currentBrandPage === 'dashboard'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300'; ?>">
                     Dashboard
                 </a>
 
-                <a href="products.php"
+                                <a href="products"
                    class="py-1.5 <?= $currentBrandPage === 'products'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300'; ?>">
                     Products
                 </a>
 
-                <a href="orders.php"
+                                <a href="orders"
                    class="py-1.5 <?= $currentBrandPage === 'orders'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300'; ?>">
                     Orders
                 </a>
 
-                <a href="brand-help.php"
+                                <a href="brand-help"
                    class="py-1.5 <?= $currentBrandPage === 'help'
                        ? 'text-orange-400 font-semibold'
                        : 'text-gray-300'; ?>">
                     Help & Support
                 </a>
 
-                <a href="../logout.php"
+                                <a href="../logout"
                    class="pt-1 py-1.5 text-red-300 hover:text-red-400">
                     Logout
                 </a>

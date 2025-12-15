@@ -56,6 +56,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = 'Product created successfully (demo only – connect to database + storage).';
     }
 }
+// If editing via query params and not submitting the form, prefill variables from GET
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['edit'])) {
+    // Only assign if present in query string; this keeps POST values winning when form is submitted
+    $name = $_GET['name'] ?? ($name ?? '');
+    $slug = $_GET['slug'] ?? ($slug ?? '');
+    $category = $_GET['category'] ?? ($category ?? '');
+    $price = $_GET['price'] ?? ($price ?? '');
+    $stock = $_GET['stock'] ?? ($stock ?? '');
+    $sku = $_GET['sku'] ?? ($sku ?? '');
+    $status = $_GET['status'] ?? ($status ?? 'active');
+    $visibility = $_GET['visibility'] ?? ($visibility ?? 'public');
+    $shortDesc = $_GET['short_desc'] ?? ($shortDesc ?? '');
+    $longDesc = $_GET['long_desc'] ?? ($longDesc ?? '');
+    $shippingFee = $_GET['shipping_fee'] ?? ($shippingFee ?? '');
+    $shipsFrom = $_GET['ships_from'] ?? ($shipsFrom ?? '');
+    $processing = $_GET['processing_time'] ?? ($processing ?? '');
+    $variantsText = $_GET['variants_text'] ?? ($variantsText ?? '');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- HEADER -->
 <header class="border-b border-white/10 bg-black/60 backdrop-blur">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <a href="index.php" class="flex items-center gap-2">
+        <a href="index" class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                  style="background-color: var(--lt-orange);">
                 <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -88,8 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
         </a>
         <div class="flex items-center gap-4 text-xs sm:text-sm">
-            <a href="brand-dashboard.php" class="text-gray-300 hover:text-orange-400">Dashboard</a>
-            <a href="../store.php" class="text-gray-300 hover:text-orange-400">Store</a>
+            <a href="brand-dashboard" class="text-gray-300 hover:text-orange-400">Dashboard</a>
+            <a href="../store" class="text-gray-300 hover:text-orange-400">Store</a>
         </div>
     </div>
 </header>
@@ -105,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Create a new product listing for your LocalTrade store.
                 </p>
             </div>
-            <a href="store.php" class="text-xs text-gray-300 hover:text-orange-400">
+            <a href="store" class="text-xs text-gray-300 hover:text-orange-400">
                 ← Back to your Store
             </a>
         </div>

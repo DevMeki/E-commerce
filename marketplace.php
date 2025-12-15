@@ -198,7 +198,7 @@ $currency = '₦';
 
                         <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
                             <?php foreach ($products as $p): ?>
-                                <a href="product.php?id=<?php echo (int) $p['id']; ?>"
+                                <a href="product?id=<?php echo (int) $p['id']; ?>"
                                     class="product-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2"
                                     data-name="<?php echo htmlspecialchars($p['name']); ?>"
                                     data-brand="<?php echo htmlspecialchars($p['brand']); ?>"

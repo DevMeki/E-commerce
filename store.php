@@ -75,7 +75,7 @@ $products = [
         <!-- HEADER -->
         <header class="border-b border-white/10 bg-black/60 backdrop-blur">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <a href="index.php" class="flex items-center gap-2">
+                <a href="index" class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center"
                         style="background-color: var(--lt-orange);">
                         <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -200,7 +200,7 @@ $products = [
                         <!-- Products grid -->
                         <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                             <?php foreach ($products as $index => $p): ?>
-                                <a href="product.php?id=<?php echo $index; ?>"
+                                <a href="product?id=<?php echo $index; ?>"
                                     class="product-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2"
                                     data-category="<?php echo htmlspecialchars($p['category']); ?>"
                                     data-price="<?php echo (int) $p['price']; ?>">

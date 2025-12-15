@@ -237,13 +237,13 @@
 
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg sm:text-xl font-semibold">Available Products</h2>
-                        <a href="marketplace.php" class="text-xs text-orange-400 hover:underline">View all</a>
+                        <a href="marketplace" class="text-xs text-orange-400 hover:underline">View all</a>
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
 
                         <!-- Product card 1 -->
-                        <a href="product.php?id=1"
+                        <a href="product?id=1"
                             class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
                             <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60
                             flex items-center justify-center text-[11px] font-semibold">
@@ -258,7 +258,7 @@
                         </a>
 
                         <!-- Product card 2 -->
-                        <a href="product.php?id=2"
+                        <a href="product?id=2"
                             class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
                             <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-pink-500/60 to-orange-500/60
                             flex items-center justify-center text-[11px] font-semibold">
@@ -273,7 +273,7 @@
                         </a>
 
                         <!-- Product card 3 -->
-                        <a href="product.php?id=3"
+                        <a href="product?id=3"
                             class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
                             <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-blue-500/60 to-indigo-500/60
                             flex items-center justify-center text-[11px] font-semibold">
@@ -288,7 +288,7 @@
                         </a>
 
                         <!-- Product card 4 -->
-                        <a href="product.php?id=4"
+                        <a href="product?id=4"
                             class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
                             <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-fuchsia-500/60 to-pink-500/60
                             flex items-center justify-center text-[11px] font-semibold">
@@ -305,7 +305,7 @@
                     </div>
 
                     <p class="mt-4 text-[11px] text-gray-400 text-center">
-                        Showing 4 of 50+ products · <a href="marketplace.php"
+                        Showing 4 of 50+ products · <a href="marketplace"
                             class="text-orange-400 hover:underline">Explore more</a>
                     </p>
 

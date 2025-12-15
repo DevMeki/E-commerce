@@ -64,7 +64,7 @@ $total = $subtotal + $deliveryEstimate;
 
                 <?php if (empty($cartItems)): ?>
                     <div class="bg-[#111111] border border-white/10 rounded-3xl p-6 text-center text-sm text-gray-300">
-                        Your cart is empty. <a href="index.php" class="text-orange-400 hover:underline">Start shopping</a>.
+                        Your cart is empty. <a href="index" class="text-orange-400 hover:underline">Start shopping</a>.
                     </div>
                 <?php else: ?>
 
