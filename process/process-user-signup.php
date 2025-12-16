@@ -100,6 +100,25 @@ if ($check) {
 	exit;
 }
 
+// Check if email already exists in Brand table
+$checkEmail = $conn->prepare('SELECT id FROM Brand WHERE email = ? LIMIT 1');
+if ($checkEmail) {
+	$checkEmail->bind_param('s', $email);
+	$checkEmail->execute();
+	$checkEmail->store_result();
+	if ($checkEmail->num_rows > 0) {
+		http_response_code(409);
+		echo json_encode(['success' => false, 'errors' => ['An account with that email already exists.']]);
+		$checkEmail->close();
+		exit;
+	}
+	$checkEmail->close();
+} else {
+	http_response_code(500);
+	echo json_encode(['success' => false, 'errors' => ['Database query failed: ' . $conn->error]]);
+	exit;
+}
+
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 // Insert into Buyer table using prepared statement (mysqli)

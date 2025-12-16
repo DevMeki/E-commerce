@@ -10,43 +10,46 @@ Purpose: Give AI coding agents the minimal, high-value knowledge to be productiv
 **Big picture**
 - Small server-rendered PHP site (no framework). Pages are individual PHP files in repo root and `Brands/`.
 - UI: Tailwind via CDN + inline CSS variables (`--lt-orange`). No compiled CSS pipeline.
-- Data: Most pages use mock arrays / placeholder logic directly in templates (e.g. `Brands/brand-dashboard.php`, `index.php`).
-- Processing: Form/action stubs live in `process/` (many files are placeholders). Expect to move form handling and DB work into `process/` scripts or a central `config.php`/`db.php` include.
+- Data: Forms use AJAX to `process/` scripts for validation/DB operations; responses are JSON for client-side error/success display.
+- Authentication: Session-based; check `$_SESSION['user']` for login state (array with 'id', 'fullname', 'email', 'type').
+- Processing: All form handling in `process/` with mysqli prepared statements; return JSON arrays with 'success' bool and 'errors' array.
 
 **Key files & patterns (examples)**
-- Global header include: `header.php` + `header-script.php`. Pages set `$currentPage = 'home'` (or similar) before `include 'header.php'` to get active nav styling.
+- Global header include: `header.php` + `header-script.php`. Pages set `$currentPage = 'home'` before `include 'header.php'` for nav styling.
   - Example: `index.php` sets `$currentPage = 'home'; include 'header.php';`
-- Signup flow: `signup.php` currently renders the form and validates on the same page (POST to self). There are empty stubs under `process/` (`process-user-signup.php`, `google_oauth_start.php`) indicating intended separation.
-- Brand area: files live in `Brands/` (e.g. `brand-dashboard.php`, `add-product.php`, `products.php`). These are server-rendered templates with mock data — replace mocks with DB queries.
-- Product & store routes: pages accept query params, e.g. `product.php?id=1` and `store.php` (store slug pattern exists visually in forms: `localtrade.ng/store/<slug>`).
+- Signup flow: `signup.php` has buyer/brand toggle; AJAX submits to `process/process-user-signup.php` (handles brand) or future buyer endpoint.
+- Login flow: `login.php` AJAX to `process/process-login.php`; sets `$_SESSION['user']` on success.
+- Account page: `account.php` shows user info; logout via `process/logout.php`.
+- Brand area: files in `Brands/` (e.g. `brand-dashboard.php`) use mock data; replace with DB queries from `Brand` table.
+- Product & store routes: pages accept query params, e.g. `product.php?id=1`, `store.php?slug=...`.
 
 **Conventions and project-specific rules**
-- No framework routing: add new pages as flat PHP files and link them from nav/templates.
-- Keep UI classes inline with Tailwind CDN usage — don't introduce a build step unless you add a new workflow and document it.
+- No framework routing: add new pages as flat PHP files and link from nav/templates.
+- Keep UI classes inline with Tailwind CDN usage — don't introduce a build step unless documented.
 - Use PHP 8 features; ensure compatibility when introducing libraries.
-- There is no central config yet. Create `config.php` (PDO connection, common helpers) and include it near top of `process/` handlers and pages that need DB access.
+- DB: mysqli with prepared statements; config in `config.php` ($conn global).
+- Forms: AJAX fetch to `process/` endpoints; handle JSON responses with success/errors display.
+- Validation: Server-side in `process/`; client-side for UX but trust server.
+- Sessions: Start with `session_start()`; store user array in `$_SESSION['user']`.
 
 **Dev / run / debug notes (concrete)**
-- Run locally with XAMPP or similar. Place project in `htdocs/LocalTrade` and start Apache/PHP. Then open: `http://localhost/LocalTrade/index.php`.
-- To quickly enable verbose errors for debugging, add near the top of a page (temporary):
-  ```php
-  ini_set('display_errors', 1);
-  error_reporting(E_ALL);
-  ```
-- For Windows PowerShell + XAMPP: ensure Apache is started using the XAMPP Control Panel. No npm/yarn required.
+- Run locally with XAMPP: place in `htdocs/LocalTrade`, start Apache/PHP, open `http://localhost/LocalTrade/index.php`.
+- Debug: Add `ini_set('display_errors', 1); error_reporting(E_ALL);` near top of PHP files.
+- DB: MySQL via mysqli; main tables: `Buyer` (id, fullname, email, password, avatar, phone, created_at, status), `Brand` (id, owner_name, brand_name, slug, category, location, email, password, logo, status, verified, created_at), `Product` (id, brand_id, name, slug, category, price, stock, status, main_image, created_at), `Order` (id, order_number, buyer_id, brand_id, status, total, customer_name, shipping_address1, created_at), `Cart` (id, buyer_id, product_id, quantity), `Review` (id, product_id, buyer_id, rating, comment, status), `Wishlist` (id, buyer_id, product_id), `BrandFollower` (id, buyer_id, brand_id), `Address` (id, buyer_id, name, phone, address1, city, state), `Notification` (id, user_type, user_id, type, title, message).
 
 **Integration points & TODOs for agents**
-- `process/google_oauth_start.php` — placeholder for Google OAuth start flow.
-- `process/process-user-signup.php` — empty; intended for server-side signup logic (DB insert, hashing, redirects).
-- Payments, shipping, analytics: not implemented; look for TODOs and `mock data` comments in `Brands/*` and implement integrations in `process/` and `includes/`.
+- `process/google_oauth_start.php`: Google OAuth flow (has code for buyer signup).
+- `process/process-user-signup.php`: Handles brand signup; buyer signup not yet implemented.
+- Payments, shipping, analytics: Not implemented; see TODOs in `Brands/*` for mock data to replace.
 
 **Actionable examples for common tasks**
-- Implement signup: create `config.php` with PDO; move validation/DB insert into `process/process-user-signup.php`; redirect back to `signup.php` with success/errors.
-- Pass active nav: set `$currentPage = '<name>'` before `include 'header.php'` to apply active styling (see `index.php` and `header.php`).
-- Add brand dashboard data: replace mock arrays in `Brands/brand-dashboard.php` with queries to your DB and keep helper `moneyNaira()`.
+- Implement buyer signup: Add logic in `process/process-user-signup.php` or new file; insert into `Buyer` table.
+- Add auth check: `if (empty($_SESSION['user'])) { header('Location: login'); exit; }`
+- DB query: Use `$conn->prepare()`; bind params; execute; handle results.
+- AJAX form: `fetch('process/endpoint', {method:'POST', body:fd})`; parse JSON; update DOM with errors/success.
 
 **Safety / constraints for AI edits**
-- Do not change global structure without adding a short migration note (e.g., adding `config.php`) — the repo is intended to run in-place on XAMPP.
-- Preserve Tailwind usage via CDN unless you add a documented build step.
+- Do not change global structure without migration note — repo runs in-place on XAMPP.
+- Preserve Tailwind CDN; document any build steps added.
 
 If anything above is unclear or you'd like additional examples (e.g. a starter `config.php` and `process/process-user-signup.php` implementation), tell me which area to scaffold next.

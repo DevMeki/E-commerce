@@ -1,81 +1,45 @@
 <?php
-// ---------- Mock marketplace data (replace with DB later) ----------
-$categories = ['All', 'Fashion', 'Beauty', 'Electronics', 'Home & Living'];
+// Include DB config
+if (file_exists('config.php')) {
+    require_once 'config.php';
+}
 
-$products = [
-    [
-        'id' => 1,
-        'name' => 'Ankara Panel Hoodie',
-        'brand' => 'Lagos Streetwear Co.',
-        'category' => 'Fashion',
-        'price' => 18500,
-        'currency' => '₦',
-        'badge' => 'Trending',
-    ],
-    [
-        'id' => 2,
-        'name' => 'Shea Butter Glow Kit',
-        'brand' => 'Abuja Beauty Lab',
-        'category' => 'Beauty',
-        'price' => 9900,
-        'currency' => '₦',
-        'badge' => 'Bestseller',
-    ],
-    [
-        'id' => 3,
-        'name' => 'Wireless Earbuds Pro',
-        'brand' => 'Naija Tech Hub',
-        'category' => 'Electronics',
-        'price' => 14200,
-        'currency' => '₦',
-        'badge' => 'New',
-    ],
-    [
-        'id' => 4,
-        'name' => 'Handwoven Throw Blanket',
-        'brand' => 'Abeokuta Crafts',
-        'category' => 'Home & Living',
-        'price' => 11000,
-        'currency' => '₦',
-        'badge' => 'Handmade',
-    ],
-    [
-        'id' => 5,
-        'name' => 'Naija Drip Tee',
-        'brand' => 'Lagos Streetwear Co.',
-        'category' => 'Fashion',
-        'price' => 7500,
-        'currency' => '₦',
-        'badge' => 'Hot',
-    ],
-    [
-        'id' => 6,
-        'name' => 'Coconut Hair Nourish Oil',
-        'brand' => 'Abuja Beauty Lab',
-        'category' => 'Beauty',
-        'price' => 6500,
-        'currency' => '₦',
-        'badge' => 'Natural',
-    ],
-    [
-        'id' => 7,
-        'name' => 'Smart Home Lamp',
-        'brand' => 'Naija Tech Hub',
-        'category' => 'Electronics',
-        'price' => 18900,
-        'currency' => '₦',
-        'badge' => 'Smart',
-    ],
-    [
-        'id' => 8,
-        'name' => 'Bamboo Serving Set',
-        'brand' => 'Home & Living NG',
-        'category' => 'Home & Living',
-        'price' => 8800,
-        'currency' => '₦',
-        'badge' => 'Eco',
-    ],
-];
+// Fetch categories
+$categories = ['All'];
+if (isset($conn) && $conn) {
+    $stmt = $conn->prepare('SELECT DISTINCT category FROM Product WHERE status = "active" ORDER BY category');
+    if ($stmt) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row['category'];
+        }
+        $stmt->close();
+    }
+}
+
+// Fetch products
+$products = [];
+if (isset($conn) && $conn) {
+    $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, p.main_image, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" ORDER BY p.created_at DESC');
+    if ($stmt) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $products[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'brand' => $row['brand_name'],
+                'category' => $row['category'],
+                'price' => $row['price'],
+                'currency' => '₦',
+                'badge' => '', // No badge in DB, set empty
+                'main_image' => $row['main_image'],
+            ];
+        }
+        $stmt->close();
+    }
+}
 
 $currency = '₦';
 ?>
@@ -206,8 +170,12 @@ $currency = '₦';
                                     data-price="<?php echo (int) $p['price']; ?>">
                                     <!-- Image placeholder -->
                                     <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60 flex items-center justify-center text-[11px] text-center px-2">
-                                        <?php echo htmlspecialchars($p['brand']); ?>
+                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60 flex items-center justify-center text-[11px] text-center px-2 overflow-hidden">
+                                        <?php if (!empty($p['main_image'])): ?>
+                                            <img src="<?php echo htmlspecialchars($p['main_image']); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" class="w-full h-full object-cover" />
+                                        <?php else: ?>
+                                            <?php echo htmlspecialchars($p['brand']); ?>
+                                        <?php endif; ?>
                                     </div>
 
                                     <!-- Badge -->

@@ -99,10 +99,10 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                         </div>
                     </div>
 
-                    <!-- FULL NAME -->
-                    <div>
-                        <label class="block text-xs mb-1">Full name</label>
-                        <input type="text" name="full_name" value=""
+                    <!-- NAME -->
+                    <div id="nameField">
+                        <label id="nameLabel" class="block text-xs mb-1">Full name</label>
+                        <input id="nameInput" type="text" name="full_name" value=""
                             class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                             placeholder="Your name">
                     </div>
@@ -156,7 +156,7 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                         <div>
                             <label class="block text-xs mb-1">Brand / Store name</label>
                             <input type="text" name="brand_name" value=""
-                                class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm">
+                                class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
                         </div>
 
                         <!-- BRAND SLUG -->
@@ -168,7 +168,7 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                                     localtrade.ng/store/
                                 </span>
                                 <input type="text" name="brand_slug" value=""
-                                    class="flex-1 bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs"
+                                    class="flex-1 bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
                                     placeholder="lagos-streetwear">
                             </div>
                         </div>
@@ -178,7 +178,7 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                             <div>
                                 <label class="block text-xs mb-1">Primary category</label>
                                 <select name="brand_category"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs">
+                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
                                     <option value="">Select a category</option>
                                     <option>Fashion</option>
                                     <option>Beauty</option>
@@ -193,7 +193,7 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                             <div>
                                 <label class="block text-xs mb-1">City / State</label>
                                 <input type="text" name="brand_location" value=""
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm"
+                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                                     placeholder="Lagos, Nigeria">
                             </div>
                         </div>
@@ -231,6 +231,9 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
         const accountTypeInput = document.getElementById('accountTypeInput');
         const brandFields = document.getElementById('brandFields');
         const googleSignup = document.getElementById('googleSignup');
+        const nameField = document.getElementById('nameField');
+        const nameLabel = document.getElementById('nameLabel');
+        const nameInput = document.getElementById('nameInput');
 
         accountTypeButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -245,11 +248,17 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                 button.classList.add('border-orange-500', 'bg-orange-500/10');
                 button.classList.remove('border-white/20');
 
-                // Show/hide fields
+                // Update name field
                 if (type === 'brand') {
+                    nameLabel.textContent = 'Owner name';
+                    nameInput.name = 'owner_name';
+                    nameInput.placeholder = 'Your full name';
                     brandFields.classList.remove('hidden');
                     googleSignup.classList.add('hidden');
                 } else {
+                    nameLabel.textContent = 'Full name';
+                    nameInput.name = 'full_name';
+                    nameInput.placeholder = 'Your name';
                     brandFields.classList.add('hidden');
                     googleSignup.classList.remove('hidden');
                 }
@@ -286,8 +295,10 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
 
             const fd = new FormData(signupForm);
 
+            let url = accountTypeInput.value === 'buyer' ? 'process/process-user-signup' : 'process/process-brand-signup';
+
             try {
-                const res = await fetch('process/process-user-signup', {
+                const res = await fetch(url, {
                     method: 'POST',
                     body: fd,
                     credentials: 'same-origin'
@@ -300,17 +311,30 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                         <div class="mb-4 bg-green-500/10 border border-green-500/30 text-green-200 px-3 py-2 rounded-xl text-sm">
                             ${json.message ? json.message : 'Account created successfully.'}
                         </div>`;
-                    signupForm.reset();
-                    // reset UI state
-                    accountTypeInput.value = 'buyer';
-                    brandFields.classList.add('hidden');
-                    accountTypeButtons.forEach(btn => {
-                        btn.classList.remove('border-orange-500', 'bg-orange-500/10');
-                        btn.classList.add('border-white/20');
-                    });
-                    // mark buyer active
-                    const buyerBtn = document.querySelector('.accountType[data-type="buyer"]');
-                    if (buyerBtn) buyerBtn.classList.add('border-orange-500', 'bg-orange-500/10');
+                    
+                    if (json.redirect) {
+                        // Redirect after showing success message briefly
+                        setTimeout(() => {
+                            window.location.href = json.redirect;
+                        }, 1500);
+                    } else {
+                        // Reset form for buyer signup
+                        signupForm.reset();
+                        // reset UI state
+                        accountTypeInput.value = 'buyer';
+                        nameLabel.textContent = 'Full name';
+                        nameInput.name = 'full_name';
+                        nameInput.placeholder = 'Your name';
+                        brandFields.classList.add('hidden');
+                        googleSignup.classList.remove('hidden');
+                        accountTypeButtons.forEach(btn => {
+                            btn.classList.remove('border-orange-500', 'bg-orange-500/10');
+                            btn.classList.add('border-white/20');
+                        });
+                        // mark buyer active
+                        const buyerBtn = document.querySelector('.accountType[data-type="buyer"]');
+                        if (buyerBtn) buyerBtn.classList.add('border-orange-500', 'bg-orange-500/10');
+                    }
                 } else {
                     const errs = json.errors || ['An unknown error occurred.'];
                     formMessages.innerHTML = `
@@ -327,6 +351,11 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                 submitBtn.disabled = false;
             }
         });
+        
+        // Check URL params to activate brand
+        if (new URLSearchParams(window.location.search).get('type') === 'brand') {
+            document.querySelector('.accountType[data-type="brand"]').click();
+        }
     </script>
 
 </body>

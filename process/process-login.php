@@ -43,8 +43,11 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
     exit;
 }
 
-// Lookup user by email
-$stmt = $conn->prepare('SELECT id, fullname, password FROM Buyer WHERE email = ? LIMIT 1');
+// Lookup user by email in Buyer table first
+$user = null;
+$type = null;
+
+$stmt = $conn->prepare('SELECT id, fullname, password, avatar, phone FROM Buyer WHERE email = ? LIMIT 1');
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(['success' => false, 'errors' => ['Failed to prepare query: ' . $conn->error]]);
@@ -53,30 +56,50 @@ if (!$stmt) {
 
 $stmt->bind_param('s', $email);
 $stmt->execute();
-$stmt->bind_result($id, $fullname, $passwordHash);
+$stmt->bind_result($id, $fullname, $passwordHash, $avatar, $phone);
 if ($stmt->fetch()) {
-    $stmt->close();
-    if (password_verify($password, $passwordHash)) {
-        // Authenticated
-        $_SESSION['user'] = ['id' => $id, 'email' => $email, 'name' => $fullname];
+    $type = 'buyer';
+    $user = ['id' => $id, 'fullname' => $fullname, 'password' => $passwordHash, 'avatar' => $avatar, 'phone' => $phone];
+}
+$stmt->close();
 
-        // Determine redirect: prefer posted redirect_to, fall back to HTTP_REFERER or '/'
-        $redirect = '/';
-        if (!empty($redirectTo)) {
-            $redirect = $redirectTo;
-        } elseif (!empty($_SERVER['HTTP_REFERER'])) {
-            $redirect = $_SERVER['HTTP_REFERER'];
-        }
-
-        echo json_encode(['success' => true, 'redirect' => $redirect]);
-        exit;
-    } else {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'errors' => ['Invalid email or password.']]);
+// If not found in Buyer, check Brand table
+if (!$user) {
+    $stmt = $conn->prepare('SELECT id, owner_name, brand_name, password, logo FROM Brand WHERE email = ? LIMIT 1');
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'errors' => ['Failed to prepare query: ' . $conn->error]]);
         exit;
     }
-} else {
+
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $stmt->bind_result($id, $owner_name, $brand_name, $passwordHash, $logo);
+    if ($stmt->fetch()) {
+        $type = 'brand';
+        $user = ['id' => $id, 'fullname' => $owner_name, 'brand_name' => $brand_name, 'password' => $passwordHash, 'avatar' => $logo];
+    }
     $stmt->close();
+}
+
+if ($user && password_verify($password, $user['password'])) {
+// Authenticated
+$_SESSION['user'] = [
+    'id' => $user['id'],
+    'email' => $email,
+    'fullname' => $user['fullname'],
+    'type' => $type
+];
+
+if ($type === 'buyer') {
+    $_SESSION['user']['avatar'] = $user['avatar'];
+    $_SESSION['user']['phone'] = $user['phone'];
+} elseif ($type === 'brand') {
+    $_SESSION['user']['avatar'] = $user['avatar'];
+    $_SESSION['user']['brand_name'] = $user['brand_name'];
+}    echo json_encode(['success' => true, 'redirect' => $redirect]);
+    exit;
+} else {
     http_response_code(401);
     echo json_encode(['success' => false, 'errors' => ['Invalid email or password.']]);
     exit;

@@ -21,8 +21,64 @@
     <div class="min-h-screen flex flex-col">
 
         <!-- HEADER / NAVBAR -->
-        <?php $currentPage = 'home';
-        include 'header.php'; ?>
+        <?php
+        $currentPage = 'home';
+        include 'header.php';
+
+        // Include DB config
+        if (file_exists('config.php')) {
+            require_once 'config.php';
+        }
+
+        // Fetch featured products
+        $products = [];
+        $totalProducts = 0;
+        if (isset($conn) && $conn) {
+            $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, p.main_image, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" ORDER BY p.created_at DESC LIMIT 4');
+            if ($stmt) {
+                $stmt->execute();
+                $result = $stmt->get_result();
+                while ($row = $result->fetch_assoc()) {
+                    $products[] = $row;
+                }
+                $stmt->close();
+            }
+
+            // Get total products count
+            $stmt = $conn->prepare('SELECT COUNT(*) as total FROM Product WHERE status = "active"');
+            if ($stmt) {
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                $totalProducts = $row['total'];
+                $stmt->close();
+            }
+
+            // Fetch categories
+            $categories = [];
+            $stmt = $conn->prepare('SELECT DISTINCT category FROM Product WHERE status = "active" ORDER BY category LIMIT 8');
+            if ($stmt) {
+                $stmt->execute();
+                $result = $stmt->get_result();
+                while ($row = $result->fetch_assoc()) {
+                    $categories[] = $row['category'];
+                }
+                $stmt->close();
+            }
+
+            // Fetch brands
+            $brands = [];
+            $stmt = $conn->prepare('SELECT id, brand_name, slug, category, logo FROM Brand WHERE status = "active" ORDER BY created_at DESC LIMIT 4');
+            if ($stmt) {
+                $stmt->execute();
+                $result = $stmt->get_result();
+                while ($row = $result->fetch_assoc()) {
+                    $brands[] = $row;
+                }
+                $stmt->close();
+            }
+        }
+        ?>
 
         <!-- MAIN CONTENT -->
         <main class="flex-1">
@@ -44,13 +100,20 @@
                         </p>
 
                         <!-- Search bar -->
-                        <div class="bg-white/5 border border-white/10 rounded-full p-1.5 flex items-center mb-4">
-                            <input type="text" placeholder="Search for products, brands, or categories..."
+                        <div
+                            class="bg-white/5 border border-white/10 rounded-full p-1.5 flex items-center mb-4 relative">
+                            <input type="text" id="searchInput"
+                                placeholder="Search for products, brands, or categories..."
                                 class="flex-1 bg-transparent border-0 text-sm text-white placeholder-gray-400 px-3 py-2 focus:outline-none" />
-                            <button class="px-4 py-2 rounded-full text-sm font-semibold"
+                            <button id="searchButton" class="px-4 py-2 rounded-full text-sm font-semibold"
                                 style="background-color: var(--lt-orange);">
                                 Search
                             </button>
+                            <!-- Search dropdown -->
+                            <div id="searchDropdown"
+                                class="absolute top-full left-0 right-0 mt-1 bg-[#111111] border border-white/10 rounded-2xl shadow-xl max-h-80 overflow-y-auto hidden z-10">
+                                <!-- Results will be populated here -->
+                            </div>
                         </div>
 
                         <!-- Stats / badges -->
@@ -70,86 +133,42 @@
                         </div>
                     </div>
 
-                    <!-- Hero card / mockup -->
+
                     <div class="lg:justify-self-end">
                         <div
                             class="bg-gradient-to-b from-[#1A1A1A] to-black border border-white/5 rounded-3xl p-5 sm:p-6 shadow-xl shadow-black/40">
                             <p class="text-xs text-gray-400 mb-3">Trending this week</p>
                             <div class="grid grid-cols-2 gap-3 text-xs">
-                                <!-- product card -->
-                                <div class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2">
-                                    <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[10px] font-semibold">
-                                        Lagos Streetwear
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-sm">Ankara Hoodie</p>
-                                        <p class="text-[11px] text-gray-400">Urban Naija fit</p>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-1">
-                                        <p class="font-semibold text-sm text-orange-400">₦18,500</p>
-                                        <button class="text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- product card -->
-                                <div class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2">
-                                    <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-[10px] font-semibold">
-                                        Abuja Beauty Co
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-sm">Shea Butter Glow Kit</p>
-                                        <p class="text-[11px] text-gray-400">Natural skincare</p>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-1">
-                                        <p class="font-semibold text-sm text-orange-400">₦9,900</p>
-                                        <button class="text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- product card -->
-                                <div class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2">
-                                    <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-[10px] font-semibold">
-                                        Naija Tech Hub
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-sm">Wireless Earbuds</p>
-                                        <p class="text-[11px] text-gray-400">Noise cancelling</p>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-1">
-                                        <p class="font-semibold text-sm text-orange-400">₦14,200</p>
-                                        <button class="text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- product card -->
-                                <div class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2">
-                                    <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center text-[10px] font-semibold">
-                                        Home & Living NG
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-sm">Handwoven Throw</p>
-                                        <p class="text-[11px] text-gray-400">Made in Abeokuta</p>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-1">
-                                        <p class="font-semibold text-sm text-orange-400">₦11,000</p>
-                                        <button class="text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
+                                <?php if (!empty($products)): ?>
+                                    <?php foreach ($products as $product): ?>
+                                        <div class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2">
+                                            <div
+                                                class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[10px] font-semibold">
+                                                <?php echo htmlspecialchars($product['brand_name']); ?>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="font-semibold text-sm">
+                                                    <?php echo htmlspecialchars($product['name']); ?></p>
+                                                <p class="text-[11px] text-gray-400">
+                                                    <?php echo htmlspecialchars($product['category']); ?></p>
+                                            </div>
+                                            <div class="flex items-center justify-between mt-1">
+                                                <p class="font-semibold text-sm text-orange-400">
+                                                    ₦<?php echo number_format($product['price']); ?></p>
+                                                <button class="text-[11px] px-2 py-1 rounded-full bg-white/5">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p class="col-span-full text-center text-gray-400">No products available.</p>
+                                <?php endif; ?>
                             </div>
                             <p class="mt-4 text-[11px] text-gray-400 text-center">
-                                Over <span class="text-orange-400 font-semibold">2,000+</span> products from verified
+                                Over <span
+                                    class="text-orange-400 font-semibold"><?= number_format($totalProducts) ?>+</span>
+                                products from verified
                                 Nigerian brands.
                             </p>
                         </div>
@@ -166,70 +185,21 @@
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 text-xs">
-                        <button
-                            class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1">
-                            <span class="text-sm font-semibold">Fashion & Wearables</span>
-                            <span class="text-[11px] text-gray-400">Streetwear, Ankara, bags</span>
-                        </button>
-                        <button
-                            class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1">
-                            <span class="text-sm font-semibold">Beauty & Care</span>
-                            <span class="text-[11px] text-gray-400">Skincare, haircare</span>
-                        </button>
-                        <button
-                            class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1">
-                            <span class="text-sm font-semibold">Electronics</span>
-                            <span class="text-[11px] text-gray-400">Gadgets, accessories</span>
-                        </button>
-                        <button
-                            class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1">
-                            <span class="text-sm font-semibold">Home & Living</span>
-                            <span class="text-[11px] text-gray-400">Decor, kitchen, more</span>
-                        </button>
+                        <?php if (!empty($categories)): ?>
+                            <?php foreach ($categories as $category): ?>
+                                <button
+                                    class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1">
+                                    <span class="text-sm font-semibold"><?= htmlspecialchars($category) ?></span>
+                                    <span class="text-[11px] text-gray-400">Explore products</span>
+                                </button>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="col-span-full text-center text-gray-400">No categories available.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </section>
 
-            <!-- FEATURED BRANDS -->
-            <section class="py-8 sm:py-10">
-                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg sm:text-xl font-semibold">Featured Nigerian brands</h2>
-                        <a href="#" class="text-xs text-orange-400 hover:underline">See all brands</a>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                        <div class="bg-[#111111] rounded-2xl p-4 border border-white/5 flex flex-col gap-2">
-                            <p class="text-sm font-semibold">Lagos Streetwear Co.</p>
-                            <p class="text-[11px] text-gray-400">Urban fashion from Lagos.</p>
-                            <span class="mt-auto inline-flex items-center gap-1 text-[11px] text-orange-400">
-                                View store →
-                            </span>
-                        </div>
-                        <div class="bg-[#111111] rounded-2xl p-4 border border-white/5 flex flex-col gap-2">
-                            <p class="text-sm font-semibold">Abuja Beauty Lab</p>
-                            <p class="text-[11px] text-gray-400">Clean skincare, made in Nigeria.</p>
-                            <span class="mt-auto inline-flex items-center gap-1 text-[11px] text-orange-400">
-                                View store →
-                            </span>
-                        </div>
-                        <div class="bg-[#111111] rounded-2xl p-4 border border-white/5 flex flex-col gap-2">
-                            <p class="text-sm font-semibold">Naija Tech Hub</p>
-                            <p class="text-[11px] text-gray-400">Gadgets & accessories.</p>
-                            <span class="mt-auto inline-flex items-center gap-1 text-[11px] text-orange-400">
-                                View store →
-                            </span>
-                        </div>
-                        <div class="bg-[#111111] rounded-2xl p-4 border border-white/5 flex flex-col gap-2">
-                            <p class="text-sm font-semibold">Abeokuta Crafts</p>
-                            <p class="text-[11px] text-gray-400">Handmade home goods.</p>
-                            <span class="mt-auto inline-flex items-center gap-1 text-[11px] text-orange-400">
-                                View store →
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             <!-- AVAILABLE PRODUCTS SECTION -->
             <section class="py-8 sm:py-10 border-t border-white/10">
@@ -242,76 +212,74 @@
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
 
-                        <!-- Product card 1 -->
-                        <a href="product?id=1"
-                            class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
-                            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60
-                            flex items-center justify-center text-[11px] font-semibold">
-                                Lagos Streetwear Co.
-                            </div>
-                            <p class="text-sm font-semibold line-clamp-2">Ankara Panel Hoodie</p>
-                            <p class="text-[11px] text-gray-400">Fashion</p>
-                            <p class="text-sm font-semibold text-orange-400">₦18,500</p>
-                            <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                View product
-                            </button>
-                        </a>
-
-                        <!-- Product card 2 -->
-                        <a href="product?id=2"
-                            class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
-                            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-pink-500/60 to-orange-500/60
-                            flex items-center justify-center text-[11px] font-semibold">
-                                Abuja Beauty Lab
-                            </div>
-                            <p class="text-sm font-semibold line-clamp-2">Shea Butter Glow Kit</p>
-                            <p class="text-[11px] text-gray-400">Beauty</p>
-                            <p class="text-sm font-semibold text-orange-400">₦9,900</p>
-                            <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                View product
-                            </button>
-                        </a>
-
-                        <!-- Product card 3 -->
-                        <a href="product?id=3"
-                            class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
-                            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-blue-500/60 to-indigo-500/60
-                            flex items-center justify-center text-[11px] font-semibold">
-                                Naija Tech Hub
-                            </div>
-                            <p class="text-sm font-semibold line-clamp-2">Wireless Earbuds Pro</p>
-                            <p class="text-[11px] text-gray-400">Electronics</p>
-                            <p class="text-sm font-semibold text-orange-400">₦14,200</p>
-                            <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                View product
-                            </button>
-                        </a>
-
-                        <!-- Product card 4 -->
-                        <a href="product?id=4"
-                            class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
-                            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-fuchsia-500/60 to-pink-500/60
-                            flex items-center justify-center text-[11px] font-semibold">
-                                Abeokuta Crafts
-                            </div>
-                            <p class="text-sm font-semibold line-clamp-2">Handwoven Throw Blanket</p>
-                            <p class="text-[11px] text-gray-400">Home & Living</p>
-                            <p class="text-sm font-semibold text-orange-400">₦11,000</p>
-                            <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                View product
-                            </button>
-                        </a>
+                        <?php if (!empty($products)): ?>
+                            <?php foreach ($products as $product): ?>
+                                <a href="product?id=<?= $product['id'] ?>"
+                                    class="bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2">
+                                    <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60
+                                    flex items-center justify-center text-[11px] font-semibold overflow-hidden">
+                                        <?php if (!empty($product['main_image'])): ?>
+                                            <img src="<?= htmlspecialchars($product['main_image']) ?>"
+                                                alt="<?= htmlspecialchars($product['name']) ?>"
+                                                class="w-full h-full object-cover" />
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($product['brand_name']) ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="text-sm font-semibold line-clamp-2"><?= htmlspecialchars($product['name']) ?></p>
+                                    <p class="text-[11px] text-gray-400"><?= htmlspecialchars($product['category']) ?></p>
+                                    <p class="text-sm font-semibold text-orange-400">₦<?= number_format($product['price']) ?>
+                                    </p>
+                                    <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
+                                        View product
+                                    </button>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="col-span-full text-center text-gray-400">No products available.</p>
+                        <?php endif; ?>
 
                     </div>
 
                     <p class="mt-4 text-[11px] text-gray-400 text-center">
-                        Showing 4 of 50+ products · <a href="marketplace"
+                        Showing <?= count($products) ?> of many products · <a href="marketplace"
                             class="text-orange-400 hover:underline">Explore more</a>
                     </p>
 
                 </div>
             </section>
 
+            <!-- FEATURED BRANDS -->
+            <section class="py-8 sm:py-10">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg sm:text-xl font-semibold">Featured Nigerian brands</h2>
+                        <a href="brands.php" class="text-xs text-orange-400 hover:underline">See all brands</a>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                        <?php if (!empty($brands)): ?>
+                            <?php foreach ($brands as $brand): ?>
+                                <a href="store?slug=<?= htmlspecialchars($brand['slug']) ?>"
+                                    class="bg-[#111111] rounded-2xl p-4 border border-white/5 flex flex-col gap-2 hover:border-orange-500/70">
+                                    <?php if (!empty($brand['logo'])): ?>
+                                        <img src="<?= htmlspecialchars($brand['logo']) ?>"
+                                            alt="<?= htmlspecialchars($brand['brand_name']) ?>"
+                                            class="w-12 h-12 rounded-lg object-cover mb-2" />
+                                    <?php endif; ?>
+                                    <p class="text-sm font-semibold"><?= htmlspecialchars($brand['brand_name']) ?></p>
+                                    <p class="text-[11px] text-gray-400"><?= htmlspecialchars($brand['category']) ?></p>
+                                    <span class="mt-auto inline-flex items-center gap-1 text-[11px] text-orange-400">
+                                        View store →
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="col-span-full text-center text-gray-400">No brands available.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </section>
 
             <!-- SELLER CTA SECTION -->
             <section class="py-10 sm:py-12 bg-gradient-to-r from-[#1A1A1A] to-black border-t border-white/10">
@@ -327,13 +295,15 @@
                         secure payments, logistics partners, and tools to grow your business.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                        <button class="px-6 py-2.5 rounded-full text-sm font-semibold"
+                        <a href="signup?type=brand" class="px-6 py-2.5 rounded-full text-sm font-semibold"
                             style="background-color: var(--lt-orange);">
                             Start selling
-                        </button>
-                        <button class="px-6 py-2.5 rounded-full text-sm border border-white/20">
+                        </a>
+                        <a href="Brands/brand-help.php">
+                            <button class="px-6 py-2.5 rounded-full text-sm border border-white/20">
                             Learn how it works
                         </button>
+                        </a>
                     </div>
                 </div>
             </section>
@@ -354,8 +324,93 @@
     </div>
 
     <script>
+        // Live search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchDropdown = document.getElementById('searchDropdown');
+        const searchButton = document.getElementById('searchButton');
+        let searchTimeout;
+
+        // Debounced search
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            clearTimeout(searchTimeout);
+            if (query.length >= 2) {
+                searchTimeout = setTimeout(() => performSearch(query), 300);
+            } else {
+                searchDropdown.classList.add('hidden');
+            }
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                searchDropdown.classList.add('hidden');
+            }
+        });
+
+        // Search button redirects to marketplace
+        searchButton.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `marketplace?q=${encodeURIComponent(query)}`;
+            }
+        });
+
+        // Enter key also searches
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                searchButton.click();
+            }
+        });
+
+        async function performSearch(query) {
+            try {
+                const res = await fetch(`process/process-search?q=${encodeURIComponent(query)}`);
+                const results = await res.json();
+                displayResults(results);
+            } catch (err) {
+                console.error('Search error:', err);
+                searchDropdown.classList.add('hidden');
+            }
+        }
+
+        function displayResults(results) {
+            if (results.length === 0) {
+                searchDropdown.classList.add('hidden');
+                return;
+            }
+
+            searchDropdown.innerHTML = results.map(item => {
+                if (item.type === 'product') {
+                    return `
+                        <a href="product?id=${item.id}" class="block px-4 py-3 hover:bg-white/5 border-b border-white/5 last:border-b-0">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-white">${item.name}</p>
+                                    <p class="text-xs text-gray-400">${item.brand_name} · ${item.category}</p>
+                                </div>
+                                <p class="text-sm font-semibold text-orange-400">₦${item.price.toLocaleString()}</p>
+                            </div>
+                        </a>
+                    `;
+                } else {
+                    return `
+                        <a href="store?slug=${item.slug}" class="block px-4 py-3 hover:bg-white/5 border-b border-white/5 last:border-b-0">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-white">${item.brand_name}</p>
+                                    <p class="text-xs text-gray-400">Brand · ${item.category}</p>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                }
+            }).join('');
+            searchDropdown.classList.remove('hidden');
+        }
+
         // Year in footer
-        document.getElementById('year').textContent = new Date().getFullYear();
+        // Already handled by PHP: <?= date('Y') ?>
     </script>
 </body>
 
