@@ -186,6 +186,10 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                                     <option>Home & Living</option>
                                     <option>Food & Drinks</option>
                                     <option>Art & Craft</option>
+                                    <option>Textiles</option>
+                                    <option>Fashion Accessories</option>
+                                    <option>Prints</option>
+                                    <option>Footwear</option>
                                     <option>Other</option>
                                 </select>
                             </div>

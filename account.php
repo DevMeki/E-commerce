@@ -67,9 +67,11 @@ $user = $_SESSION['user'];
                     </div>
 
                     <div class="pt-4 border-t border-white/10 flex gap-3">
-                        <button type="submit" class="px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                       <form action="process/logout" method="post" class="inline-block">
+                         <button type="submit" class="px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400">
                             Update Account
                         </button>
+                       </form >
                         <form action="process/logout" method="post" class="inline-block" aria-label="Logout form">
                             <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-red-600 text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400" aria-describedby="logoutDesc">
                                 <!-- logout icon -->

@@ -189,14 +189,46 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['edit'])) {
                             <label class="block text-xs mb-1">Category</label>
                             <select
                                 name="category"
+                                id="categorySelect"
                                 class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
                             >
                                 <option value="">Select a category</option>
                                 <?php
-                                $productCategories = ['Fashion', 'Beauty', 'Electronics', 'Home & Living', 'Food & Drinks', 'Art & Craft', 'Other'];
+                                $productCategories = [
+                                    'Fashion (Streetwear, Ankara, accessories)',
+                                    'Beauty (Skincare, haircare, self-care)', 
+                                    'Electronics (Headphones, accessories, smart tech)', 
+                                    'Home & Living (Decor, kitchen, furniture)', 
+                                    'Food & Drinks (Snacks, pantry, local specials)', 
+                                    'Art & Craft (Handmade pieces from Nigerian artists)', 
+                                    'Gadgets (Headphones, accessories, smart tech)',
+                                    'Furniture (Home and office furniture)', 
+                                    'Paintings (Artworks and paintings)', 
+                                    'Sculptures (Handmade sculptures)', 
+                                    'Prints (Art prints and posters)', 
+                                    'Snacks (Local snacks and treats)', 
+                                    'Herbs (Fresh and dried herbs)', 
+                                    'Spices (Local spices and seasonings)', 
+                                    'Kitchen (Kitchen utensils and appliances)', 
+                                    'Streetwear (Urban fashion and accessories)', 
+                                    'Skincare (Natural skincare products)', 
+                                    'Textiles (Fabrics and clothing materials)', 
+                                    'Fashion Accessories (Jewelry and bags)',
+                                    'Footwear (Shoes, slippers and sandals)', 
+                                    'Decor (Home decoration items)', 
+                                    'Other'
+                                ];
+                                
                                 foreach ($productCategories as $cat):
-                                    $sel = (($category ?? '') === $cat) ? 'selected' : '';
-                                    echo "<option $sel>" . htmlspecialchars($cat) . "</option>";
+                                    // Extract the clean category name (before the bracket)
+                                    $cleanCat = trim(explode('(', $cat)[0]);
+                                    
+                                    // Check if this option should be selected
+                                    $sel = (($category ?? '') === $cleanCat) ? 'selected' : '';
+                                    
+                                    // Output option with clean value but full display text
+                                    echo "<option value=\"" . htmlspecialchars($cleanCat) . "\" $sel>" . 
+                                         htmlspecialchars($cat) . "</option>";
                                 endforeach;
                                 ?>
                             </select>
@@ -517,6 +549,46 @@ if (galleryInput && galleryPreview) {
         syncGalleryInput();
         renderGallery();
     });
+}
+
+// Category select - remove brackets from selected option
+const categorySelect = document.getElementById('categorySelect');
+
+if (categorySelect) {
+    // Function to update display text
+    function updateSelectedDisplay() {
+        // Get all options
+        const options = categorySelect.options;
+        
+        // Reset all options to show full text
+        for (let i = 0; i < options.length; i++) {
+            // Store original full text if not already stored
+            if (!options[i].dataset.originalText) {
+                options[i].dataset.originalText = options[i].textContent;
+            }
+            
+            // Restore original text for all options
+            if (options[i].dataset.originalText) {
+                options[i].textContent = options[i].dataset.originalText;
+            }
+        }
+        
+        // For the selected option, show only the clean text (value)
+        const selectedOption = options[categorySelect.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            // Show just the value (clean category name)
+            selectedOption.textContent = selectedOption.value;
+        }
+    }
+    
+    // Initial update
+    updateSelectedDisplay();
+    
+    // Update on change
+    categorySelect.addEventListener('change', updateSelectedDisplay);
+    
+    // Also update when the select loses focus (for better UX)
+    categorySelect.addEventListener('blur', updateSelectedDisplay);
 }
 </script>
 

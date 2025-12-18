@@ -1,4 +1,8 @@
-<?php ?>
+<?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +16,21 @@
             --lt-orange: #F36A1D;
             --lt-black: #0D0D0D;
         }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-[#0D0D0D] text-white flex flex-col">
@@ -19,7 +38,7 @@
 <!-- Optional minimal header -->
 <header class="border-b border-white/10 bg-black/60 backdrop-blur">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <a href="index" class="flex items-center gap-2">
+        <a href="index.php" class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                  style="background-color: var(--lt-orange);">
                 <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
@@ -29,7 +48,7 @@
             </div>
             <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
         </a>
-        <a href="index" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
+        <a href="index.php" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
             ← Back home
         </a>
     </div>
@@ -112,10 +131,12 @@
                 <input type="hidden" name="redirect_to" id="redirectToInput" value="">
                 <button
                     type="submit"
+                    id="loginButton"
                     class="w-full mt-1 px-4 py-2.5 rounded-full text-sm font-semibold flex items-center justify-center gap-2"
                     style="background-color: var(--lt-orange);"
                 >
-                    Log in
+                    <span id="loginButtonText">Log in</span>
+                    <div id="loginSpinner" class="spinner hidden"></div>
                 </button>
             </form>
 
@@ -126,17 +147,9 @@
                 <span class="flex-1 h-px bg-white/10"></span>
             </div>
 
-            <!-- Social / alt login (optional placeholder) -->
-            <button
-                type="button"
-                class="w-full px-4 py-2.5 rounded-full text-xs sm:text-sm font-medium border border-white/15 bg-[#0B0B0B] hover:border-orange-400 flex items-center justify-center gap-2"
-            >
-                <span>Continue with Google</span>
-            </button>
-
             <!-- Sign up link -->
             <p class="mt-4 text-[11px] sm:text-xs text-center text-gray-400">
-                Don’t have an account?
+                Don't have an account?
                 <a href="signup" class="text-orange-400 hover:underline">
                     Create a seller or buyer account
                 </a>
@@ -145,7 +158,7 @@
 
         <!-- Small trust text -->
         <p class="mt-4 text-[11px] text-center text-gray-500 max-w-sm mx-auto">
-            By logging in, you agree to LocalTrade’s
+            By logging in, you agree to LocalTrade's
             <a href="#" class="text-orange-400 hover:underline">Terms</a> and
             <a href="#" class="text-orange-400 hover:underline">Privacy Policy</a>.
         </p>
@@ -153,47 +166,102 @@
 </main>
 
 <script>
-    // AJAX login
+document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const loginMessages = document.getElementById('loginMessages');
     const redirectInput = document.getElementById('redirectToInput');
+    const loginButton = document.getElementById('loginButton');
+    const loginButtonText = document.getElementById('loginButtonText');
+    const loginSpinner = document.getElementById('loginSpinner');
+    
+    // Set redirect URL - send the previous page URL to backend
+    try {
+        redirectInput.value = document.referrer || 'index.php';
+    } catch(e) {
+        redirectInput.value = 'index.php';
+    }
 
-    // set redirect_to to document.referrer so we can return user to previous page
-    try { redirectInput.value = document.referrer || '/'; } catch(e) { redirectInput.value = '/'; }
-
+    // Handle form submission
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Clear previous messages
         loginMessages.innerHTML = '';
-        const btn = loginForm.querySelector('button[type="submit"]');
-        btn.disabled = true;
+        
+        // Show loading state
+        loginButton.disabled = true;
+        loginButtonText.textContent = 'Logging in...';
+        loginSpinner.classList.remove('hidden');
 
-        const fd = new FormData(loginForm);
+        const formData = new FormData(loginForm);
+        
         try {
-            const res = await fetch('process/process-login', { method: 'POST', body: fd, credentials: 'same-origin' });
-            const json = await res.json();
-            if (json.success) {
-                // redirect to provided URL
-                window.location.href = json.redirect || '/';
-            } else {
-                const errs = json.errors || ['Login failed.'];
-                loginMessages.innerHTML = `
-                    <div class="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
-                        <ul class="list-disc list-inside">${errs.map(e => `<li>${e}</li>`).join('')}</ul>
-                    </div>`;
+            const response = await fetch('process/process-login.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            });
+            
+            const responseText = await response.text();
+            
+            try {
+                const jsonData = JSON.parse(responseText);
+                
+                if (jsonData.success) {
+                    // Login successful
+                    const userType = jsonData.user_type === 'brand' ? 'Brand' : 'Buyer';
+                    showSuccess(`✅ Login successful! Redirecting ${userType} account...`);
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = jsonData.redirect || 'index.php';
+                    }, 1000);
+                    
+                } else {
+                    // Login failed
+                    const errorMessage = jsonData.errors?.[0] || 'Login failed';
+                    showError(errorMessage);
+                    resetButton();
+                }
+                
+            } catch (jsonError) {
+                console.error('Invalid JSON response:', responseText);
+                showError('Server error. Please try again.');
+                resetButton();
             }
-        } catch (err) {
-            loginMessages.innerHTML = `
-                <div class="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
-                    Network or server error. Please try again.
-                </div>`;
-        } finally {
-            btn.disabled = false;
+            
+        } catch (error) {
+            console.error('Network error:', error);
+            showError('Network error. Please check your connection.');
+            resetButton();
         }
     });
 
-    // Password visibility toggle for login
+    // Helper functions
+    function showError(message) {
+        loginMessages.innerHTML = `
+            <div class="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                ${message}
+            </div>`;
+    }
+    
+    function showSuccess(message) {
+        loginMessages.innerHTML = `
+            <div class="mb-4 rounded-xl border border-green-500/40 bg-green-500/10 px-3 py-2 text-xs text-green-200">
+                ${message}
+            </div>`;
+    }
+    
+    function resetButton() {
+        loginButton.disabled = false;
+        loginButtonText.textContent = 'Log in';
+        loginSpinner.classList.add('hidden');
+    }
+
+    // Password visibility toggle
     const passwordInput = document.getElementById('password');
     const toggleLoginBtn = document.querySelector('.toggle-password-login');
+    
     if (toggleLoginBtn && passwordInput) {
         toggleLoginBtn.addEventListener('click', () => {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -201,6 +269,7 @@
             toggleLoginBtn.classList.toggle('text-orange-400');
         });
     }
+});
 </script>
 
 </body>
