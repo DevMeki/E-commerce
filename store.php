@@ -1,56 +1,135 @@
 <?php
-// ---------- Mock store + products data (replace with DB later) ----------
-$store = [
-    'name' => 'Lagos Streetwear Co.',
-    'slug' => 'lagos-streetwear-co',
-    'location' => 'Lagos, Nigeria',
-    'rating' => 4.8,
-    'reviews' => 124,
-    'followers' => 2300,
-    'products_count' => 52,
-    'since' => '2021',
-    'description' => 'Urban fashion label from Lagos, blending African prints with modern streetwear silhouettes. All pieces made locally by Nigerian tailors.',
-    'policies' => [
-        'Shipping' => 'Orders ship within 2–4 business days across Nigeria. Express options available for Lagos.',
-        'Returns' => 'Returns accepted within 7 days of delivery for unworn items with tags attached.',
-        'Payments' => 'All payments are processed securely via LocalTrade escrow.',
-    ],
-];
+session_start(); // Start session to access user data
+// Include DB config
+if (file_exists('config.php')) {
+    require_once 'config.php';
+}
 
-$categories = ['All', 'Hoodies', 'T-Shirts', 'Bags', 'Accessories'];
 
-$products = [
-    [
-        'name' => 'Ankara Panel Hoodie',
-        'price' => 18500,
-        'category' => 'Hoodies',
-    ],
-    [
-        'name' => 'Naija Drip Tee',
-        'price' => 7500,
-        'category' => 'T-Shirts',
-    ],
-    [
-        'name' => 'Street Ankara Tote',
-        'price' => 14500,
-        'category' => 'Bags',
-    ],
-    [
-        'name' => 'Signature Logo Cap',
-        'price' => 5500,
-        'category' => 'Accessories',
-    ],
-    [
-        'name' => 'Patchwork Hoodie Limited',
-        'price' => 21000,
-        'category' => 'Hoodies',
-    ],
-    [
-        'name' => 'Oversized Graphic Tee',
-        'price' => 8900,
-        'category' => 'T-Shirts',
-    ],
-];
+$store = [];
+$products = [];
+$categories = ['All'];
+
+if (isset($conn) && $conn instanceof mysqli) {
+
+    // Get slug from URL
+    $slug = $_GET['slug'] ?? '';
+    
+    // Fallback: If no slug but we have an 'id', try to fetch slug (not standard but robust)
+    if (empty($slug) && isset($_GET['id'])) {
+        $id = (int)$_GET['id'];
+        $stmt = $conn->prepare("SELECT slug FROM Brand WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($row = $res->fetch_assoc()) {
+            $slug = $row['slug'];
+        }
+        $stmt->close();
+    }
+
+    if (empty($slug)) {
+        // No identifier -> redirect to marketplace or show error
+        header("Location: marketplace.php");
+        exit;
+    }
+
+    // 1. Fetch Brand Profile
+    // Note: status check to ensure we only show active brands
+    $stmt = $conn->prepare("
+        SELECT * FROM Brand 
+        WHERE slug = ? AND status = 'active' 
+        LIMIT 1
+    ");
+    $stmt->bind_param("s", $slug);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        // Brand not found
+        header("Location: marketplace.php"); // Or 404 page
+        exit;
+    }
+    
+    $storeData = $result->fetch_assoc();
+    $stmt->close();
+    
+    // Map DB fields to template structure
+    $store = [
+        'id'            => $storeData['id'],
+        'name'          => $storeData['brand_name'],
+        'slug'          => $storeData['slug'],
+        'location'      => $storeData['location'],
+        'rating'        => (float)$storeData['rating'],
+        'reviews'       => (int)$storeData['total_reviews'],
+        'followers'     => (int)$storeData['followers'],
+        'products_count'=> (int)$storeData['products_count'],
+        'since'         => $storeData['since_year'] ?? date('Y', strtotime($storeData['created_at'])),
+        'description'   => $storeData['bio'] ?? "Welcome to " . htmlspecialchars($storeData['brand_name']) . "'s store.",
+        'policies'      => [
+            'Shipping' => $storeData['shipping_policy'] ?? 'Standard shipping rates apply.',
+            'Returns'  => $storeData['return_policy'] ?? 'Contact seller for return information.',
+            // Payments are platform wide usually
+            'Payments' => 'All payments are processed securely via LocalTrade escrow.',
+        ],
+    ];
+
+    // 2. Fetch Active Products for this Brand
+    $brandId = $storeData['id'];
+    
+    $pStmt = $conn->prepare("
+        SELECT id, name, category, price, main_image, brand_id 
+        FROM Product 
+        WHERE brand_id = ? AND status = 'active'
+        ORDER BY created_at DESC
+    ");
+    $pStmt->bind_param("i", $brandId);
+    $pStmt->execute();
+    $pResult = $pStmt->get_result();
+    
+    while ($pRow = $pResult->fetch_assoc()) {
+        $products[] = [
+            'id'       => $pRow['id'],
+            'name'     => $pRow['name'],
+            'price'    => (float)$pRow['price'],
+            'category' => $pRow['category'],
+            'main_image' => $pRow['main_image'],
+            'brand_id' => $pRow['brand_id'] // useful for links
+        ];
+        
+        // Collect categories
+        if (!in_array($pRow['category'], $categories, true)) {
+            $categories[] = $pRow['category'];
+        }
+    }
+    $pStmt->close();
+    
+    // 3. Check if user is following
+    $isFollowing = false;
+    if (isset($_SESSION['user']['id']) && $_SESSION['user']['type'] === 'buyer') {
+        $buyerId = $_SESSION['user']['id'];
+        $fStmt = $conn->prepare("SELECT id FROM BrandFollower WHERE buyer_id = ? AND brand_id = ?");
+        $fStmt->bind_param("ii", $buyerId, $brandId);
+        $fStmt->execute();
+        $fStmt->store_result();
+        if ($fStmt->num_rows > 0) {
+            $isFollowing = true;
+        }
+        $fStmt->close();
+    }
+
+    // Sort categories
+    sort($categories);
+    // Ensure All is first
+    if (($key = array_search('All', $categories)) !== false) {
+        unset($categories[$key]);
+        array_unshift($categories, 'All');
+    }
+
+} else {
+    // DB error handling - redirect/die
+    die("Database connection failed.");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -137,14 +216,12 @@ $products = [
 
                         <!-- Right: actions -->
                         <div class="flex flex-wrap md:flex-col items-stretch md:items-end gap-2 md:gap-3 text-xs">
-                            <button class="px-4 py-2 rounded-full font-semibold"
-                                style="background-color: var(--lt-orange);">
-                                + Follow store
+                            <button id="followBtn" 
+                                class="px-4 py-2 rounded-full font-semibold transition-colors <?php echo $isFollowing ? 'bg-gray-800 text-white border border-white/20' : 'bg-[#F36A1D] text-white'; ?>"
+                                data-brand-id="<?php echo $store['id']; ?>">
+                                <?php echo $isFollowing ? 'Following' : '+ Follow store'; ?>
                             </button>
-                            <button class="px-4 py-2 rounded-full border border-white/20">
-                                💬 Chat with seller
-                            </button>
-                            <button class="px-4 py-2 rounded-full border border-white/20">
+                            <button id="shareBtn" class="px-4 py-2 rounded-full border border-white/20 hover:bg-white/5 transition">
                                 ↗ Share store
                             </button>
                         </div>
@@ -200,7 +277,7 @@ $products = [
                         <!-- Products grid -->
                         <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                             <?php foreach ($products as $index => $p): ?>
-                                <a href="product?id=<?php echo $index; ?>"
+                                <a href="product?id=<?php echo $p['id']; ?>"
                                     class="product-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2"
                                     data-category="<?php echo htmlspecialchars($p['category']); ?>"
                                     data-price="<?php echo (int) $p['price']; ?>">
@@ -292,7 +369,12 @@ $products = [
             btn.addEventListener('click', () => {
                 const target = btn.dataset.tab;
 
-                storeTabBtns.forEach(b => b.classList.remove('border-orange-400'));
+                storeTabBtns.forEach(b => {
+                    b.classList.remove('border-orange-400');
+                    b.classList.add('border-transparent');
+                });
+                
+                btn.classList.remove('border-transparent');
                 btn.classList.add('border-orange-400');
 
                 storeTabContents.forEach(c => {
@@ -333,8 +415,98 @@ $products = [
             visible.forEach(card => grid.appendChild(card));
         }
 
-        categoryFilter.addEventListener('change', applyFilters);
-        sortSelect.addEventListener('change', applyFilters);
+
+
+        // Share functionality
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+            const url = window.location.href;
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: '<?php echo htmlspecialchars($store['name']); ?> on LocalTrade',
+                        url: url
+                    });
+                } catch (err) {
+                    console.log('Share canceled');
+                }
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('Store link copied to clipboard!');
+                });
+            }
+        });
+
+        // Follow functionality
+        const followBtn = document.getElementById('followBtn');
+        followBtn.addEventListener('click', async () => {
+            const brandId = followBtn.dataset.brandId;
+            
+            // Check login first (simple client check logic)
+            <?php if (!isset($_SESSION['user'])): ?>
+                window.location.href = 'login.php';
+                return;
+            <?php endif; ?>
+
+            followBtn.disabled = true;
+            followBtn.style.opacity = '0.7';
+
+            try {
+                const response = await fetch('process/follow-brand.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ brand_id: brandId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    if (result.following) {
+                        followBtn.textContent = 'Following';
+                        followBtn.className = 'px-4 py-2 rounded-full font-semibold transition-colors bg-gray-800 text-white border border-white/20';
+                        showToast('You are now following this store');
+                    } else {
+                        followBtn.textContent = '+ Follow store';
+                        followBtn.className = 'px-4 py-2 rounded-full font-semibold transition-colors bg-[#F36A1D] text-white';
+                        showToast('Unfollowed store');
+                    }
+                    
+                    // Update follower count text
+                     const followersSpan = Array.from(document.querySelectorAll('span')).find(el => el.textContent.includes('followers'));
+                     if (followersSpan && result.newCount !== undefined) {
+                         followersSpan.textContent = result.newCount + ' followers';
+                     }
+
+                } else {
+                    if (result.redirect) {
+                        window.location.href = result.redirect;
+                    } else {
+                        showToast(result.message || 'Action failed');
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Something went wrong. Please try again.');
+            } finally {
+                followBtn.disabled = false;
+                followBtn.style.opacity = '1';
+            }
+        });
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 right-5 bg-white text-black px-6 py-3 rounded-lg shadow-xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 font-medium';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+            });
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     </script>
 </body>
 

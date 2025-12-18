@@ -187,11 +187,11 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 text-xs">
                         <?php if (!empty($categories)): ?>
                             <?php foreach ($categories as $category): ?>
-                                <button
-                                    class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1">
+                                <a href="brands_page.php?category=<?= urlencode($category) ?>"
+                                    class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1 block text-left">
                                     <span class="text-sm font-semibold"><?= htmlspecialchars($category) ?></span>
-                                    <span class="text-[11px] text-gray-400">Explore products</span>
-                                </button>
+                                    <span class="text-[11px] text-gray-400">Explore brands</span>
+                                </a>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <p class="col-span-full text-center text-gray-400">No categories available.</p>

@@ -215,7 +215,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['edit'])) {
                                     'Textiles (Fabrics and clothing materials)', 
                                     'Fashion Accessories (Jewelry and bags)',
                                     'Footwear (Shoes, slippers and sandals)', 
-                                    'Decor (Home decoration items)', 
+                                    'Decor (Home decoration items)',
+                                    'Toiletries (Personal care products)',
+                                    'Cosmetics (Makeup, perfume, skincare)',
+                                    'Education (Books, stationery, learning materials)', 
                                     'Other'
                                 ];
                                 

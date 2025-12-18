@@ -85,6 +85,70 @@ $user = $_SESSION['user'];
                     </div>
                 </form>
             </div>
+            
+            <!-- Followed Brands Section -->
+            <div class="mt-8 bg-[#111111] border border-white/10 rounded-2xl px-6 py-8 shadow-xl shadow-black/40 max-w-2xl mx-auto">
+                <h2 class="text-lg font-semibold mb-4">Brands you follow</h2>
+                
+                <?php
+                // Fetch followed brands
+                // Include config if not available (header usually includes it)
+                if (file_exists('config.php')) {
+                    require_once 'config.php';
+                }
+                
+                $followedBrands = [];
+                if (isset($conn) && $conn instanceof mysqli && isset($user['id'])) {
+                    $fStmt = $conn->prepare("
+                        SELECT b.id, b.brand_name, b.slug, b.category, b.logo 
+                        FROM Brand b
+                        JOIN BrandFollower bf ON b.id = bf.brand_id
+                        WHERE bf.buyer_id = ?
+                        ORDER BY bf.followed_at DESC
+                    ");
+                    $fStmt->bind_param("i", $user['id']);
+                    $fStmt->execute();
+                    $fRes = $fStmt->get_result();
+                    while ($frow = $fRes->fetch_assoc()) {
+                        $followedBrands[] = $frow;
+                    }
+                    $fStmt->close();
+                }
+                ?>
+                
+                <?php if (!empty($followedBrands)): ?>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <?php foreach ($followedBrands as $fb): ?>
+                            <a href="store?slug=<?= htmlspecialchars($fb['slug']) ?>" 
+                               class="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition group">
+                                <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold border border-orange-500/30">
+                                    <?php if (!empty($fb['logo'])): ?>
+                                        <img src="<?= htmlspecialchars($fb['logo']) ?>" alt="<?= htmlspecialchars($fb['brand_name']) ?>" class="w-full h-full object-cover rounded-full">
+                                    <?php else: ?>
+                                        <?= strtoupper(substr($fb['brand_name'], 0, 1)) ?>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-white truncate group-hover:text-orange-400 transition-colors">
+                                        <?= htmlspecialchars($fb['brand_name']) ?>
+                                    </p>
+                                    <p class="text-xs text-gray-500 truncate">
+                                        <?= htmlspecialchars($fb['category']) ?>
+                                    </p>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600 group-hover:text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-6">
+                        <p class="text-gray-500 text-sm">You are not following any brands yet.</p>
+                        <a href="marketplace" class="text-xs text-orange-400 hover:underline mt-2 inline-block">Explore marketplace</a>
+                    </div>
+                <?php endif; ?>
+            </div>
         </main>
     </div>
 

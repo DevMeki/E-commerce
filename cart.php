@@ -1,36 +1,71 @@
 <?php
-// -------- Mock cart data (replace with session/DB later) --------
-$cartItems = [
-    [
-        'id' => 101,
-        'name' => 'Handcrafted Ankara Tote Bag',
-        'seller' => 'Lagos Streetwear Co.',
-        'price' => 14500,
-        'currency' => '₦',
-        'qty' => 1,
-        'variant' => 'Colour: Orange · Size: One Size',
-    ],
-    [
-        'id' => 202,
-        'name' => 'Naija Drip Tee',
-        'seller' => 'Lagos Streetwear Co.',
-        'price' => 7500,
-        'currency' => '₦',
-        'qty' => 2,
-        'variant' => 'Size: L · Colour: Black',
-    ],
-];
+session_start();
 
-$currency = '₦';
+// Include config (using require_once to ensure it's loaded)
+require_once 'config.php';
 
-// Calculate subtotal in PHP
-$subtotal = 0;
-foreach ($cartItems as $item) {
-    $subtotal += $item['price'] * $item['qty'];
+// Check login
+if (!isset($_SESSION['user']) || $_SESSION['user']['type'] !== 'buyer') {
+    // Redirect to login if accessed directly without session
+    header('Location: login.php?redirect=' . urlencode('cart.php'));
+    exit;
 }
 
-// Simple flat delivery estimate (can be dynamic later)
-$deliveryEstimate = 2500;
+$user_id = $_SESSION['user']['id'];
+$cartItems = [];
+$subtotal = 0;
+$currency = '₦';
+$deliveryEstimate = 2500; // Static for now
+
+// Fetch cart items from DB
+if (isset($conn) && $conn instanceof mysqli) {
+    // Join with Product and Brand tables to get details
+    $stmt = $conn->prepare("
+        SELECT 
+            c.id, 
+            c.quantity as qty, 
+            c.variants, 
+            p.id as product_id,
+            p.name, 
+            p.price, 
+            p.main_image, 
+            b.brand_name as seller 
+        FROM cart c 
+        JOIN Product p ON c.product_id = p.id 
+        JOIN Brand b ON p.brand_id = b.id 
+        WHERE c.buyer_id = ?
+        ORDER BY c.added_at DESC
+    ");
+    
+    if ($stmt) {
+        $stmt->bind_param('i', $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        while ($row = $result->fetch_assoc()) {
+            // Parse variants JSON to string for display
+            $variantStr = '';
+            if (!empty($row['variants'])) {
+                $variantsArr = json_decode($row['variants'], true);
+                if (is_array($variantsArr)) {
+                    $parts = [];
+                    foreach ($variantsArr as $k => $v) {
+                        $parts[] = ucfirst($k) . ': ' . $v;
+                    }
+                    $variantStr = implode(' · ', $parts);
+                }
+            }
+            
+            $row['variant'] = $variantStr;
+            $row['currency'] = $currency;
+            
+            $cartItems[] = $row;
+            $subtotal += $row['price'] * $row['qty'];
+        }
+        $stmt->close();
+    }
+}
+
 $total = $subtotal + $deliveryEstimate;
 ?>
 <!DOCTYPE html>
@@ -74,7 +109,7 @@ $total = $subtotal + $deliveryEstimate;
                         <section class="space-y-3 sm:space-y-4">
                             <?php foreach ($cartItems as $index => $item): ?>
                                 <div class="cart-item bg-[#111111] border border-white/10 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4"
-                                    data-index="<?php echo $index; ?>" data-price="<?php echo (int) $item['price']; ?>">
+                                    data-id="<?php echo $item['id']; ?>" data-price="<?php echo (int) $item['price']; ?>" id="cart-item-<?php echo $item['id']; ?>">
                                     <!-- Product image placeholder -->
                                     <div
                                         class="w-20 sm:w-24 h-20 sm:h-24 rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60 flex items-center justify-center text-[11px] text-center">
@@ -197,7 +232,33 @@ $total = $subtotal + $deliveryEstimate;
                 </div>
             </div>
         </footer>
+        </footer>
     </div>
+    
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modalBackdrop"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+            <h3 class="text-lg font-semibold mb-2">Remove Item?</h3>
+            <p class="text-sm text-gray-400 mb-6">
+                Are you sure you want to remove this item from your cart? This action cannot be undone.
+            </p>
+            <div class="flex gap-3">
+                <button id="modalCancel" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-white/10 hover:bg-white/5 transition">
+                    Cancel
+                </button>
+                <button id="modalConfirm" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition">
+                    Remove
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages container -->
+    <div id="messageContainer" class="fixed top-4 right-4 z-50 max-w-sm"></div>
 
     <script>
         // Footer year
@@ -208,83 +269,187 @@ $total = $subtotal + $deliveryEstimate;
 
         // Helpers
         function formatMoney(n) {
-            // basic thousands separator
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
-        // Recalculate totals whenever cart changes (front-end only)
-        function recalcTotals() {
-            const items = document.querySelectorAll('.cart-item');
-            let subtotal = 0;
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `mb-2 p-3 rounded-xl border text-sm ${
+                type === 'success' ? 'border-green-500/40 bg-green-500/10 text-green-200' :
+                type === 'error' ? 'border-red-500/40 bg-red-500/10 text-red-200' :
+                'border-blue-500/40 bg-blue-500/10 text-blue-200'
+            }`;
+            messageDiv.textContent = message;
+            
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
 
-            items.forEach(item => {
-                const price = parseInt(item.dataset.price, 10);
-                const qtyInput = item.querySelector('.qty-input');
-                const lineTotalEl = item.querySelector('.line-total');
-                const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
-
-                const lineTotal = price * qty;
-                subtotal += lineTotal;
-
-                lineTotalEl.textContent = currency + formatMoney(lineTotal);
-            });
-
-            document.getElementById('subtotalText').textContent = currency + formatMoney(subtotal);
-
-            const total = subtotal + delivery;
-            document.getElementById('totalText').textContent = currency + formatMoney(total);
-
-            // If no items left, show "empty" state (simple front-end version)
-            if (items.length === 0) {
-                alert('Your cart is now empty.');
-                window.location.reload(); // in real app, you’d rerender via PHP
+        async function updateCartItem(cartId, quantity, rowElement) {
+            try {
+                const formData = new FormData();
+                formData.append('cart_id', cartId);
+                formData.append('quantity', quantity);
+                
+                const response = await fetch('process/update-cart.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update subtotal
+                    const subtotalEl = document.getElementById('subtotalText');
+                    const totalEl = document.getElementById('totalText');
+                    
+                    const newSubtotal = parseFloat(result.subtotal);
+                    subtotalEl.textContent = currency + formatMoney(newSubtotal);
+                    totalEl.textContent = currency + formatMoney(newSubtotal + delivery);
+                    
+                    // Update line total
+                    const price = parseInt(rowElement.dataset.price);
+                    const lineTotalEl = rowElement.querySelector('.line-total');
+                    lineTotalEl.textContent = currency + formatMoney(price * quantity);
+                    
+                    // Optional: show subtle success or just update silently
+                    // showMessage('Cart updated', 'success');
+                } else {
+                    showMessage(result.message || 'Update failed', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Network error', 'error');
             }
         }
 
-        // Quantity controls
+        // Modal state
+        const modal = document.getElementById('confirmModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        let itemToRemove = null;
+        let itemToRemoveId = null;
+
+        function showModal(id, element) {
+            itemToRemove = element;
+            itemToRemoveId = id;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        }
+
+        function hideModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            itemToRemove = null;
+            itemToRemoveId = null;
+        }
+
+        modalCancel.addEventListener('click', hideModal);
+        modalBackdrop.addEventListener('click', hideModal);
+
+        modalConfirm.addEventListener('click', () => {
+            if (itemToRemoveId && itemToRemove) {
+                removeCartItem(itemToRemoveId, itemToRemove);
+                hideModal();
+            }
+        });
+
+        async function removeCartItem(cartId, rowElement) {
+            try {
+                const formData = new FormData();
+                formData.append('cart_id', cartId);
+                
+                const response = await fetch('process/remove-from-cart.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Animate removal
+                    rowElement.style.transition = 'all 0.3s ease';
+                    rowElement.style.opacity = '0';
+                    rowElement.style.transform = 'translateX(20px)';
+                    
+                    setTimeout(() => {
+                        rowElement.remove();
+                        
+                        // Update totals
+                        const subtotalEl = document.getElementById('subtotalText');
+                        const totalEl = document.getElementById('totalText');
+                        
+                        const newSubtotal = parseFloat(result.subtotal);
+                        subtotalEl.textContent = currency + formatMoney(newSubtotal);
+                        totalEl.textContent = currency + formatMoney(newSubtotal + delivery);
+                        
+                        // Check if empty
+                        if (document.querySelectorAll('.cart-item').length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                    
+                    showMessage('Item removed', 'success');
+                } else {
+                    showMessage(result.message || 'Removal failed', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Network error', 'error');
+            }
+        }
+
+        // Attach listeners
         document.querySelectorAll('.cart-item').forEach(item => {
             const minusBtn = item.querySelector('.qty-minus');
             const plusBtn = item.querySelector('.qty-plus');
             const qtyInput = item.querySelector('.qty-input');
+            const removeBtn = item.querySelector('.remove-item');
+            const cartId = item.dataset.id;
 
             minusBtn.addEventListener('click', () => {
                 let v = parseInt(qtyInput.value || '1', 10);
-                if (v > 1) v--;
-                qtyInput.value = v;
-                recalcTotals();
+                if (v > 1) {
+                    v--;
+                    qtyInput.value = v;
+                    updateCartItem(cartId, v, item);
+                }
             });
 
             plusBtn.addEventListener('click', () => {
                 let v = parseInt(qtyInput.value || '1', 10);
-                v++;
-                qtyInput.value = v;
-                recalcTotals();
+                if (v < 100) { // arbitrary max
+                    v++;
+                    qtyInput.value = v;
+                    updateCartItem(cartId, v, item);
+                }
             });
 
             qtyInput.addEventListener('change', () => {
                 let v = parseInt(qtyInput.value || '1', 10);
                 if (isNaN(v) || v < 1) v = 1;
                 qtyInput.value = v;
-                recalcTotals();
+                updateCartItem(cartId, v, item);
+            });
+            
+            removeBtn.addEventListener('click', () => {
+                showModal(cartId, item);
             });
         });
 
-        // Remove item
-        document.querySelectorAll('.remove-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const item = btn.closest('.cart-item');
-                item.remove();
-                recalcTotals();
-            });
-        });
-
-        // Checkout button (demo)
+        // Checkout button
         document.getElementById('checkoutBtn')?.addEventListener('click', () => {
-            alert('Go to checkout page (implement redirect to checkout.php).');
+            window.location.href = 'checkout.php';
         });
-
-        // Initial calculation
-        recalcTotals();
     </script>
 </body>
 

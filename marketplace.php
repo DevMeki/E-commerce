@@ -237,7 +237,41 @@ $currency = '₦';
         const resultsCount = document.getElementById('resultsCount');
         const catChips = document.querySelectorAll('.cat-chip');
 
-        let activeCategory = 'All';
+        // Initial category from URL or default
+        const urlParams = new URLSearchParams(window.location.search);
+        let activeCategory = urlParams.get('category') || 'All';
+
+        // Set initial chip state
+        document.addEventListener('DOMContentLoaded', () => {
+            if (activeCategory !== 'All') {
+                // Find and highlight correct chip
+                catChips.forEach(c => {
+                    if (c.dataset.category === activeCategory) {
+                        c.classList.add('border-orange-400', 'bg-white/5');
+                    } else {
+                        c.classList.remove('border-orange-400', 'bg-white/5');
+                    }
+                });
+                
+                // If "All" was default active (first one), remove it if we have a specific cat
+                if (activeCategory !== 'All') {
+                     // Assuming "All" is the first one and might have been hardcoded active in HTML? 
+                     // Actually, no chip has 'border-orange-400' by default in HTML loop, 
+                     // but likely we want to set "All" if nothing else is pending.
+                }
+                
+                // Trigger filter immediately
+                applyFilters();
+            } else {
+                // Highlight "All" by default if no param
+                // Assuming the first chip is "All" if the loop covers it, 
+                // but checking the PHP, $categories = ['All', ...] so first chip is "All".
+                if (catChips.length > 0) {
+                    catChips[0].classList.add('border-orange-400', 'bg-white/5');
+                }
+                applyFilters();
+            }
+        });
 
         // Helpers
         function formatMoney(n) {

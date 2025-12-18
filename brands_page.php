@@ -1,88 +1,96 @@
 <?php
-// -------- Mock brands data (replace with DB later) --------
-$brands = [
-    [
-        'slug'         => 'lagos-streetwear-co',
-        'name'         => 'Lagos Streetwear Co.',
-        'location'     => 'Lagos, Nigeria',
-        'categories'   => ['Fashion', 'Wearables'],
-        'products'     => 32,
-        'rating'       => 4.8,
-        'since'        => '2021',
-        'description'  => 'Urban fashion label blending African prints with modern silhouettes.',
-        'color_from'   => 'from-orange-500',
-        'color_to'     => 'to-pink-500',
-    ],
-    [
-        'slug'         => 'abuja-beauty-lab',
-        'name'         => 'Abuja Beauty Lab',
-        'location'     => 'Abuja, Nigeria',
-        'categories'   => ['Beauty', 'Skincare'],
-        'products'     => 24,
-        'rating'       => 4.7,
-        'since'        => '2020',
-        'description'  => 'Clean skincare and self-care products made with Nigerian ingredients.',
-        'color_from'   => 'from-rose-500',
-        'color_to'     => 'to-amber-400',
-    ],
-    [
-        'slug'         => 'naija-tech-hub',
-        'name'         => 'Naija Tech Hub',
-        'location'     => 'Lagos, Nigeria',
-        'categories'   => ['Electronics', 'Gadgets'],
-        'products'     => 18,
-        'rating'       => 4.6,
-        'since'        => '2019',
-        'description'  => 'Affordable gadgets and smart accessories for everyday Nigerians.',
-        'color_from'   => 'from-blue-500',
-        'color_to'     => 'to-indigo-500',
-    ],
-    [
-        'slug'         => 'abeokuta-crafts',
-        'name'         => 'Abeokuta Crafts',
-        'location'     => 'Ogun, Nigeria',
-        'categories'   => ['Home & Living', 'Crafts'],
-        'products'     => 21,
-        'rating'       => 4.9,
-        'since'        => '2018',
-        'description'  => 'Handwoven textiles, home decor and artisan-made pieces.',
-        'color_from'   => 'from-emerald-500',
-        'color_to'     => 'to-teal-400',
-    ],
-    [
-        'slug'         => 'home-living-ng',
-        'name'         => 'Home & Living NG',
-        'location'     => 'Port Harcourt, Nigeria',
-        'categories'   => ['Home & Living', 'Kitchen'],
-        'products'     => 16,
-        'rating'       => 4.5,
-        'since'        => '2022',
-        'description'  => 'Everyday home and kitchen essentials with a Nigerian touch.',
-        'color_from'   => 'from-yellow-500',
-        'color_to'     => 'to-orange-500',
-    ],
-    [
-        'slug'         => 'lagos-art-collective',
-        'name'         => 'Lagos Art Collective',
-        'location'     => 'Lagos, Nigeria',
-        'categories'   => ['Art & Craft'],
-        'products'     => 12,
-        'rating'       => 4.9,
-        'since'        => '2017',
-        'description'  => 'Prints, paintings and craft pieces from Lagos-based artists.',
-        'color_from'   => 'from-fuchsia-500',
-        'color_to'     => 'to-purple-500',
-    ],
+// Include configuration for DB connection
+if (file_exists('config.php')) {
+    require_once 'config.php';
+}
+
+// Define gradient pairs for deterministic assignment
+$gradients = [
+    ['from-orange-500', 'to-pink-500'],
+    ['from-rose-500', 'to-amber-400'],
+    ['from-blue-500', 'to-indigo-500'],
+    ['from-emerald-500', 'to-teal-400'],
+    ['from-yellow-500', 'to-orange-500'],
+    ['from-fuchsia-500', 'to-purple-500'],
+    ['from-cyan-500', 'to-blue-500'],
+    ['from-violet-500', 'to-fuchsia-500'],
 ];
 
-// Build a flat list of categories for filter
+$brands = [];
 $categoryFilterOptions = ['All'];
-foreach ($brands as $b) {
-    foreach ($b['categories'] as $cat) {
-        if (!in_array($cat, $categoryFilterOptions, true)) {
-            $categoryFilterOptions[] = $cat;
+
+if (isset($conn) && $conn instanceof mysqli) {
+    // Fetch brands with product count
+    // Using LEFT JOIN to count active products
+    // Assuming 'status' column exists and 'active' is the value for visible brands
+    $sql = "
+        SELECT 
+            b.id, 
+            b.brand_name, 
+            b.slug, 
+            b.location, 
+            b.category, 
+            b.rating, 
+            b.created_at, 
+            b.bio as description,
+            COUNT(p.id) as real_product_count
+        FROM Brand b
+        LEFT JOIN Product p ON b.id = p.brand_id AND p.status = 'active'
+        WHERE b.status = 'active'
+        GROUP BY b.id
+        HAVING real_product_count > 0
+        ORDER BY b.brand_name ASC
+    ";
+    
+    $result = $conn->query($sql);
+    
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            // Calculate random-ish but consistent gradient based on ID
+            $gradIndex = $row['id'] % count($gradients);
+            $colors = $gradients[$gradIndex];
+            
+            // Format year
+            $since = $row['created_at'] ? date('Y', strtotime($row['created_at'])) : date('Y');
+            
+            // Ensure description isn't empty
+            $desc = $row['description'];
+            if (empty($desc)) {
+                $desc = "Trusted seller on LocalTrade offering quality " . strtolower($row['category']) . " products.";
+            }
+
+            // Categories - for now using the main category as an array to match template structure
+            // If the brand has products with different categories, we could fetch them, but for now specific brand category + generic
+            $brandCats = [$row['category']];
+            
+            $brands[] = [
+                'id'           => $row['id'],
+                'slug'         => $row['slug'],
+                'name'         => $row['brand_name'],
+                'location'     => $row['location'],
+                'categories'   => $brandCats,
+                'products'     => $row['real_product_count'],
+                'rating'       => (float)$row['rating'],
+                'since'        => $since,
+                'description'  => $desc,
+                'color_from'   => $colors[0],
+                'color_to'     => $colors[1],
+            ];
+            
+            // Populate filter options
+            if (!in_array($row['category'], $categoryFilterOptions, true)) {
+                $categoryFilterOptions[] = $row['category'];
+            }
         }
+        $result->free();
     }
+}
+// Sort filter options
+sort($categoryFilterOptions);
+// Ensure 'All' is first
+if (($key = array_search('All', $categoryFilterOptions)) !== false) {
+    unset($categoryFilterOptions[$key]);
+    array_unshift($categoryFilterOptions, 'All');
 }
 ?>
 <!DOCTYPE html>
@@ -162,7 +170,7 @@ foreach ($brands as $b) {
                 <div id="brandsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                     <?php foreach ($brands as $b): ?>
                             <a
-                                href="store?brand=<?php echo urlencode($b['slug']); ?>"
+                                href="store?slug=<?php echo urlencode($b['slug']); ?>"
                             class="brand-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition"
                             data-name="<?php echo htmlspecialchars($b['name']); ?>"
                             data-location="<?php echo htmlspecialchars($b['location']); ?>"
@@ -272,6 +280,26 @@ function applyBrandFilters() {
 
     brandCountEl.textContent = `${visible} brand${visible === 1 ? '' : 's'} available`;
 }
+
+// Initial category from URL
+const urlParams = new URLSearchParams(window.location.search);
+const activeCategory = urlParams.get('category');
+
+if (activeCategory && activeCategory !== 'All') {
+    // Set dropdown value if it exists
+    // We iterate options to check if the category exists in the list to avoid setting invalid value
+    let found = false;
+    for (let i = 0; i < catFilter.options.length; i++) {
+        if (catFilter.options[i].value === activeCategory) {
+            catFilter.selectedIndex = i;
+            found = true;
+            break;
+        }
+    }
+}
+
+// Run filter immediately on load
+applyBrandFilters();
 
 searchInput.addEventListener('input', applyBrandFilters);
 catFilter.addEventListener('change', applyBrandFilters);

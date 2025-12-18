@@ -190,6 +190,9 @@ $config = file_exists(__DIR__ . '/config.php') ? include __DIR__ . '/config.php'
                                     <option>Fashion Accessories</option>
                                     <option>Prints</option>
                                     <option>Footwear</option>
+                                    <option>Toiletries</option>
+                                    <option>Cosmetics</option>
+                                    <option>Education</option>
                                     <option>Other</option>
                                 </select>
                             </div>
