@@ -5,8 +5,9 @@ session_start();
 // Include database configuration
 require_once 'config.php';
 
-// Get product ID from URL
+// Get product identifier from URL
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$product_slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 
 // Fetch product from database
 $product = null;
@@ -14,8 +15,13 @@ $seller = null;
 $images = [];
 $relatedProducts = [];
 
-if ($product_id > 0 && isset($conn) && $conn instanceof mysqli) {
-    // Fetch product details
+if (($product_id > 0 || !empty($product_slug)) && isset($conn) && $conn instanceof mysqli) {
+    // Determine search column
+    $whereClause = $product_id > 0 ? "p.id = ?" : "p.slug = ?";
+    $paramType = $product_id > 0 ? "i" : "s";
+    $paramVal = $product_id > 0 ? $product_id : $product_slug;
+
+    // Fetch product details - Relaxed visibility check for direct links
     $stmt = $conn->prepare("
         SELECT 
             p.id, 
@@ -42,19 +48,23 @@ if ($product_id > 0 && isset($conn) && $conn instanceof mysqli) {
             b.rating as brand_rating,
             b.total_sales as brand_total_sales,
             b.products_count,
+            b.status as brand_status,
             b.slug as brand_slug
         FROM Product p
         JOIN Brand b ON p.brand_id = b.id
-        WHERE p.id = ? AND p.status = 'active' AND p.visibility = 'public' AND b.status = 'active'
+        WHERE $whereClause AND p.status = 'active' AND b.status = 'active'
     ");
     
     if ($stmt) {
-        $stmt->bind_param('i', $product_id);
+        $stmt->bind_param($paramType, $paramVal);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
             $product = $result->fetch_assoc();
+            
+            // Re-assign product_id correctly if it was fetched by slug
+            $product_id = $product['id'];
             
             // Increment view count
             $updateView = $conn->prepare("UPDATE Product SET views = views + 1 WHERE id = ?");
@@ -128,6 +138,9 @@ if ($product_id > 0 && isset($conn) && $conn instanceof mysqli) {
                 $moreBrandProducts[] = $row;
             }
             $brandStmt->close();
+           if ($product['brand_status'] !== 'active' || $product['status'] === 'archived') {
+            $product = null;
+        }
         }
         $stmt->close();
     }

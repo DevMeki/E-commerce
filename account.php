@@ -31,7 +31,15 @@ $user = $_SESSION['user'];
 
         <main id="main" class="max-w-4xl mx-auto px-4 py-12" role="main" aria-labelledby="accountHeading">
             <div class="bg-[#111111] border border-white/10 rounded-2xl px-6 py-8 shadow-xl shadow-black/40 max-w-2xl mx-auto">
-                <h1 id="accountHeading" class="text-xl font-semibold mb-4">Account</h1>
+                <div class="flex items-center justify-between mb-4">
+                    <h1 id="accountHeading" class="text-xl font-semibold">Account</h1>
+                    <a href="purchases" class="text-sm text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1 border border-orange-400/30 rounded-lg px-3 py-1 hover:bg-orange-400/10">
+                        <span>History</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </a>
+                </div>
 
                 <div id="updateMessages"></div>
 
@@ -149,6 +157,8 @@ $user = $_SESSION['user'];
                     </div>
                 <?php endif; ?>
             </div>
+
+
         </main>
     </div>
 

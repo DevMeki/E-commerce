@@ -13,7 +13,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header('Content-Type: application/json');
 
-function send_json_response($success, $message, $redirect = null) {
+function send_json_response($success, $message, $redirect = null)
+{
     ob_clean(); // Discard any prior output
     echo json_encode([
         'success' => $success,
@@ -53,7 +54,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 $stmt = $conn->prepare("
     SELECT id, name, price, stock 
     FROM Product 
-    WHERE id = ? AND status = 'active' AND visibility = 'public'
+    WHERE id = ? AND status = 'active'
 ");
 $stmt->bind_param('i', $product_id);
 $stmt->execute();
@@ -103,7 +104,7 @@ $success = false;
 if ($existingCartItem) {
     // Update existing cart item
     $newQuantity = $existingCartItem['quantity'] + $quantity;
-    
+
     // Check if new quantity exceeds stock
     if ($newQuantity > $product['stock']) {
         send_json_response(false, 'Cannot add more. You already have ' . $existingCartItem['quantity'] . ' in cart and stock is ' . $product['stock']);
@@ -117,9 +118,9 @@ if ($existingCartItem) {
     $updateStmt->bind_param('ii', $newQuantity, $existingCartItem['id']);
     $success = $updateStmt->execute();
     $updateStmt->close();
-    
+
     $message = 'Cart updated. You now have ' . $newQuantity . ' of this item.';
-    
+
 } else {
     // Insert new cart item
     $insertStmt = $conn->prepare("
@@ -129,7 +130,7 @@ if ($existingCartItem) {
     $insertStmt->bind_param('iiis', $user_id, $product_id, $quantity, $variants_json);
     $success = $insertStmt->execute();
     $insertStmt->close();
-    
+
     $message = 'Product added to cart successfully';
 }
 

@@ -1,4 +1,5 @@
 <?php
+require_once 'process/check_brand_login.php';
 // --- SIMPLE PLACEHOLDER BACKEND HANDLING ---
 // In production, you’d:
 // - Check if user is logged in (seller)

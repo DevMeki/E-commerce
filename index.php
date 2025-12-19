@@ -34,7 +34,7 @@
         $products = [];
         $totalProducts = 0;
         if (isset($conn) && $conn) {
-            $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, p.main_image, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" ORDER BY p.created_at DESC LIMIT 4');
+            $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, p.main_image, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" AND p.visibility = "public" AND b.status = "active" ORDER BY p.created_at DESC LIMIT 4');
             if ($stmt) {
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -45,7 +45,7 @@
             }
 
             // Get total products count
-            $stmt = $conn->prepare('SELECT COUNT(*) as total FROM Product WHERE status = "active"');
+            $stmt = $conn->prepare('SELECT COUNT(*) as total FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" AND p.visibility = "public" AND b.status = "active"');
             if ($stmt) {
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -141,25 +141,35 @@
                             <div class="grid grid-cols-2 gap-3 text-xs">
                                 <?php if (!empty($products)): ?>
                                     <?php foreach ($products as $product): ?>
-                                        <div class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2">
+                                        <a href="product.php?id=<?= $product['id'] ?>"
+                                            class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2 hover:border-orange-500/50 border border-transparent transition-colors">
                                             <div
-                                                class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[10px] font-semibold">
-                                                <?php echo htmlspecialchars($product['brand_name']); ?>
+                                                class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[10px] font-semibold overflow-hidden">
+                                                <?php if (!empty($product['main_image'])): ?>
+                                                    <img src="<?= htmlspecialchars($product['main_image']) ?>"
+                                                        alt="<?= htmlspecialchars($product['name']) ?>"
+                                                        class="w-full h-full object-cover" onload="this.style.opacity='1'"
+                                                        style="opacity:0; transition: opacity 0.3s;">
+                                                <?php else: ?>
+                                                    <?php echo htmlspecialchars($product['brand_name']); ?>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="flex-1">
                                                 <p class="font-semibold text-sm">
-                                                    <?php echo htmlspecialchars($product['name']); ?></p>
+                                                    <?php echo htmlspecialchars($product['name']); ?>
+                                                </p>
                                                 <p class="text-[11px] text-gray-400">
-                                                    <?php echo htmlspecialchars($product['category']); ?></p>
+                                                    <?php echo htmlspecialchars($product['category']); ?>
+                                                </p>
                                             </div>
                                             <div class="flex items-center justify-between mt-1">
                                                 <p class="font-semibold text-sm text-orange-400">
                                                     ₦<?php echo number_format($product['price']); ?></p>
-                                                <button class="text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                                    Add
-                                                </button>
+                                                <div class="text-[11px] px-2 py-1 rounded-full bg-white/5">
+                                                    View
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <p class="col-span-full text-center text-gray-400">No products available.</p>
@@ -301,8 +311,8 @@
                         </a>
                         <a href="Brands/brand-help.php">
                             <button class="px-6 py-2.5 rounded-full text-sm border border-white/20">
-                            Learn how it works
-                        </button>
+                                Learn how it works
+                            </button>
                         </a>
                     </div>
                 </div>

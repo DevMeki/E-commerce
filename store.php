@@ -14,10 +14,10 @@ if (isset($conn) && $conn instanceof mysqli) {
 
     // Get slug from URL
     $slug = $_GET['slug'] ?? '';
-    
+
     // Fallback: If no slug but we have an 'id', try to fetch slug (not standard but robust)
     if (empty($slug) && isset($_GET['id'])) {
-        $id = (int)$_GET['id'];
+        $id = (int) $_GET['id'];
         $stmt = $conn->prepare("SELECT slug FROM Brand WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -44,31 +44,31 @@ if (isset($conn) && $conn instanceof mysqli) {
     $stmt->bind_param("s", $slug);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows === 0) {
         // Brand not found
         header("Location: marketplace.php"); // Or 404 page
         exit;
     }
-    
+
     $storeData = $result->fetch_assoc();
     $stmt->close();
-    
+
     // Map DB fields to template structure
     $store = [
-        'id'            => $storeData['id'],
-        'name'          => $storeData['brand_name'],
-        'slug'          => $storeData['slug'],
-        'location'      => $storeData['location'],
-        'rating'        => (float)$storeData['rating'],
-        'reviews'       => (int)$storeData['total_reviews'],
-        'followers'     => (int)$storeData['followers'],
-        'products_count'=> (int)$storeData['products_count'],
-        'since'         => $storeData['since_year'] ?? date('Y', strtotime($storeData['created_at'])),
-        'description'   => $storeData['bio'] ?? "Welcome to " . htmlspecialchars($storeData['brand_name']) . "'s store.",
-        'policies'      => [
+        'id' => $storeData['id'],
+        'name' => $storeData['brand_name'],
+        'slug' => $storeData['slug'],
+        'location' => $storeData['location'],
+        'rating' => (float) $storeData['rating'],
+        'reviews' => (int) $storeData['total_reviews'],
+        'followers' => (int) $storeData['followers'],
+        'products_count' => (int) $storeData['products_count'],
+        'since' => $storeData['since_year'] ?? date('Y', strtotime($storeData['created_at'])),
+        'description' => $storeData['bio'] ?? "Welcome to " . htmlspecialchars($storeData['brand_name']) . "'s store.",
+        'policies' => [
             'Shipping' => $storeData['shipping_policy'] ?? 'Standard shipping rates apply.',
-            'Returns'  => $storeData['return_policy'] ?? 'Contact seller for return information.',
+            'Returns' => $storeData['return_policy'] ?? 'Contact seller for return information.',
             // Payments are platform wide usually
             'Payments' => 'All payments are processed securely via LocalTrade escrow.',
         ],
@@ -76,34 +76,34 @@ if (isset($conn) && $conn instanceof mysqli) {
 
     // 2. Fetch Active Products for this Brand
     $brandId = $storeData['id'];
-    
+
     $pStmt = $conn->prepare("
         SELECT id, name, category, price, main_image, brand_id 
         FROM Product 
-        WHERE brand_id = ? AND status = 'active'
+        WHERE brand_id = ? AND status = 'active' AND visibility = 'public'
         ORDER BY created_at DESC
     ");
     $pStmt->bind_param("i", $brandId);
     $pStmt->execute();
     $pResult = $pStmt->get_result();
-    
+
     while ($pRow = $pResult->fetch_assoc()) {
         $products[] = [
-            'id'       => $pRow['id'],
-            'name'     => $pRow['name'],
-            'price'    => (float)$pRow['price'],
+            'id' => $pRow['id'],
+            'name' => $pRow['name'],
+            'price' => (float) $pRow['price'],
             'category' => $pRow['category'],
             'main_image' => $pRow['main_image'],
             'brand_id' => $pRow['brand_id'] // useful for links
         ];
-        
+
         // Collect categories
         if (!in_array($pRow['category'], $categories, true)) {
             $categories[] = $pRow['category'];
         }
     }
     $pStmt->close();
-    
+
     // 3. Check if user is following
     $isFollowing = false;
     if (isset($_SESSION['user']['id']) && $_SESSION['user']['type'] === 'buyer') {
@@ -216,12 +216,13 @@ if (isset($conn) && $conn instanceof mysqli) {
 
                         <!-- Right: actions -->
                         <div class="flex flex-wrap md:flex-col items-stretch md:items-end gap-2 md:gap-3 text-xs">
-                            <button id="followBtn" 
+                            <button id="followBtn"
                                 class="px-4 py-2 rounded-full font-semibold transition-colors <?php echo $isFollowing ? 'bg-gray-800 text-white border border-white/20' : 'bg-[#F36A1D] text-white'; ?>"
                                 data-brand-id="<?php echo $store['id']; ?>">
                                 <?php echo $isFollowing ? 'Following' : '+ Follow store'; ?>
                             </button>
-                            <button id="shareBtn" class="px-4 py-2 rounded-full border border-white/20 hover:bg-white/5 transition">
+                            <button id="shareBtn"
+                                class="px-4 py-2 rounded-full border border-white/20 hover:bg-white/5 transition">
                                 ↗ Share store
                             </button>
                         </div>
@@ -373,7 +374,7 @@ if (isset($conn) && $conn instanceof mysqli) {
                     b.classList.remove('border-orange-400');
                     b.classList.add('border-transparent');
                 });
-                
+
                 btn.classList.remove('border-transparent');
                 btn.classList.add('border-orange-400');
 
@@ -440,7 +441,7 @@ if (isset($conn) && $conn instanceof mysqli) {
         const followBtn = document.getElementById('followBtn');
         followBtn.addEventListener('click', async () => {
             const brandId = followBtn.dataset.brandId;
-            
+
             // Check login first (simple client check logic)
             <?php if (!isset($_SESSION['user'])): ?>
                 window.location.href = 'login.php';
@@ -456,9 +457,9 @@ if (isset($conn) && $conn instanceof mysqli) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ brand_id: brandId })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     if (result.following) {
                         followBtn.textContent = 'Following';
@@ -469,12 +470,12 @@ if (isset($conn) && $conn instanceof mysqli) {
                         followBtn.className = 'px-4 py-2 rounded-full font-semibold transition-colors bg-[#F36A1D] text-white';
                         showToast('Unfollowed store');
                     }
-                    
+
                     // Update follower count text
-                     const followersSpan = Array.from(document.querySelectorAll('span')).find(el => el.textContent.includes('followers'));
-                     if (followersSpan && result.newCount !== undefined) {
-                         followersSpan.textContent = result.newCount + ' followers';
-                     }
+                    const followersSpan = Array.from(document.querySelectorAll('span')).find(el => el.textContent.includes('followers'));
+                    if (followersSpan && result.newCount !== undefined) {
+                        followersSpan.textContent = result.newCount + ' followers';
+                    }
 
                 } else {
                     if (result.redirect) {
@@ -497,11 +498,11 @@ if (isset($conn) && $conn instanceof mysqli) {
             toast.className = 'fixed bottom-5 right-5 bg-white text-black px-6 py-3 rounded-lg shadow-xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 font-medium';
             toast.textContent = message;
             document.body.appendChild(toast);
-            
+
             requestAnimationFrame(() => {
                 toast.classList.remove('translate-y-20', 'opacity-0');
             });
-            
+
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);

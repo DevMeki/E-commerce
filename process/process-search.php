@@ -21,7 +21,7 @@ $results = [];
 
 if (!empty($query)) {
     // Search products
-    $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" AND (p.name LIKE ? OR p.category LIKE ?) ORDER BY p.name LIMIT 5');
+    $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" AND p.visibility = "public" AND (p.name LIKE ? OR p.category LIKE ?) ORDER BY p.name LIMIT 5');
     if ($stmt) {
         $searchTerm = '%' . $query . '%';
         $stmt->bind_param('ss', $searchTerm, $searchTerm);
@@ -32,7 +32,7 @@ if (!empty($query)) {
         }
         $stmt->close();
     }
-    
+
     // Search brands
     $stmt = $conn->prepare('SELECT id, brand_name, slug, category, logo FROM Brand WHERE status = "active" AND (brand_name LIKE ? OR category LIKE ?) ORDER BY brand_name LIMIT 5');
     if ($stmt) {

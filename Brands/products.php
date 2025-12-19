@@ -1,64 +1,62 @@
 <?php
+require_once 'process/check_brand_login.php';
 // Brand products page (seller-side)
 
-// Mock data for now – replace with DB query later
-$products = [
-    [
-        'id' => 1,
-        'name' => 'Ankara Panel Hoodie',
-        'sku' => 'ANK-HOOD-001',
-        'category' => 'Fashion',
-        'price' => 18500,
-        'stock' => 12,
-        'status' => 'Active',     // Active, Draft, Archived
-        'visibility' => 'Public',     // Public, Hidden
-        'updated_at' => '2025-02-10 09:21',
-    ],
-    [
-        'id' => 2,
-        'name' => 'Naija Drip Tee',
-        'sku' => 'TEE-NG-002',
-        'category' => 'Fashion',
-        'price' => 7500,
-        'stock' => 0,
-        'status' => 'Active',
-        'visibility' => 'Public',
-        'updated_at' => '2025-02-09 14:05',
-    ],
-    [
-        'id' => 3,
-        'name' => 'Shea Butter Glow Oil',
-        'sku' => 'BEAUTY-OIL-01',
-        'category' => 'Beauty',
-        'price' => 6200,
-        'stock' => 34,
-        'status' => 'Draft',
-        'visibility' => 'Hidden',
-        'updated_at' => '2025-02-08 17:45',
-    ],
-    [
-        'id' => 4,
-        'name' => 'Handmade Clay Mug',
-        'sku' => 'HOME-MUG-01',
-        'category' => 'Home & Living',
-        'price' => 4500,
-        'stock' => 5,
-        'status' => 'Active',
-        'visibility' => 'Public',
-        'updated_at' => '2025-02-07 10:12',
-    ],
-    [
-        'id' => 5,
-        'name' => 'Limited Edition Hoodie',
-        'sku' => 'ANK-HOOD-999',
-        'category' => 'Fashion',
-        'price' => 25000,
-        'stock' => 0,
-        'status' => 'Archived',
-        'visibility' => 'Hidden',
-        'updated_at' => '2025-01-12 09:12',
-    ],
-];
+// Include DB connection
+if (file_exists('../config.php')) {
+    require_once '../config.php';
+}
+
+$brand_id = $_SESSION['user']['id'];
+
+// Get counts for metrics and tabs
+$totalProducts = 0;
+$totalActive = 0;
+$totalDrafts = 0;
+$totalArchived = 0;
+$totalHidden = 0;
+
+if (isset($conn) && $conn) {
+    // Total count
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM product WHERE brand_id = ?");
+    $stmt->bind_param("i", $brand_id);
+    $stmt->execute();
+    $stmt->bind_result($totalProducts);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Active count
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM product WHERE brand_id = ? AND status = 'active'");
+    $stmt->bind_param("i", $brand_id);
+    $stmt->execute();
+    $stmt->bind_result($totalActive);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Draft count
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM product WHERE brand_id = ? AND status = 'draft'");
+    $stmt->bind_param("i", $brand_id);
+    $stmt->execute();
+    $stmt->bind_result($totalDrafts);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Archived count
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM product WHERE brand_id = ? AND status = 'archived'");
+    $stmt->bind_param("i", $brand_id);
+    $stmt->execute();
+    $stmt->bind_result($totalArchived);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Private in marketplace count
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM product WHERE brand_id = ? AND visibility = 'private'");
+    $stmt->bind_param("i", $brand_id);
+    $stmt->execute();
+    $stmt->bind_result($totalHidden);
+    $stmt->fetch();
+    $stmt->close();
+}
 
 function moneyNaira($n)
 {
@@ -69,30 +67,57 @@ function moneyNaira($n)
 $statusFilter = strtolower($_GET['status'] ?? 'all'); // all, active, draft, archived
 $search = trim($_GET['q'] ?? '');
 
-// Filter products
-$filteredProducts = array_filter($products, function ($p) use ($statusFilter, $search) {
-    if ($statusFilter !== 'all') {
-        if (strtolower($p['status']) !== $statusFilter) {
-            return false;
+// Fetch filtered products from DB
+$filteredProducts = [];
+if (isset($conn) && $conn) {
+    if ($statusFilter === 'all' && $search === '') {
+        // Simple case
+        $res = $conn->query("SELECT * FROM product WHERE brand_id = $brand_id ORDER BY created_at DESC");
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $filteredProducts[] = $row;
+            }
+        }
+    } else {
+        $sql = "SELECT * FROM product WHERE brand_id = ?";
+        $params = [$brand_id];
+        $types = "i";
+
+        if ($statusFilter !== 'all') {
+            $sql .= " AND status = ?";
+            $params[] = $statusFilter;
+            $types .= "s";
+        }
+
+        if ($search !== '') {
+            $sql .= " AND (name LIKE ? OR sku LIKE ? OR category LIKE ?)";
+            $searchTerm = "%$search%";
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $types .= "sss";
+        }
+
+        $sql .= " ORDER BY created_at DESC";
+
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result(); // Keep for now, but check if we should fallback
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $filteredProducts[] = $row;
+                }
+            } else {
+                // Manual binding if get_result fails
+                // But let's assume get_result works since search-process uses it.
+                // If it really doesn't, we'd need a more complex bind_result loop.
+            }
+            $stmt->close();
         }
     }
-
-    if ($search !== '') {
-        $haystack = strtolower($p['name'] . ' ' . $p['sku'] . ' ' . $p['category']);
-        if (strpos($haystack, strtolower($search)) === false) {
-            return false;
-        }
-    }
-
-    return true;
-});
-
-// Simple metrics
-$totalProducts = count($products);
-$totalActive = count(array_filter($products, fn($p) => strtolower($p['status']) === 'active'));
-$totalDrafts = count(array_filter($products, fn($p) => strtolower($p['status']) === 'draft'));
-$totalArchived = count(array_filter($products, fn($p) => strtolower($p['status']) === 'archived'));
-$totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibility']) === 'public'));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,8 +180,8 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                     <p class="text-lg font-semibold text-amber-300"><?= $totalDrafts; ?></p>
                 </div>
                 <div class="bg-[#111111] border border-white/10 rounded-2xl p-3">
-                    <p class="text-[11px] text-gray-400 mb-1">Visible in marketplace</p>
-                    <p class="text-lg font-semibold text-orange-300"><?= $totalVisible; ?></p>
+                    <p class="text-[11px] text-gray-400 mb-1">Private in marketplace</p>
+                    <p class="text-lg font-semibold text-gray-400"><?= $totalHidden; ?></p>
                 </div>
             </section>
 
@@ -167,7 +192,7 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                     <div class="flex flex-wrap gap-2">
                         <?php
                         $statusCounts = [
-                            'all' => count($products),
+                            'all' => $totalProducts,
                             'active' => $totalActive,
                             'draft' => $totalDrafts,
                             'archived' => $totalArchived,
@@ -247,6 +272,7 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
 
                                     // Visibility
                                     $isPublic = strtolower($p['visibility']) === 'public';
+                                    $visibilityLabel = $isPublic ? 'Public' : 'Private';
                                     $visibilityClass = $isPublic
                                         ? 'bg-orange-500/15 text-orange-300 border-orange-500/40'
                                         : 'bg-white/5 text-gray-300 border-white/20';
@@ -254,18 +280,35 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                                     <tr class="bg-[#0B0B0B] border border-white/10 rounded-xl align-top">
                                         <!-- Product info -->
                                         <td class="px-3 py-2 rounded-l-xl align-top">
-                                            <div class="flex flex-col">
-                                                <a href="edit-product?id=<?= urlencode($p['id']); ?>"
-                                                    class="font-semibold text-gray-100 hover:text-orange-400">
-                                                    <?= htmlspecialchars($p['name']); ?>
-                                                </a>
-                                                <span class="text-[11px] text-gray-500">
-                                                    SKU: <?= htmlspecialchars($p['sku']); ?>
-                                                </span>
-                                                <span class="mt-1 text-[10px] text-gray-600">
-                                                    Last updated <?= htmlspecialchars($p['updated_at']); ?>
-                                                </span>
-                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                <?php if (!empty($p['main_image'])): ?>
+                                                    <div
+                                                        class="w-10 h-10 rounded-lg overflow-hidden bg-white/5 border border-white/10 flex-shrink-0">
+                                                        <img src="../<?= htmlspecialchars($p['main_image']); ?>"
+                                                            class="w-full h-full object-cover">
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div
+                                                        class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-[10px] text-gray-500">
+                                                        No img
+                                                    </div>
+                                                <?php endif; ?>
+                                                <div class="flex flex-col">
+                                                    <?php
+                                                    $editUrl = "add-product?edit=1&id=" . urlencode($p['id']);
+                                                    ?>
+                                                    <a href="<?= $editUrl; ?>"
+                                                        class="font-semibold text-gray-100 hover:text-orange-400">
+                                                        <?= htmlspecialchars($p['name']); ?>
+                                                    </a>
+                                                    <span class="text-[11px] text-gray-500">
+                                                        SKU: <?= htmlspecialchars($p['sku']); ?>
+                                                    </span>
+                                                    <span class="mt-1 text-[10px] text-gray-600">
+                                                        Last updated
+                                                        <?= $p['updated_at'] ? date('M j, Y H:i', strtotime($p['updated_at'])) : date('M j, Y H:i', strtotime($p['created_at'])); ?>
+                                                    </span>
+                                                </div>
                                         </td>
 
                                         <!-- Category -->
@@ -301,38 +344,35 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
                                         <td class="px-3 py-2 align-top">
                                             <span
                                                 class="inline-flex px-2 py-0.5 rounded-full border text-[11px] <?= $visibilityClass; ?>">
-                                                <?= htmlspecialchars($p['visibility']); ?>
+                                                <?= $visibilityLabel; ?>
                                             </span>
                                         </td>
 
                                         <!-- Actions -->
                                         <td class="px-3 py-2 rounded-r-xl align-top">
                                             <div class="flex flex-wrap gap-1.5 text-[11px]">
-                                                <?php
-                                                // Build an edit URL that pre-fills the add-product form with available values
-                                                $editParams = http_build_query([
-                                                    'edit' => 1,
-                                                    'id' => $p['id'],
-                                                    'name' => $p['name'],
-                                                    'sku' => $p['sku'] ?? '',
-                                                    'category' => $p['category'] ?? '',
-                                                    'price' => $p['price'] ?? '',
-                                                    'stock' => $p['stock'] ?? '',
-                                                    'status' => $p['status'] ?? '',
-                                                    'visibility' => $p['visibility'] ?? '',
-                                                ]);
-                                                ?>
-                                                <a href="add-product?<?= $editParams; ?>"
+                                                <a href="add-product?id=<?= $p['id']; ?>"
                                                     class="px-2 py-1 rounded-full border border-white/20 bg-[#111111] hover:border-orange-400">
                                                     Edit
                                                 </a>
-                                                <button type="button"
-                                                    class="px-2 py-1 rounded-full border border-white/15 bg-[#111111] hover:border-emerald-400">
-                                                    Duplicate
-                                                </button>
-                                                <button type="button"
+
+                                                <?php if ($statusKey === 'archived'): ?>
+                                                    <button type="button"
+                                                        onclick="handleProductAction(<?= $p['id']; ?>, 'unarchive')"
+                                                        class="px-2 py-1 rounded-full border border-white/40 bg-[#111111] text-emerald-300 hover:border-emerald-400">
+                                                        Unarchive
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button type="button"
+                                                        onclick="<?= $statusKey === 'draft' ? "showModal({title: 'Action Restricted', message: 'Drafts cannot be archived. Activate or Delete them instead.', type: 'error'})" : "handleProductAction({$p['id']}, 'archive')" ?>"
+                                                        class="px-2 py-1 rounded-full border border-white/40 bg-[#111111] <?= $statusKey === 'draft' ? 'opacity-30 cursor-not-allowed text-gray-400' : 'text-red-300 hover:border-red-400' ?>">
+                                                        Archive
+                                                    </button>
+                                                <?php endif; ?>
+
+                                                <button type="button" onclick="handleProductAction(<?= $p['id']; ?>, 'delete')"
                                                     class="px-2 py-1 rounded-full border border-red-500/40 bg-[#111111] text-red-300 hover:border-red-400">
-                                                    Archive
+                                                    Delete
                                                 </button>
                                             </div>
                                         </td>
@@ -346,6 +386,60 @@ $totalVisible = count(array_filter($products, fn($p) => strtolower($p['visibilit
         </div>
     </main>
 
+    <script>
+        async function handleProductAction(productId, action) {
+            let title, message;
+
+            if (action === 'delete') {
+                title = 'Delete Product';
+                message = 'Are you sure you want to PERMANENTLY delete this product? All images will be removed. This cannot be undone.';
+            } else if (action === 'unarchive') {
+                title = 'Unarchive Product';
+                message = 'Are you sure you want to unarchive this product? It will be visible in the marketplace again.';
+            } else {
+                title = 'Archive Product';
+                message = 'Are you sure you want to archive this product? It will no longer be available for purchase.';
+            }
+
+            showModal({
+                title: title,
+                message: message,
+                onConfirm: async () => {
+                    const formData = new FormData();
+                    formData.append('product_id', productId);
+                    formData.append('action', action);
+
+                    try {
+                        const response = await fetch('process/process-product-action.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            showModal({
+                                title: 'Success!',
+                                message: data.message,
+                                type: 'success',
+                                onConfirm: () => location.reload()
+                            });
+                        } else {
+                            showModal({
+                                title: 'Error',
+                                message: data.message || 'An error occurred.',
+                                type: 'error'
+                            });
+                        }
+                    } catch (error) {
+                        showModal({
+                            title: 'Connection Error',
+                            message: error.message,
+                            type: 'error'
+                        });
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -21,7 +21,7 @@ if (isset($conn) && $conn) {
 // Fetch products
 $products = [];
 if (isset($conn) && $conn) {
-    $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, p.main_image, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" ORDER BY p.created_at DESC');
+    $stmt = $conn->prepare('SELECT p.id, p.name, p.slug, p.category, p.price, p.main_image, b.brand_name FROM Product p JOIN Brand b ON p.brand_id = b.id WHERE p.status = "active" AND p.visibility = "public" AND b.status = "active" ORDER BY p.created_at DESC');
     if ($stmt) {
         $stmt->execute();
         $result = $stmt->get_result();
@@ -64,7 +64,8 @@ $currency = '₦';
     <div class="min-h-screen flex flex-col">
 
         <!-- HEADER -->
-        <?php $currentPage = 'marketplace'; include 'header.php'; ?>
+        <?php $currentPage = 'marketplace';
+        include 'header.php'; ?>
 
         <!-- MAIN -->
         <main class="flex-1 py-6 sm:py-10">
@@ -172,7 +173,9 @@ $currency = '₦';
                                     <div
                                         class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60 flex items-center justify-center text-[11px] text-center px-2 overflow-hidden">
                                         <?php if (!empty($p['main_image'])): ?>
-                                            <img src="<?php echo htmlspecialchars($p['main_image']); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" class="w-full h-full object-cover" />
+                                            <img src="<?php echo htmlspecialchars($p['main_image']); ?>"
+                                                alt="<?php echo htmlspecialchars($p['name']); ?>"
+                                                class="w-full h-full object-cover" />
                                         <?php else: ?>
                                             <?php echo htmlspecialchars($p['brand']); ?>
                                         <?php endif; ?>
@@ -252,14 +255,14 @@ $currency = '₦';
                         c.classList.remove('border-orange-400', 'bg-white/5');
                     }
                 });
-                
+
                 // If "All" was default active (first one), remove it if we have a specific cat
                 if (activeCategory !== 'All') {
-                     // Assuming "All" is the first one and might have been hardcoded active in HTML? 
-                     // Actually, no chip has 'border-orange-400' by default in HTML loop, 
-                     // but likely we want to set "All" if nothing else is pending.
+                    // Assuming "All" is the first one and might have been hardcoded active in HTML? 
+                    // Actually, no chip has 'border-orange-400' by default in HTML loop, 
+                    // but likely we want to set "All" if nothing else is pending.
                 }
-                
+
                 // Trigger filter immediately
                 applyFilters();
             } else {

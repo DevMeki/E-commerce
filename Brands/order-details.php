@@ -1,4 +1,5 @@
 <?php
+require_once 'process/check_brand_login.php';
 // --------- MOCK DATA (replace with DB lookup later) ---------
 function moneyNaira($n) {
     return '₦' . number_format($n);

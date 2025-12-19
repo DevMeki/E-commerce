@@ -1,4 +1,5 @@
 <?php
+require_once 'process/check_brand_login.php';
 // Seller Help page
 ?>
 <!DOCTYPE html>
