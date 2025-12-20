@@ -27,6 +27,7 @@ if (($product_id > 0 || !empty($product_slug)) && isset($conn) && $conn instance
             p.id, 
             p.name, 
             p.slug, 
+            p.status,
             p.category, 
             p.price, 
             p.compare_at_price, 

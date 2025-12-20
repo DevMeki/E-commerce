@@ -25,13 +25,13 @@ $categoryImages = [
     'Accessories' => 'https://images.unsplash.com/photo-1594576722512-582d5577dc56?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'Decor' => 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'Furniture' => 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    'Kitchen' => 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    'Kitchen' => 'https://i.pinimg.com/1200x/36/ec/60/36ec609df4d5a1c4a74683467b54e98c.jpg',
     'Spices' => 'https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'Herbs' => 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'Snacks' => 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'Paintings' => 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'Prints' => 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    'Sculptures' => 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    'Sculptures' => 'https://i.pinimg.com/736x/c3/36/da/c336daf378d2a660eade1beb6da28149.jpg',
 ];
 
 // Helper function to get image for category

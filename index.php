@@ -141,7 +141,7 @@
                             <div class="grid grid-cols-2 gap-3 text-xs">
                                 <?php if (!empty($products)): ?>
                                     <?php foreach ($products as $product): ?>
-                                        <a href="product.php?id=<?= $product['id'] ?>"
+                                        <a href="product?id=<?= $product['id'] ?>"
                                             class="bg-[#111111] rounded-2xl p-3 flex flex-col gap-2 hover:border-orange-500/50 border border-transparent transition-colors">
                                             <div
                                                 class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-[10px] font-semibold overflow-hidden">
@@ -191,16 +191,16 @@
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg sm:text-xl font-semibold">Shop by category</h2>
-                        <a href="#" class="text-xs text-orange-400 hover:underline">View all</a>
+                        <a href="categories" class="text-xs text-orange-400 hover:underline">View all</a>
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 text-xs">
                         <?php if (!empty($categories)): ?>
-                            <?php foreach ($categories as $category): ?>
-                                <a href="brands_page.php?category=<?= urlencode($category) ?>"
+                                <?php foreach ($categories as $category): ?>
+                                <a href="marketplace?category=<?= urlencode($category) ?>"
                                     class="bg-[#111111] hover:bg-[#181818] border border-white/5 rounded-2xl p-3 flex flex-col items-start gap-1 block text-left">
                                     <span class="text-sm font-semibold"><?= htmlspecialchars($category) ?></span>
-                                    <span class="text-[11px] text-gray-400">Explore brands</span>
+                                    <span class="text-[11px] text-gray-400">Explore products</span>
                                 </a>
                             <?php endforeach; ?>
                         <?php else: ?>
