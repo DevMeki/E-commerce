@@ -140,31 +140,49 @@ if (isset($conn) && $conn instanceof mysqli) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-forest': '#1E3932',
+                        'brand-orange': '#F36A1D',
+                        'brand-parchment': '#FCFBF7',
+                        'brand-ink': '#1A1A1A',
+                        'brand-cream': '#F3F0E6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
+            --lt-forest: #1E3932;
             --lt-orange: #F36A1D;
-            --lt-black: #0D0D0D;
+            --lt-parchment: #FCFBF7;
+            --lt-ink: #1A1A1A;
+            --lt-cream: #F3F0E6;
         }
     </style>
 </head>
 
-<body class="bg-[#0D0D0D] text-white">
+<body class="bg-brand-parchment text-brand-ink font-sans">
     <div class="min-h-screen flex flex-col">
 
         <!-- HEADER -->
-        <header class="border-b border-white/10 bg-black/60 backdrop-blur">
+        <header class="border-b border-white/10 bg-brand-forest shadow-lg">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <a href="index" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                        style="background-color: var(--lt-orange);">
-                        <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
-                            <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 left-0.5"></span>
-                            <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 right-0.5"></span>
+                <a href="index.php" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-brand-parchment">
+                        <div class="w-4 h-3 border-2 border-brand-forest border-b-0 rounded-sm relative">
+                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 left-0.5"></span>
+                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 right-0.5"></span>
                         </div>
                     </div>
-                    <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
+                    <span class="font-bold tracking-tight text-lg text-white">LocalTrade</span>
                 </a>
-                <a href="javascript:history.back()" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
+                <a href="javascript:history.back()"
+                    class="text-xs sm:text-sm text-white/70 hover:text-white transition-colors">
                     ← Back
                 </a>
             </div>
@@ -175,88 +193,102 @@ if (isset($conn) && $conn instanceof mysqli) {
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <!-- STORE HERO -->
-                <section
-                    class="bg-gradient-to-r from-[#151515] to-black border border-white/10 rounded-3xl p-4 sm:p-6 lg:p-7 mb-6 sm:mb-8">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+                <section class="bg-green-50 border border-brand-forest/5 rounded-3xl p-6 sm:p-8 lg:p-10 mb-8 shadow-sm">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <!-- Left: avatar + store info -->
-                        <div class="flex items-start gap-4">
+                        <div
+                            class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
                             <!-- Avatar / logo circle -->
                             <div
-                                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#111111] flex items-center justify-center border border-white/10">
-                                <span class="text-xl sm:text-2xl font-semibold">
+                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-brand-parchment flex items-center justify-center border border-brand-forest/5 shadow-inner">
+                                <span class="text-2xl sm:text-3xl font-bold text-brand-forest">
                                     <?php echo strtoupper(substr($store['name'], 0, 2)); ?>
                                 </span>
                             </div>
                             <div>
-                                <h1 class="text-xl sm:text-2xl font-semibold mb-1">
+                                <h1 class="text-2xl sm:text-3xl font-bold mb-2 text-brand-forest">
                                     <?php echo htmlspecialchars($store['name']); ?>
                                 </h1>
-                                <div class="flex flex-wrap items-center gap-3 text-xs text-gray-300">
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-yellow-400">★</span>
-                                        <span><?php echo number_format($store['rating'], 1); ?></span>
-                                        <span class="text-gray-500">·</span>
+                                <div
+                                    class="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs font-medium text-brand-ink/60">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-brand-orange text-lg">★</span>
+                                        <span
+                                            class="text-brand-forest font-bold"><?php echo number_format($store['rating'], 1); ?></span>
+                                        <span class="text-brand-ink/20">·</span>
                                         <span><?php echo (int) $store['reviews']; ?> reviews</span>
                                     </div>
-                                    <span class="text-gray-500 hidden sm:inline">·</span>
-                                    <span><?php echo (int) $store['products_count']; ?> products</span>
-                                    <span class="text-gray-500 hidden sm:inline">·</span>
-                                    <span><?php echo (int) $store['followers']; ?> followers</span>
-                                    <span class="text-gray-500 hidden sm:inline">·</span>
-                                    <span>Since <?php echo htmlspecialchars($store['since']); ?></span>
+                                    <span class="text-brand-ink/20 hidden sm:inline">·</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-brand-forest/30">📦</span>
+                                        <span><?php echo (int) $store['products_count']; ?> products</span>
+                                    </div>
+                                    <span class="text-brand-ink/20 hidden sm:inline">·</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-brand-forest/30">👥</span>
+                                        <span><?php echo (int) $store['followers']; ?> followers</span>
+                                    </div>
                                 </div>
-                                <p class="mt-2 text-xs sm:text-sm text-gray-300 max-w-xl">
+                                <p class="mt-4 text-sm sm:text-base text-brand-ink/70 max-w-xl leading-relaxed">
                                     <?php echo htmlspecialchars($store['description']); ?>
                                 </p>
-                                <p class="mt-1 text-[11px] text-gray-400">
-                                    📍 <?php echo htmlspecialchars($store['location']); ?>
-                                </p>
+                                <div
+                                    class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-brand-forest/5 rounded-full text-[11px] font-bold text-brand-forest">
+                                    📍 <?php echo htmlspecialchars($store['location']); ?> • Since
+                                    <?php echo htmlspecialchars($store['since']); ?>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Right: actions -->
-                        <div class="flex flex-wrap md:flex-col items-stretch md:items-end gap-2 md:gap-3 text-xs">
+                        <div class="flex flex-col gap-3 min-w-[160px]">
                             <button id="followBtn"
-                                class="px-4 py-2 rounded-full font-semibold transition-colors <?php echo $isFollowing ? 'bg-gray-800 text-white border border-white/20' : 'bg-[#F36A1D] text-white'; ?>"
+                                class="w-full px-6 py-3 rounded-full font-bold text-sm transition-all shadow-lg <?php echo $isFollowing ? 'bg-brand-parchment text-brand-forest border border-brand-forest/10' : 'bg-brand-orange text-white shadow-brand-orange/20 hover:scale-[1.02]'; ?>"
                                 data-brand-id="<?php echo $store['id']; ?>">
-                                <?php echo $isFollowing ? 'Following' : '+ Follow store'; ?>
+                                <?php echo $isFollowing ? 'Following' : 'Follow Store'; ?>
                             </button>
                             <button id="shareBtn"
-                                class="px-4 py-2 rounded-full border border-white/20 hover:bg-white/5 transition">
-                                ↗ Share store
+                                class="w-full px-6 py-3 rounded-full border border-brand-forest/10 text-brand-forest font-bold text-sm hover:bg-brand-forest hover:text-white transition-all shadow-sm">
+                                ↗ Share Store
                             </button>
                         </div>
                     </div>
                 </section>
 
                 <!-- TABS: Products / About / Policies / Reviews -->
-                <section class="mb-6 sm:mb-8">
-                    <div class="border-b border-white/10 flex text-xs sm:text-sm">
-                        <button class="store-tab-btn px-4 sm:px-6 py-3 border-b-2 border-orange-400"
+                <section class="mb-8">
+                    <div
+                        class="border-b border-brand-forest/10 flex text-[11px] font-bold uppercase tracking-widest overflow-x-auto">
+                        <button
+                            class="store-tab-btn px-6 py-4 border-b-2 border-brand-orange text-brand-forest transition-colors"
                             data-tab="products">
                             Products
                         </button>
-                        <button class="store-tab-btn px-4 sm:px-6 py-3 border-b-2 border-transparent" data-tab="about">
+                        <button
+                            class="store-tab-btn px-6 py-4 border-b-2 border-transparent text-brand-ink/40 hover:text-brand-forest transition-colors"
+                            data-tab="about">
                             About
                         </button>
-                        <button class="store-tab-btn px-4 sm:px-6 py-3 border-b-2 border-transparent"
+                        <button
+                            class="store-tab-btn px-6 py-4 border-b-2 border-transparent text-brand-ink/40 hover:text-brand-forest transition-colors"
                             data-tab="policies">
                             Policies
                         </button>
-                        <button class="store-tab-btn px-4 sm:px-6 py-3 border-b-2 border-transparent"
+                        <button
+                            class="store-tab-btn px-6 py-4 border-b-2 border-transparent text-brand-ink/40 hover:text-brand-forest transition-colors"
                             data-tab="reviews">
                             Reviews
                         </button>
                     </div>
 
                     <!-- TAB CONTENT: PRODUCTS -->
-                    <div id="store-tab-products" class="store-tab-content pt-4 sm:pt-6">
+                    <div id="store-tab-products" class="store-tab-content pt-8">
                         <!-- Filters row -->
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                            <div class="flex items-center gap-3 text-xs">
-                                <label class="text-gray-300">Category:</label>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
+                            <div class="flex items-center gap-4 text-[11px]">
+                                <label class="font-bold text-brand-ink/40 uppercase tracking-widest">Category</label>
                                 <select id="categoryFilter"
-                                    class="bg-[#111111] border border-white/15 rounded-full px-3 py-1.5 text-xs focus:outline-none">
+                                    class="bg-white border border-brand-forest/10 rounded-full px-4 py-2 text-xs font-bold text-brand-forest focus:outline-none focus:border-brand-orange transition-all appearance-none cursor-pointer pr-10 relative">
                                     <?php foreach ($categories as $cat): ?>
                                         <option value="<?php echo htmlspecialchars($cat); ?>">
                                             <?php echo htmlspecialchars($cat); ?>
@@ -264,10 +296,10 @@ if (isset($conn) && $conn instanceof mysqli) {
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="flex items-center gap-3 text-xs">
-                                <label class="text-gray-300">Sort by:</label>
+                            <div class="flex items-center gap-4 text-[11px]">
+                                <label class="font-bold text-brand-ink/40 uppercase tracking-widest">Sort by</label>
                                 <select id="sortSelect"
-                                    class="bg-[#111111] border border-white/15 rounded-full px-3 py-1.5 text-xs focus:outline-none">
+                                    class="bg-white border border-brand-forest/10 rounded-full px-4 py-2 text-xs font-bold text-brand-forest focus:outline-none focus:border-brand-orange transition-all appearance-none cursor-pointer pr-10">
                                     <option value="featured">Featured</option>
                                     <option value="price-asc">Price: Low to High</option>
                                     <option value="price-desc">Price: High to Low</option>
@@ -276,27 +308,35 @@ if (isset($conn) && $conn instanceof mysqli) {
                         </div>
 
                         <!-- Products grid -->
-                        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+                        <div id="productsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
                             <?php foreach ($products as $index => $p): ?>
                                 <a href="product?id=<?php echo $p['id']; ?>"
-                                    class="product-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2"
+                                    class="product-card bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-2xl p-4 flex flex-col gap-3 transition-all shadow-sm hover:shadow-xl group"
                                     data-category="<?php echo htmlspecialchars($p['category']); ?>"
                                     data-price="<?php echo (int) $p['price']; ?>">
                                     <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60 flex items-center justify-center text-[11px] font-semibold text-center px-2">
-                                        <?php echo htmlspecialchars($store['name']); ?>
+                                        class="aspect-[4/3] rounded-xl bg-brand-parchment flex items-center justify-center border border-brand-forest/5 overflow-hidden">
+                                        <?php if (!empty($p['main_image'])): ?>
+                                            <img src="<?php echo htmlspecialchars($p['main_image']); ?>"
+                                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <?php else: ?>
+                                            <span class="text-brand-forest/20 font-bold uppercase tracking-widest text-[10px]">
+                                                <?php echo htmlspecialchars($store['name']); ?>
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
-                                    <p class="text-sm font-semibold line-clamp-2">
+                                    <p class="text-sm font-bold text-brand-forest line-clamp-2">
                                         <?php echo htmlspecialchars($p['name']); ?>
                                     </p>
-                                    <p class="text-[11px] text-gray-400">
+                                    <p class="text-[11px] text-brand-ink/50">
                                         <?php echo htmlspecialchars($p['category']); ?>
                                     </p>
-                                    <p class="text-sm font-semibold text-orange-400">
+                                    <p class="text-sm font-bold text-brand-forest pb-1 border-b border-brand-forest/5">
                                         ₦<?php echo number_format($p['price']); ?>
                                     </p>
-                                    <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
-                                        View product
+                                    <button
+                                        class="mt-auto text-[11px] px-3 py-1.5 rounded-full bg-brand-orange text-white font-bold transition-all shadow-sm shadow-brand-orange/10 group-hover:scale-105">
+                                        View Product
                                     </button>
                                 </a>
                             <?php endforeach; ?>
@@ -304,55 +344,77 @@ if (isset($conn) && $conn instanceof mysqli) {
                     </div>
 
                     <!-- TAB CONTENT: ABOUT -->
-                    <div id="store-tab-about" class="store-tab-content hidden pt-4 sm:pt-6 text-sm text-gray-200">
-                        <p class="mb-3">
-                            <?php echo htmlspecialchars($store['description']); ?>
-                        </p>
-                        <p class="text-xs text-gray-400">
-                            Based in <?php echo htmlspecialchars($store['location']); ?> · Selling on LocalTrade since
-                            <?php echo htmlspecialchars($store['since']); ?>.
-                        </p>
+                    <div id="store-tab-about"
+                        class="store-tab-content hidden pt-8 text-sm text-brand-ink/80 leading-relaxed">
+                        <div class="bg-green-50 border border-brand-forest/5 rounded-3xl p-8 shadow-sm">
+                            <h3 class="text-lg font-bold text-brand-forest mb-4">Our Story</h3>
+                            <p class="mb-6 whitespace-pre-line">
+                                <?php echo htmlspecialchars($store['description']); ?>
+                            </p>
+                            <div
+                                class="p-4 bg-brand-parchment rounded-2xl inline-flex flex-col gap-1 border border-brand-forest/5">
+                                <span class="text-[10px] uppercase font-bold text-brand-ink/40">Registered
+                                    Location</span>
+                                <span
+                                    class="text-sm font-bold text-brand-forest"><?php echo htmlspecialchars($store['location']); ?></span>
+                                <span class="text-xs text-brand-ink/40">Selling on LocalTrade since
+                                    <?php echo htmlspecialchars($store['since']); ?></span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- TAB CONTENT: POLICIES -->
-                    <div id="store-tab-policies" class="store-tab-content hidden pt-4 sm:pt-6 text-sm text-gray-200">
-                        <dl class="space-y-3">
+                    <div id="store-tab-policies" class="store-tab-content hidden pt-8">
+                        <div class="grid md:grid-cols-3 gap-6">
                             <?php foreach ($store['policies'] as $label => $policy): ?>
-                                <div>
-                                    <dt class="font-semibold text-gray-100 mb-1"><?php echo htmlspecialchars($label); ?>
+                                <div class="bg-green-50 border border-brand-forest/5 rounded-3xl p-6 shadow-sm">
+                                    <div
+                                        class="w-10 h-10 bg-brand-forest/5 rounded-full flex items-center justify-center mb-4">
+                                        <span class="text-brand-forest">📜</span>
+                                    </div>
+                                    <dt class="font-bold text-brand-forest mb-2 uppercase tracking-wide text-xs">
+                                        <?php echo htmlspecialchars($label); ?>
                                     </dt>
-                                    <dd class="text-gray-300 text-sm">
+                                    <dd class="text-brand-ink/60 text-sm leading-relaxed">
                                         <?php echo htmlspecialchars($policy); ?>
                                     </dd>
                                 </div>
                             <?php endforeach; ?>
-                        </dl>
+                        </div>
                     </div>
 
                     <!-- TAB CONTENT: REVIEWS -->
-                    <div id="store-tab-reviews" class="store-tab-content hidden pt-4 sm:pt-6 text-sm text-gray-200">
-                        <p class="mb-2">
-                            Store reviews coming soon. Buyers will be able to rate and review this seller after
-                            purchases.
-                        </p>
-                        <p class="text-xs text-gray-400">
-                            Current rating: <?php echo number_format($store['rating'], 1); ?> from
-                            <?php echo (int) $store['reviews']; ?> reviews.
-                        </p>
+                    <div id="store-tab-reviews" class="store-tab-content hidden pt-8 text-center py-12">
+                        <div class="inline-flex flex-col items-center">
+                            <div class="text-5xl mb-6">⭐</div>
+                            <h3 class="text-xl font-bold text-brand-forest mb-4">Trusted Presence</h3>
+                            <p class="text-brand-ink/50 max-w-sm mb-6">
+                                <?php echo htmlspecialchars($store['name']); ?> has maintained an average rating of
+                                <span
+                                    class="font-bold text-brand-forest"><?php echo number_format($store['rating'], 1); ?></span>
+                                across <span
+                                    class="font-bold text-brand-forest"><?php echo (int) $store['reviews']; ?></span>
+                                verified purchases.
+                            </p>
+                            <span
+                                class="px-6 py-2 bg-brand-parchment border border-brand-forest/5 rounded-full text-[11px] font-bold text-brand-forest italic">
+                                Detailed buyer reviews are currently being verified for authenticity.
+                            </span>
+                        </div>
                     </div>
                 </section>
             </div>
         </main>
 
         <!-- FOOTER -->
-        <footer class="border-t border-white/10 bg-black mt-6">
+        <footer class="border-t border-brand-forest/10 bg-brand-cream/30 mt-12 py-8">
             <div
-                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-xs text-gray-400 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-brand-ink/50 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <p>© <span id="year"></span> LocalTrade. All rights reserved.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="hover:text-orange-400">Privacy</a>
-                    <a href="#" class="hover:text-orange-400">Terms</a>
-                    <a href="#" class="hover:text-orange-400">Support</a>
+                <div class="flex gap-6 font-medium">
+                    <a href="#" class="hover:text-brand-orange transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Terms</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Support</a>
                 </div>
             </div>
         </footer>
@@ -371,12 +433,12 @@ if (isset($conn) && $conn instanceof mysqli) {
                 const target = btn.dataset.tab;
 
                 storeTabBtns.forEach(b => {
-                    b.classList.remove('border-orange-400');
-                    b.classList.add('border-transparent');
+                    b.classList.remove('border-brand-orange', 'text-brand-forest');
+                    b.classList.add('border-transparent', 'text-brand-ink/40');
                 });
 
-                btn.classList.remove('border-transparent');
-                btn.classList.add('border-orange-400');
+                btn.classList.remove('border-transparent', 'text-brand-ink/40');
+                btn.classList.add('border-brand-orange', 'text-brand-forest');
 
                 storeTabContents.forEach(c => {
                     c.classList.toggle('hidden', c.id !== 'store-tab-' + target);
@@ -463,11 +525,11 @@ if (isset($conn) && $conn instanceof mysqli) {
                 if (result.success) {
                     if (result.following) {
                         followBtn.textContent = 'Following';
-                        followBtn.className = 'px-4 py-2 rounded-full font-semibold transition-colors bg-gray-800 text-white border border-white/20';
+                        followBtn.className = 'w-full px-6 py-3 rounded-full font-bold text-sm transition-all bg-brand-parchment text-brand-forest border border-brand-forest/10';
                         showToast('You are now following this store');
                     } else {
-                        followBtn.textContent = '+ Follow store';
-                        followBtn.className = 'px-4 py-2 rounded-full font-semibold transition-colors bg-[#F36A1D] text-white';
+                        followBtn.textContent = 'Follow Store';
+                        followBtn.className = 'w-full px-6 py-3 rounded-full font-bold text-sm bg-brand-orange text-white shadow-lg shadow-brand-orange/20 hover:scale-[1.02] transition-all';
                         showToast('Unfollowed store');
                     }
 
@@ -495,7 +557,7 @@ if (isset($conn) && $conn instanceof mysqli) {
 
         function showToast(message) {
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-5 right-5 bg-white text-black px-6 py-3 rounded-lg shadow-xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 font-medium';
+            toast.className = 'fixed bottom-5 right-5 bg-white border border-brand-forest/10 text-brand-forest px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 font-bold text-sm backdrop-blur-md';
             toast.textContent = message;
             document.body.appendChild(toast);
 

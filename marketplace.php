@@ -52,15 +52,33 @@ $currency = '₦';
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-forest': '#1E3932',
+                        'brand-orange': '#F36A1D',
+                        'brand-parchment': '#FCFBF7',
+                        'brand-ink': '#1A1A1A',
+                        'brand-cream': '#F3F0E6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
+            --lt-forest: #1E3932;
             --lt-orange: #F36A1D;
-            --lt-black: #0D0D0D;
+            --lt-parchment: #FCFBF7;
+            --lt-ink: #1A1A1A;
+            --lt-cream: #F3F0E6;
         }
     </style>
 </head>
 
-<body class="bg-[#0D0D0D] text-white">
+<body class="bg-brand-parchment text-brand-ink font-sans">
     <div class="min-h-screen flex flex-col">
 
         <!-- HEADER -->
@@ -74,20 +92,20 @@ $currency = '₦';
                 <!-- Title + search -->
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5 sm:mb-7">
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-semibold mb-1">
+                        <h1 class="text-xl sm:text-2xl font-bold mb-1 text-brand-forest">
                             Marketplace
                         </h1>
-                        <p class="text-xs sm:text-sm text-gray-300">
+                        <p class="text-xs sm:text-sm text-brand-ink/60">
                             Discover products from verified Nigerian brands across fashion, beauty, electronics and
                             more.
                         </p>
                     </div>
                     <div class="w-full md:w-80">
                         <div
-                            class="bg-[#111111] border border-white/15 rounded-full px-3 py-1.5 flex items-center gap-2">
-                            <span class="text-gray-500 text-sm">🔍</span>
+                            class="bg-white border border-brand-forest/10 rounded-full px-4 py-2 flex items-center gap-2 shadow-sm focus-within:border-brand-orange/30 transition-all">
+                            <span class="text-brand-ink/40 text-sm">🔍</span>
                             <input id="searchInput" type="text" placeholder="Search products or brands..."
-                                class="flex-1 bg-transparent border-0 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none" />
+                                class="flex-1 bg-transparent border-0 text-xs sm:text-sm text-brand-ink placeholder-brand-ink/30 focus:outline-none" />
                         </div>
                     </div>
                 </div>
@@ -96,59 +114,65 @@ $currency = '₦';
                 <div class="grid gap-6 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
 
                     <!-- FILTERS -->
-                    <aside class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 h-max">
-                        <div class="flex items-center justify-between mb-3">
-                            <h2 class="text-sm font-semibold">Filters</h2>
-                            <button id="clearFilters" class="text-[11px] text-gray-400 hover:text-orange-400">
+                    <aside class="bg-white border border-brand-forest/5 rounded-2xl p-4 sm:p-5 h-max shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-sm font-bold text-brand-forest uppercase tracking-wider">Filters</h2>
+                            <button id="clearFilters" class="text-[11px] text-brand-orange hover:underline font-bold">
                                 Clear all
                             </button>
                         </div>
 
-                        <!-- Category -->
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-400 mb-2">Category</p>
-                            <div class="flex flex-wrap gap-2">
-                                <?php foreach ($categories as $cat): ?>
-                                    <button
-                                        class="cat-chip text-[11px] px-3 py-1.5 rounded-full border border-white/15 bg-transparent hover:border-orange-400"
-                                        data-category="<?php echo htmlspecialchars($cat); ?>">
-                                        <?php echo htmlspecialchars($cat); ?>
-                                    </button>
-                                <?php endforeach; ?>
+                        <div class="space-y-6">
+                            <!-- Category -->
+                            <div>
+                                <p class="text-[11px] font-bold text-brand-ink/40 uppercase tracking-widest mb-3">
+                                    Category</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <?php foreach ($categories as $cat): ?>
+                                        <button
+                                            class="cat-chip text-[11px] px-3 py-1.5 rounded-full border border-brand-forest/10 bg-brand-parchment text-brand-forest hover:border-brand-orange transition-all"
+                                            data-category="<?php echo htmlspecialchars($cat); ?>">
+                                            <?php echo htmlspecialchars($cat); ?>
+                                        </button>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Price range -->
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-400 mb-2">Price range (₦)</p>
-                            <div class="flex gap-2 items-center text-xs">
-                                <input id="minPrice" type="number" placeholder="Min"
-                                    class="w-full bg-[#0B0B0B] border border-white/15 rounded-xl px-2 py-1.5 text-xs focus:outline-none" />
-                                <span class="text-gray-500">–</span>
-                                <input id="maxPrice" type="number" placeholder="Max"
-                                    class="w-full bg-[#0B0B0B] border border-white/15 rounded-xl px-2 py-1.5 text-xs focus:outline-none" />
+                            <!-- Price range -->
+                            <div>
+                                <p class="text-[11px] font-bold text-brand-ink/40 uppercase tracking-widest mb-3">Price
+                                    range (₦)</p>
+                                <div class="flex gap-2 items-center">
+                                    <input id="minPrice" type="number" placeholder="Min"
+                                        class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink focus:outline-none focus:border-brand-orange/30" />
+                                    <span class="text-brand-ink/20">–</span>
+                                    <input id="maxPrice" type="number" placeholder="Max"
+                                        class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink focus:outline-none focus:border-brand-orange/30" />
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Sort -->
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-400 mb-2">Sort by</p>
-                            <select id="sortSelect"
-                                class="w-full bg-[#0B0B0B] border border-white/15 rounded-xl px-2 py-1.5 text-xs focus:outline-none">
-                                <option value="featured">Featured</option>
-                                <option value="price-asc">Price: Low to High</option>
-                                <option value="price-desc">Price: High to Low</option>
-                            </select>
+                            <!-- Sort -->
+                            <div>
+                                <p class="text-[11px] font-bold text-brand-ink/40 uppercase tracking-widest mb-3">Sort
+                                    by</p>
+                                <select id="sortSelect"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink focus:outline-none appearance-none cursor-pointer">
+                                    <option value="featured">Featured</option>
+                                    <option value="price-asc">Price: Low to High</option>
+                                    <option value="price-desc">Price: High to Low</option>
+                                </select>
+                            </div>
                         </div>
 
                         <!-- Apply -->
-                        <button id="applyFilters" class="mt-2 w-full px-4 py-2 rounded-full text-xs font-semibold"
+                        <button id="applyFilters"
+                            class="mt-8 w-full px-4 py-3 rounded-full text-xs font-bold text-white shadow-lg shadow-brand-orange/20 hover:scale-[1.02] transition-all"
                             style="background-color: var(--lt-orange);">
                             Apply filters
                         </button>
 
-                        <p class="mt-3 text-[11px] text-gray-500">
-                            LocalTrade shows results from verified Nigerian sellers only.
+                        <p class="mt-4 text-[10px] text-brand-ink/40 text-center leading-relaxed">
+                            Marketplace results verified for <br> Nigerian authenticity.
                         </p>
                     </aside>
 
@@ -164,43 +188,37 @@ $currency = '₦';
                         <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
                             <?php foreach ($products as $p): ?>
                                 <a href="product?id=<?php echo (int) $p['id']; ?>"
-                                    class="product-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-3 sm:p-4 flex flex-col gap-2"
+                                    class="product-card bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-2xl p-3 sm:p-4 flex flex-col gap-2 transition-all shadow-sm hover:shadow-lg group"
                                     data-name="<?php echo htmlspecialchars($p['name']); ?>"
                                     data-brand="<?php echo htmlspecialchars($p['brand']); ?>"
                                     data-category="<?php echo htmlspecialchars($p['category']); ?>"
                                     data-price="<?php echo (int) $p['price']; ?>">
-                                    <!-- Image placeholder -->
+                                    <!-- Image wrapper -->
                                     <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-orange-500/60 to-pink-500/60 flex items-center justify-center text-[11px] text-center px-2 overflow-hidden">
+                                        class="aspect-[4/3] rounded-xl bg-brand-parchment flex items-center justify-center text-[11px] text-center px-2 overflow-hidden border border-brand-forest/5">
                                         <?php if (!empty($p['main_image'])): ?>
                                             <img src="<?php echo htmlspecialchars($p['main_image']); ?>"
                                                 alt="<?php echo htmlspecialchars($p['name']); ?>"
-                                                class="w-full h-full object-cover" />
+                                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                         <?php else: ?>
-                                            <?php echo htmlspecialchars($p['brand']); ?>
+                                            <span
+                                                class="text-brand-forest/20 font-bold"><?php echo htmlspecialchars($p['brand']); ?></span>
                                         <?php endif; ?>
                                     </div>
 
-                                    <!-- Badge -->
-                                    <?php if (!empty($p['badge'])): ?>
-                                        <span
-                                            class="inline-flex w-max items-center px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-orange-300">
-                                            <?php echo htmlspecialchars($p['badge']); ?>
-                                        </span>
-                                    <?php endif; ?>
-
                                     <!-- Info -->
-                                    <p class="text-sm font-semibold line-clamp-2">
+                                    <p class="text-sm font-bold text-brand-forest line-clamp-2 mt-1">
                                         <?php echo htmlspecialchars($p['name']); ?>
                                     </p>
-                                    <p class="text-[11px] text-gray-400">
+                                    <p class="text-[11px] text-brand-ink/50">
                                         <?php echo htmlspecialchars($p['category']); ?>
                                     </p>
-                                    <p class="text-sm font-semibold text-orange-400">
+                                    <p class="text-sm font-bold text-brand-forest pb-1 border-b border-brand-forest/5">
                                         <?php echo $currency . number_format($p['price']); ?>
                                     </p>
 
-                                    <button class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5">
+                                    <button
+                                        class="mt-auto text-[11px] px-3 py-1.5 rounded-full bg-brand-orange text-white font-bold transition-all hover:scale-105 active:scale-100 shadow-sm shadow-brand-orange/20">
                                         View product
                                     </button>
                                 </a>
@@ -212,14 +230,14 @@ $currency = '₦';
         </main>
 
         <!-- FOOTER -->
-        <footer class="border-t border-white/10 bg-black mt-6">
+        <footer class="border-t border-brand-forest/10 bg-brand-cream/30 mt-12 py-8">
             <div
-                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-xs text-gray-400 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-brand-ink/50 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <p>© <span id="year"></span> LocalTrade. All rights reserved.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="hover:text-orange-400">Privacy</a>
-                    <a href="#" class="hover:text-orange-400">Terms</a>
-                    <a href="#" class="hover:text-orange-400">Support</a>
+                <div class="flex gap-6 font-medium">
+                    <a href="#" class="hover:text-brand-orange transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Terms</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Support</a>
                 </div>
             </div>
         </footer>
@@ -250,9 +268,9 @@ $currency = '₦';
                 // Find and highlight correct chip
                 catChips.forEach(c => {
                     if (c.dataset.category === activeCategory) {
-                        c.classList.add('border-orange-400', 'bg-white/5');
+                        c.classList.add('border-brand-orange', 'bg-brand-orange/5', 'font-bold');
                     } else {
-                        c.classList.remove('border-orange-400', 'bg-white/5');
+                        c.classList.remove('border-brand-orange', 'bg-brand-orange/5', 'font-bold');
                     }
                 });
 
@@ -270,7 +288,7 @@ $currency = '₦';
                 // Assuming the first chip is "All" if the loop covers it, 
                 // but checking the PHP, $categories = ['All', ...] so first chip is "All".
                 if (catChips.length > 0) {
-                    catChips[0].classList.add('border-orange-400', 'bg-white/5');
+                    catChips[0].classList.add('border-brand-orange', 'bg-brand-orange/5', 'font-bold');
                 }
                 applyFilters();
             }
@@ -341,8 +359,8 @@ $currency = '₦';
             chip.addEventListener('click', () => {
                 activeCategory = chip.dataset.category;
 
-                catChips.forEach(c => c.classList.remove('border-orange-400', 'bg-white/5'));
-                chip.classList.add('border-orange-400', 'bg-white/5');
+                catChips.forEach(c => c.classList.remove('border-brand-orange', 'bg-brand-orange/5', 'font-bold'));
+                chip.classList.add('border-brand-orange', 'bg-brand-orange/5', 'font-bold');
 
                 applyFilters();
             });
@@ -359,9 +377,9 @@ $currency = '₦';
             maxPriceInput.value = '';
             sortSelect.value = 'featured';
 
-            catChips.forEach(c => c.classList.remove('border-orange-400', 'bg-white/5'));
+            catChips.forEach(c => c.classList.remove('border-brand-orange', 'bg-brand-orange/5', 'font-bold'));
             // Set "All" as active
-            catChips[0].classList.add('border-orange-400', 'bg-white/5');
+            catChips[0].classList.add('border-brand-orange', 'bg-brand-orange/5', 'font-bold');
 
             productCards.forEach(card => card.classList.remove('hidden'));
             resultsCount.textContent = `${productCards.length} products`;

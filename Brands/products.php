@@ -128,15 +128,24 @@ if (isset($conn) && $conn) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --lt-orange: #F36A1D;
-            --lt-black: #0D0D0D;
+    <script>
+         tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-forest': '#1E3932',
+                        'brand-orange': '#F36A1D',
+                        'brand-parchment': '#FCFBF7',
+                        'brand-ink': '#1A1A1A',
+                        'brand-cream': '#F3F0E6',
+                    }
+                }
+            }
         }
-    </style>
+    </script>
 </head>
 
-<body class="bg-[#0D0D0D] text-white min-h-screen flex flex-col">
+<body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">
 
     <?php
     $currentBrandPage = 'products';
@@ -149,8 +158,8 @@ if (isset($conn) && $conn) {
             <!-- Title + primary actions -->
             <section class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-semibold tracking-tight">Products</h1>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1">
+                    <h1 class="text-xl sm:text-2xl font-semibold tracking-tight text-brand-forest">Products</h1>
+                    <p class="text-xs sm:text-sm text-brand-ink/50 mt-1">
                         Manage the products available in your LocalTrade store. You can edit, hide or archive any
                         listing.
                     </p>
@@ -158,8 +167,7 @@ if (isset($conn) && $conn) {
 
                 <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
                     <a href="add-product"
-                        class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-semibold text-black"
-                        style="background-color: var(--lt-orange);">
+                        class="inline-flex bg-brand-orange items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-semibold text-white shadow-sm shadow-brand-orange/20">
                         <span>+ Add product</span>
                     </a>
                 </div>
@@ -167,26 +175,26 @@ if (isset($conn) && $conn) {
 
             <!-- Metrics summary -->
             <section class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
-                <div class="bg-[#111111] border border-white/10 rounded-2xl p-3">
-                    <p class="text-[11px] text-gray-400 mb-1">Total products</p>
-                    <p class="text-lg font-semibold"><?= $totalProducts; ?></p>
+                <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-3 shadow-sm">
+                    <p class="text-[11px] text-brand-ink/40 mb-1">Total products</p>
+                    <p class="text-lg font-semibold text-brand-forest"><?= $totalProducts; ?></p>
                 </div>
-                <div class="bg-[#111111] border border-white/10 rounded-2xl p-3">
-                    <p class="text-[11px] text-gray-400 mb-1">Active listings</p>
-                    <p class="text-lg font-semibold text-emerald-300"><?= $totalActive; ?></p>
+                <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-3 shadow-sm">
+                    <p class="text-[11px] text-brand-ink/40 mb-1">Active listings</p>
+                    <p class="text-lg font-semibold text-emerald-600"><?= $totalActive; ?></p>
                 </div>
-                <div class="bg-[#111111] border border-white/10 rounded-2xl p-3">
-                    <p class="text-[11px] text-gray-400 mb-1">Drafts</p>
-                    <p class="text-lg font-semibold text-amber-300"><?= $totalDrafts; ?></p>
+                <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-3 shadow-sm">
+                    <p class="text-[11px] text-brand-ink/40 mb-1">Drafts</p>
+                    <p class="text-lg font-semibold text-amber-600"><?= $totalDrafts; ?></p>
                 </div>
-                <div class="bg-[#111111] border border-white/10 rounded-2xl p-3">
-                    <p class="text-[11px] text-gray-400 mb-1">Private in marketplace</p>
-                    <p class="text-lg font-semibold text-gray-400"><?= $totalHidden; ?></p>
+                <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-3 shadow-sm">
+                    <p class="text-[11px] text-brand-ink/40 mb-1">Private in marketplace</p>
+                    <p class="text-lg font-semibold text-brand-ink/40"><?= $totalHidden; ?></p>
                 </div>
             </section>
 
             <!-- Filters -->
-            <section class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm">
+            <section class="bg-white border border-brand-forest/10 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm shadow-sm">
                 <form method="get" class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <!-- Status filter pills -->
                     <div class="flex flex-wrap gap-2">
@@ -206,12 +214,13 @@ if (isset($conn) && $conn) {
                         foreach ($statusOptions as $key => $label):
                             $active = $statusFilter === $key;
                             ?>
-                            <button type="submit" name="status" value="<?= htmlspecialchars($key); ?>" class="px-3 py-1.5 rounded-full border text-[11px] sm:text-xs
+                            <button type="submit" name="status" value="<?= htmlspecialchars($key); ?>"
+                                class="px-3 py-1.5 rounded-full border text-[11px] sm:text-xs transition-all
                             <?= $active
-                                ? 'border-orange-500 bg-orange-500/10 text-orange-300'
-                                : 'border-white/15 bg-[#0B0B0B] text-gray-300 hover:border-orange-400'; ?>">
+                                ? 'border-brand-orange bg-brand-orange/10 text-brand-orange font-bold'
+                                : 'border-brand-forest/10 bg-brand-parchment text-brand-ink/60 hover:border-brand-orange/50'; ?>">
                                 <?= $label; ?>
-                                <span class="ml-1 text-[10px] text-gray-400">
+                                <span class="ml-1 text-[10px] text-brand-ink/30">
                                     <?= $statusCounts[$key] ?? 0; ?>
                                 </span>
                             </button>
@@ -223,9 +232,9 @@ if (isset($conn) && $conn) {
                         <input type="hidden" name="status" value="<?= htmlspecialchars($statusFilter); ?>">
                         <input type="text" name="q" value="<?= htmlspecialchars($search); ?>"
                             placeholder="Search by name, SKU or category"
-                            class="flex-1 bg-[#0B0B0B] border border-white/20 rounded-full px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
-                        <button type="submit" class="px-3 py-2 rounded-full text-xs sm:text-sm font-semibold"
-                            style="background-color: var(--lt-orange);">
+                            class="flex-1 bg-brand-parchment border border-brand-forest/10 rounded-full px-4 py-2 text-xs sm:text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange">
+                        <button type="submit"
+                            class="bg-brand-orange px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white shadow-sm shadow-brand-orange/20">
                             Filter
                         </button>
                     </div>
@@ -233,7 +242,8 @@ if (isset($conn) && $conn) {
             </section>
 
             <!-- Products table -->
-            <section class="bg-[#111111] border border-white/10 rounded-2xl p-3 sm:p-5 text-xs sm:text-sm">
+            <section
+                class="bg-green-50 border border-brand-forest/5 rounded-2xl p-3 sm:p-5 text-xs sm:text-sm shadow-sm">
                 <?php if (empty($filteredProducts)): ?>
                     <div class="py-10 text-center text-xs text-gray-400">
                         No products match your current filters.
@@ -241,7 +251,7 @@ if (isset($conn) && $conn) {
                 <?php else: ?>
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-separate border-spacing-y-2">
-                            <thead class="text-[11px] text-gray-400">
+                            <thead class="text-[11px] text-brand-ink/40">
                                 <tr>
                                     <th class="text-left pr-3 pb-1">Product</th>
                                     <th class="text-left pr-3 pb-1">Category</th>
@@ -260,36 +270,36 @@ if (isset($conn) && $conn) {
 
                                     // Status badge classes
                                     $statusClass = match ($statusKey) {
-                                        'active' => 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40',
-                                        'draft' => 'bg-amber-500/15 text-amber-300 border-amber-500/40',
-                                        'archived' => 'bg-gray-500/15 text-gray-200 border-gray-500/40',
-                                        default => 'bg-white/10 text-gray-200 border-white/20',
+                                        'active' => 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+                                        'draft' => 'bg-amber-500/10 text-amber-700 border-amber-500/20',
+                                        'archived' => 'bg-brand-forest/5 text-brand-ink/60 border-brand-forest/10',
+                                        default => 'bg-brand-forest/5 text-brand-ink/60 border-brand-forest/10',
                                     };
 
                                     // Stock label
                                     $stockLabel = $stock > 0 ? $stock . ' in stock' : 'Out of stock';
-                                    $stockClass = $stock > 0 ? 'text-gray-100' : 'text-red-300';
+                                    $stockClass = $stock > 0 ? 'text-brand-forest' : 'text-red-600 font-bold';
 
                                     // Visibility
                                     $isPublic = strtolower($p['visibility']) === 'public';
                                     $visibilityLabel = $isPublic ? 'Public' : 'Private';
                                     $visibilityClass = $isPublic
-                                        ? 'bg-orange-500/15 text-orange-300 border-orange-500/40'
-                                        : 'bg-white/5 text-gray-300 border-white/20';
+                                        ? 'bg-brand-orange/10 text-brand-orange border-brand-orange/20'
+                                        : 'bg-brand-forest/5 text-brand-ink/60 border-brand-forest/10';
                                     ?>
-                                    <tr class="bg-[#0B0B0B] border border-white/10 rounded-xl align-top">
+                                    <tr class="bg-white border border-brand-forest/5 rounded-xl align-top shadow-sm">
                                         <!-- Product info -->
                                         <td class="px-3 py-2 rounded-l-xl align-top">
                                             <div class="flex items-center gap-3">
                                                 <?php if (!empty($p['main_image'])): ?>
                                                     <div
-                                                        class="w-10 h-10 rounded-lg overflow-hidden bg-white/5 border border-white/10 flex-shrink-0">
+                                                        class="w-10 h-10 rounded-lg overflow-hidden bg-brand-parchment border border-brand-forest/5 flex-shrink-0">
                                                         <img src="../<?= htmlspecialchars($p['main_image']); ?>"
                                                             class="w-full h-full object-cover">
                                                     </div>
                                                 <?php else: ?>
                                                     <div
-                                                        class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-[10px] text-gray-500">
+                                                        class="w-10 h-10 rounded-lg bg-brand-forest/5 border border-brand-forest/5 flex-shrink-0 flex items-center justify-center text-[10px] text-brand-ink/30">
                                                         No img
                                                     </div>
                                                 <?php endif; ?>
@@ -298,13 +308,13 @@ if (isset($conn) && $conn) {
                                                     $editUrl = "add-product?edit=1&id=" . urlencode($p['id']);
                                                     ?>
                                                     <a href="<?= $editUrl; ?>"
-                                                        class="font-semibold text-gray-100 hover:text-orange-400">
+                                                        class="font-semibold text-brand-forest hover:text-brand-orange">
                                                         <?= htmlspecialchars($p['name']); ?>
                                                     </a>
-                                                    <span class="text-[11px] text-gray-500">
+                                                    <span class="text-[11px] text-brand-ink/40">
                                                         SKU: <?= htmlspecialchars($p['sku']); ?>
                                                     </span>
-                                                    <span class="mt-1 text-[10px] text-gray-600">
+                                                    <span class="mt-1 text-[10px] text-brand-ink/30">
                                                         Last updated
                                                         <?= $p['updated_at'] ? date('M j, Y H:i', strtotime($p['updated_at'])) : date('M j, Y H:i', strtotime($p['created_at'])); ?>
                                                     </span>
@@ -313,14 +323,14 @@ if (isset($conn) && $conn) {
 
                                         <!-- Category -->
                                         <td class="px-3 py-2 align-top">
-                                            <span class="text-gray-200">
+                                            <span class="text-brand-ink/70">
                                                 <?= htmlspecialchars($p['category']); ?>
                                             </span>
                                         </td>
 
                                         <!-- Price -->
                                         <td class="px-3 py-2 align-top">
-                                            <span class="font-semibold text-orange-400">
+                                            <span class="font-semibold text-brand-orange text-sm">
                                                 <?= moneyNaira($p['price']); ?>
                                             </span>
                                         </td>
@@ -352,26 +362,26 @@ if (isset($conn) && $conn) {
                                         <td class="px-3 py-2 rounded-r-xl align-top">
                                             <div class="flex flex-wrap gap-1.5 text-[11px]">
                                                 <a href="add-product?id=<?= $p['id']; ?>"
-                                                    class="px-2 py-1 rounded-full border border-white/20 bg-[#111111] hover:border-orange-400">
+                                                    class="px-2 py-1 rounded-full border border-brand-forest/10 bg-white hover:border-brand-orange/50 text-brand-forest shadow-sm">
                                                     Edit
                                                 </a>
 
                                                 <?php if ($statusKey === 'archived'): ?>
                                                     <button type="button"
                                                         onclick="handleProductAction(<?= $p['id']; ?>, 'unarchive')"
-                                                        class="px-2 py-1 rounded-full border border-white/40 bg-[#111111] text-emerald-300 hover:border-emerald-400">
+                                                        class="px-2 py-1 rounded-full border border-emerald-500/20 bg-emerald-50 text-emerald-700 hover:border-emerald-400 shadow-sm">
                                                         Unarchive
                                                     </button>
                                                 <?php else: ?>
                                                     <button type="button"
-                                                        onclick="<?= $statusKey === 'draft' ? "showModal({title: 'Action Restricted', message: 'Drafts cannot be archived. Activate or Delete them instead.', type: 'error'})" : "handleProductAction({$p['id']}, 'archive')" ?>"
-                                                        class="px-2 py-1 rounded-full border border-white/40 bg-[#111111] <?= $statusKey === 'draft' ? 'opacity-30 cursor-not-allowed text-gray-400' : 'text-red-300 hover:border-red-400' ?>">
+                                                        onclick="<?= $statusKey === 'draft' ? "alert('Drafts cannot be archived. Activate or Delete them instead.')" : "handleProductAction({$p['id']}, 'archive')" ?>"
+                                                        class="px-2 py-1 rounded-full border border-brand-forest/10 bg-white shadow-sm <?= $statusKey === 'draft' ? 'opacity-30 cursor-not-allowed text-brand-ink/30' : 'text-red-400 hover:border-red-400' ?>">
                                                         Archive
                                                     </button>
                                                 <?php endif; ?>
 
                                                 <button type="button" onclick="handleProductAction(<?= $p['id']; ?>, 'delete')"
-                                                    class="px-2 py-1 rounded-full border border-red-500/40 bg-[#111111] text-red-300 hover:border-red-400">
+                                                    class="px-2 py-1 rounded-full border border-red-500/10 bg-red-50 text-red-600 hover:border-red-400 shadow-sm">
                                                     Delete
                                                 </button>
                                             </div>
@@ -391,53 +401,34 @@ if (isset($conn) && $conn) {
             let title, message;
 
             if (action === 'delete') {
-                title = 'Delete Product';
                 message = 'Are you sure you want to PERMANENTLY delete this product? All images will be removed. This cannot be undone.';
             } else if (action === 'unarchive') {
-                title = 'Unarchive Product';
                 message = 'Are you sure you want to unarchive this product? It will be visible in the marketplace again.';
             } else {
-                title = 'Archive Product';
                 message = 'Are you sure you want to archive this product? It will no longer be available for purchase.';
             }
 
-            showModal({
-                title: title,
-                message: message,
-                onConfirm: async () => {
-                    const formData = new FormData();
-                    formData.append('product_id', productId);
-                    formData.append('action', action);
+            if (confirm(message)) {
+                const formData = new FormData();
+                formData.append('product_id', productId);
+                formData.append('action', action);
 
-                    try {
-                        const response = await fetch('process/process-product-action.php', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const data = await response.json();
-                        if (data.success) {
-                            showModal({
-                                title: 'Success!',
-                                message: data.message,
-                                type: 'success',
-                                onConfirm: () => location.reload()
-                            });
-                        } else {
-                            showModal({
-                                title: 'Error',
-                                message: data.message || 'An error occurred.',
-                                type: 'error'
-                            });
-                        }
-                    } catch (error) {
-                        showModal({
-                            title: 'Connection Error',
-                            message: error.message,
-                            type: 'error'
-                        });
+                try {
+                    const response = await fetch('process/process-product-action.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message || 'An error occurred.');
                     }
+                } catch (error) {
+                    alert('Connection Error: ' + error.message);
                 }
-            });
+            }
         }
     </script>
 </body>

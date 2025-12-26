@@ -175,10 +175,28 @@ $in_cart = false;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-forest': '#1E3932',
+                        'brand-orange': '#F36A1D',
+                        'brand-parchment': '#FCFBF7',
+                        'brand-ink': '#1A1A1A',
+                        'brand-cream': '#F3F0E6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
+            --lt-forest: #1E3932;
             --lt-orange: #F36A1D;
-            --lt-black: #0D0D0D;
+            --lt-parchment: #FCFBF7;
+            --lt-ink: #1A1A1A;
+            --lt-cream: #F3F0E6;
         }
         
         .spinner {
@@ -196,30 +214,37 @@ $in_cart = false;
         }
     </style>
 </head>
-<body class="bg-[#0D0D0D] text-white">
+<body class="bg-brand-parchment text-brand-ink font-sans">
     <div class="min-h-screen flex flex-col">
 
         <!-- Top bar -->
-        <header class="border-b border-white/10 bg-black/60 backdrop-blur">
+        <header class="border-b border-white/10 bg-brand-forest sticky top-0 z-40 shadow-lg">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="index.php" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                        style="background-color: var(--lt-orange);">
-                        <div class="w-4 h-3 border-2 border-white border-b-0 rounded-sm relative">
-                            <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 left-0.5"></span>
-                            <span class="w-1 h-1 bg-white rounded-full absolute -bottom-1 right-0.5"></span>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-brand-parchment">
+                        <div class="w-4 h-3 border-2 border-brand-forest border-b-0 rounded-sm relative">
+                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 left-0.5"></span>
+                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 right-0.5"></span>
                         </div>
                     </div>
-                    <span class="font-semibold tracking-tight text-lg">LocalTrade</span>
+                    <span class="font-bold tracking-tight text-lg text-white">LocalTrade</span>
                 </a>
                 <div class="flex items-center gap-4">
-                    <a href="marketplace.php" class="text-xs sm:text-sm text-gray-300 hover:text-orange-400">
+                    <a href="marketplace.php" class="text-xs sm:text-sm text-white/70 hover:text-white transition-colors">
                         Back to marketplace
                     </a>
                     <?php if ($is_logged_in && $user_type === 'buyer'): ?>
-                        <a href="cart.php" class="text-xs sm:text-sm text-orange-400 hover:text-orange-300">
-                            🛒 View Cart
-                        </a>
+                        <a href="cart"
+                    class="relative flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-brand-orange transition-all group">
+                    <span class="text-sm group-hover:scale-110 text-white transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                        </svg>
+
+                    </span>
+                </a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -231,10 +256,10 @@ $in_cart = false;
 
                 <!-- Left: Image gallery -->
                 <section>
-                    <div class="bg-[#111111] rounded-3xl p-4 sm:p-6 border border-white/10">
+                    <div class="bg-green-50 rounded-3xl p-4 sm:p-6 border border-brand-forest/5 shadow-sm">
                         <!-- Main image -->
                         <div
-                            class="aspect-square bg-black rounded-2xl overflow-hidden flex items-center justify-center mb-4">
+                            class="aspect-square bg-brand-parchment rounded-2xl overflow-hidden flex items-center justify-center mb-4 border border-brand-forest/5">
                             <img id="mainImage" src="<?php echo htmlspecialchars($images[0] ?? 'https://via.placeholder.com/600x600?text=Product+Image'); ?>"
                                 alt="<?php echo htmlspecialchars($product['name']); ?>"
                                 class="w-full h-full object-cover">
@@ -244,7 +269,7 @@ $in_cart = false;
                         <div class="grid grid-cols-4 gap-3">
                             <?php foreach ($images as $index => $img): ?>
                                 <button
-                                    class="thumb border rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-orange-400 <?php echo $index === 0 ? 'border-orange-500' : 'border-white/10'; ?>"
+                                    class="thumb border rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-brand-orange <?php echo $index === 0 ? 'border-brand-orange border-2' : 'border-brand-forest/10'; ?>"
                                     data-src="<?php echo htmlspecialchars($img); ?>">
                                     <img src="<?php echo htmlspecialchars($img); ?>"
                                         alt="Thumbnail <?php echo $index + 1; ?>" class="w-full h-full object-cover">
@@ -258,22 +283,22 @@ $in_cart = false;
                 <section class="flex flex-col gap-4 sm:gap-5">
                     <!-- Title & rating -->
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-semibold mb-1">
+                        <h1 class="text-2xl sm:text-3xl font-bold mb-1 text-brand-forest">
                             <?php echo htmlspecialchars($product['name']); ?>
                         </h1>
-                        <div class="flex flex-wrap items-center gap-3 text-xs text-gray-300">
+                        <div class="flex flex-wrap items-center gap-3 text-xs text-brand-ink/60">
                             <div class="flex items-center gap-1">
-                                <span class="text-yellow-400">★</span>
-                                <span><?php echo number_format($product['rating'], 1); ?></span>
-                                <span class="text-gray-500">·</span>
+                                <span class="text-brand-orange">★</span>
+                                <span class="font-bold text-brand-ink"><?php echo number_format($product['rating'], 1); ?></span>
+                                <span class="text-brand-ink/20">·</span>
                                 <span><?php echo (int) $product['total_reviews']; ?> reviews</span>
                             </div>
-                            <span class="text-gray-500">·</span>
-                            <span class="<?php echo $product['stock'] > 0 ? 'text-green-400' : 'text-red-400'; ?>">
+                            <span class="text-brand-ink/20">·</span>
+                            <span class="<?php echo $product['stock'] > 0 ? 'text-brand-forest font-bold' : 'text-red-500'; ?>">
                                 <?php echo $product['stock'] > 0 ? 'In stock (' . $product['stock'] . ' available)' : 'Out of stock'; ?>
                             </span>
                             <?php if ($product['total_sales'] > 0): ?>
-                                <span class="text-gray-500">·</span>
+                                <span class="text-brand-ink/20">·</span>
                                 <span><?php echo (int) $product['total_sales']; ?> sold</span>
                             <?php endif; ?>
                         </div>
@@ -281,7 +306,7 @@ $in_cart = false;
 
                     <!-- Price -->
                     <div class="flex items-baseline gap-3">
-                        <p class="text-2xl sm:text-3xl font-semibold text-orange-400">
+                        <p class="text-2xl sm:text-3xl font-bold text-brand-forest">
                             ₦<?php echo number_format($product['price']); ?>
                         </p>
                         <?php if ($product['compare_at_price'] && $product['compare_at_price'] > $product['price']): ?>
@@ -299,21 +324,21 @@ $in_cart = false;
                     </div>
 
                     <!-- Short description -->
-                    <p class="text-sm sm:text-base text-gray-200">
+                    <p class="text-sm sm:text-base text-brand-ink/80 leading-relaxed">
                         <?php echo htmlspecialchars($product['short_desc']); ?>
                     </p>
 
                     <!-- Variants (if any) -->
                     <?php if (!empty($variants)): ?>
-                        <div class="bg-[#111111] border border-white/10 rounded-2xl p-4">
-                            <h3 class="text-sm font-semibold mb-3">Options</h3>
+                        <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 shadow-sm">
+                            <h3 class="text-sm font-bold text-brand-forest mb-4 uppercase tracking-wider">Options</h3>
                             <?php foreach ($variants as $variantType => $options): ?>
-                                <div class="mb-3">
-                                    <p class="text-xs text-gray-400 mb-2">Select <?php echo htmlspecialchars($variantType); ?></p>
+                                <div class="mb-4 last:mb-0">
+                                    <p class="text-[11px] font-bold text-brand-ink/40 uppercase tracking-widest mb-3">Select <?php echo htmlspecialchars($variantType); ?></p>
                                     <div class="flex flex-wrap gap-2">
                                         <?php foreach ($options as $option): ?>
                                             <button type="button" 
-                                                class="variant-btn px-3 py-1.5 text-xs border border-white/20 rounded-full hover:border-orange-400"
+                                                class="variant-btn px-4 py-2 text-xs border border-brand-forest/10 rounded-xl hover:border-brand-orange text-brand-forest font-medium transition-all"
                                                 data-type="<?php echo htmlspecialchars($variantType); ?>"
                                                 data-value="<?php echo htmlspecialchars($option); ?>">
                                                 <?php echo htmlspecialchars($option); ?>
@@ -327,31 +352,31 @@ $in_cart = false;
                     <?php endif; ?>
 
                     <!-- Quantity + buttons -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-4">
+                    <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 shadow-sm">
                         <div class="flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm text-gray-300">Quantity</span>
-                                <div class="flex items-center border border-white/20 rounded-full overflow-hidden">
+                            <div class="flex items-center gap-4">
+                                <span class="text-[11px] font-bold text-brand-ink/40 uppercase tracking-widest">Quantity</span>
+                                <div class="flex items-center border border-brand-forest/10 rounded-full overflow-hidden bg-brand-parchment">
                                     <button type="button" id="qtyMinus"
-                                        class="w-8 h-8 flex items-center justify-center text-lg text-gray-300 hover:bg-white/5">
+                                        class="w-10 h-10 flex items-center justify-center text-lg text-brand-forest hover:bg-brand-forest/5 transition-colors">
                                         -
                                     </button>
                                     <input id="qtyInput" type="number" value="1" min="1" max="<?php echo $product['stock']; ?>"
-                                        class="w-12 text-center text-sm bg-transparent border-0 text-white focus:outline-none">
+                                        class="w-12 text-center text-sm bg-transparent border-0 text-brand-forest font-bold focus:outline-none">
                                     <button type="button" id="qtyPlus"
-                                        class="w-8 h-8 flex items-center justify-center text-lg text-gray-300 hover:bg-white/5">
+                                        class="w-10 h-10 flex items-center justify-center text-lg text-brand-forest hover:bg-brand-forest/5 transition-colors">
                                         +
                                     </button>
                                 </div>
                             </div>
-                            <div class="text-right text-xs text-gray-400">
-                                <?php echo $product['stock']; ?> available
+                            <div class="text-right text-[11px] font-medium text-brand-ink/40">
+                                <?php echo (int) $product['stock']; ?> available
                             </div>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="flex flex-col sm:flex-row gap-4">
                             <button id="addToCartBtn"
-                                class="flex-1 px-4 py-2.5 rounded-full text-sm font-semibold flex items-center justify-center gap-2"
+                                class="flex-1 px-8 py-4 rounded-full text-sm font-bold flex items-center justify-center gap-2 text-white shadow-lg shadow-brand-orange/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                 style="background-color: var(--lt-orange);"
                                 <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
                                 data-logged-in="<?php echo $is_logged_in && $user_type === 'buyer' ? 'true' : 'false'; ?>">
@@ -359,13 +384,13 @@ $in_cart = false;
                                     <?php if ($product['stock'] <= 0): ?>
                                         Out of Stock
                                     <?php else: ?>
-                                        🛒 Add to Cart
+                                        Add to Cart
                                     <?php endif; ?>
                                 </span>
                                 <div id="cartSpinner" class="spinner hidden"></div>
                             </button>
                             <button id="buyNowBtn"
-                                class="flex-1 px-4 py-2.5 rounded-full text-sm font-semibold border border-white/20"
+                                class="flex-1 px-8 py-4 rounded-full text-sm font-bold border border-brand-forest/10 text-brand-forest hover:bg-brand-forest hover:text-white transition-all shadow-sm"
                                 <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>>
                                 Buy now
                             </button>
@@ -376,42 +401,49 @@ $in_cart = false;
 
                     <!-- Seller box -->
                     <div
-                        class="bg-[#111111] border border-white/10 rounded-2xl p-4 flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-1">Sold by</p>
-                            <p class="text-sm font-semibold"><?php echo htmlspecialchars($seller['name']); ?></p>
-                            <p class="text-xs text-gray-400">
-                                <?php echo htmlspecialchars($seller['location']); ?>
+                        class="bg-green-50 border border-brand-forest/5 rounded-2xl p-5 flex items-start justify-between gap-5 shadow-sm">
+                        <div class="flex-1">
+                            <p class="text-[10px] uppercase font-bold tracking-[0.2em] text-brand-ink/40 mb-2">Verified Brand</p>
+                            <p class="text-base font-bold text-brand-forest"><?php echo htmlspecialchars($seller['name']); ?></p>
+                            <p class="text-xs text-brand-ink/50 mt-1">
+                                📍 <?php echo htmlspecialchars($seller['location']); ?>
                             </p>
-                            <div class="mt-2 flex flex-wrap gap-3 text-xs text-gray-300">
-                                <span>⭐ <?php echo number_format($seller['rating'], 1); ?> seller rating</span>
-                                <span class="text-gray-500">·</span>
-                                <span><?php echo (int) $seller['total_products']; ?> products</span>
+                            <div class="mt-4 flex flex-wrap gap-4 text-xs font-medium text-brand-forest/70">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-brand-orange">⭐</span>
+                                    <span><?php echo number_format($seller['rating'], 1); ?> rating</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-brand-forest/30">📦</span>
+                                    <span><?php echo (int) $seller['total_products']; ?> products</span>
+                                </div>
                                 <?php if ($seller['total_sales'] > 0): ?>
-                                    <span class="text-gray-500">·</span>
-                                    <span><?php echo (int) $seller['total_sales']; ?> sales</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-brand-forest/30">🤝</span>
+                                        <span><?php echo (int) $seller['total_sales']; ?> sales</span>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <a href="store.php?brand=<?php echo $seller['id']; ?>" 
-                           class="text-xs text-orange-400 hover:underline">
-                            Visit store →
+                        <a href="store.php?slug=<?php echo urlencode($product['brand_slug']); ?>" 
+                           class="px-4 py-2 rounded-full border border-brand-forest/10 text-[11px] font-bold text-brand-forest hover:bg-brand-forest hover:text-white transition-all shadow-sm">
+                            Visit Store
                         </a>
                     </div>
 
                     <!-- Tabs: Description / Details / Shipping / Reviews -->
-                    <div class="bg-[#050505] border border-white/10 rounded-2xl">
-                        <div class="flex border-b border-white/5 text-xs overflow-x-auto">
-                            <button class="tab-btn flex-1 min-w-max py-3 px-4 text-center border-b-2 border-orange-400 transition-colors"
+                    <div class="bg-green-50 border border-brand-forest/5 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="flex border-b border-brand-forest/5 text-[11px] font-bold uppercase tracking-wider overflow-x-auto bg-brand-parchment/50">
+                            <button class="tab-btn flex-1 min-w-max py-4 px-6 text-center border-b-2 border-brand-orange text-brand-forest transition-colors"
                                 data-tab="description">Description</button>
-                            <button class="tab-btn flex-1 min-w-max py-3 px-4 text-center border-b-2 border-transparent hover:border-white/10 transition-colors"
+                            <button class="tab-btn flex-1 min-w-max py-4 px-6 text-center border-b-2 border-transparent text-brand-ink/40 hover:text-brand-forest transition-colors"
                                 data-tab="details">Details</button>
-                            <button class="tab-btn flex-1 min-w-max py-3 px-4 text-center border-b-2 border-transparent hover:border-white/10 transition-colors"
+                            <button class="tab-btn flex-1 min-w-max py-4 px-6 text-center border-b-2 border-transparent text-brand-ink/40 hover:text-brand-forest transition-colors"
                                 data-tab="shipping">Shipping</button>
-                            <button class="tab-btn flex-1 min-w-max py-3 px-4 text-center border-b-2 border-transparent hover:border-white/10 transition-colors"
+                            <button class="tab-btn flex-1 min-w-max py-4 px-6 text-center border-b-2 border-transparent text-brand-ink/40 hover:text-brand-forest transition-colors"
                                 data-tab="reviews">Reviews (<?php echo (int) $product['total_reviews']; ?>)</button>
                         </div>
-                        <div class="p-4 sm:p-5 text-sm text-gray-200">
+                        <div class="p-6 text-sm text-brand-ink/80 leading-relaxed">
                             <div class="tab-content" id="tab-description">
                                 <p class="mb-2 whitespace-pre-line">
                                     <?php echo htmlspecialchars($product['long_desc'] ?: $product['short_desc']); ?>
@@ -437,35 +469,36 @@ $in_cart = false;
 
                             </div>
                             <div class="tab-content hidden" id="tab-shipping">
-                                <h3 class="text-sm font-semibold mb-3">Shipping & Delivery</h3>
-                                <dl class="space-y-2 text-sm">
-                                    <div class="flex justify-between gap-4 border-b border-white/5 pb-2">
-                                        <dt class="text-gray-400">Ships from</dt>
-                                        <dd class="text-gray-200 text-right"><?php echo htmlspecialchars($product['ships_from']); ?></dd>
+                                <h3 class="text-sm font-bold text-brand-forest mb-4">Shipping & Delivery</h3>
+                                <dl class="space-y-4 text-sm">
+                                    <div class="flex justify-between gap-4 border-b border-brand-forest/5 pb-4">
+                                        <dt class="text-brand-ink/40 font-medium">Ships from</dt>
+                                        <dd class="text-brand-forest font-bold text-right"><?php echo htmlspecialchars($product['ships_from']); ?></dd>
                                     </div>
-                                    <div class="flex justify-between gap-4 border-b border-white/5 pb-2">
-                                        <dt class="text-gray-400">Processing time</dt>
-                                        <dd class="text-gray-200 text-right"><?php echo htmlspecialchars($product['processing_time'] ?: '2-4 business days'); ?></dd>
+                                    <div class="flex justify-between gap-4 border-b border-brand-forest/5 pb-4">
+                                        <dt class="text-brand-ink/40 font-medium">Processing time</dt>
+                                        <dd class="text-brand-forest font-bold text-right"><?php echo htmlspecialchars($product['processing_time'] ?: '2-4 business days'); ?></dd>
                                     </div>
                                     <div class="flex justify-between gap-4">
-                                        <dt class="text-gray-400">Shipping fee</dt>
-                                        <dd class="text-gray-200 text-right">
-                                            <?php echo $product['shipping_fee'] ? '₦' . number_format($product['shipping_fee']) : 'Free'; ?>
+                                        <dt class="text-brand-ink/40 font-medium">Shipping fee</dt>
+                                        <dd class="text-brand-forest font-bold text-right">
+                                            <?php echo $product['shipping_fee'] ? '₦' . number_format($product['shipping_fee']) : 'Free Delivery'; ?>
                                         </dd>
                                     </div>
                                 </dl>
                             </div>
                             <div class="tab-content hidden" id="tab-reviews">
                                 <?php if ($product['total_reviews'] > 0): ?>
-                                    <p class="mb-2 text-gray-300">
-                                        Average rating: <span class="text-yellow-400"><?php echo number_format($product['rating'], 1); ?> ★</span>
-                                        from <?php echo (int) $product['total_reviews']; ?> reviews.
-                                    </p>
-                                    <p class="text-xs text-gray-500">
-                                        Reviews feature coming soon. For now, buyers can rate this product after purchase.
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <span class="text-2xl font-bold text-brand-forest"><?php echo number_format($product['rating'], 1); ?></span>
+                                        <div class="flex text-brand-orange text-lg">★★★★★</div>
+                                        <span class="text-brand-ink/40 text-xs">(<?php echo (int) $product['total_reviews']; ?> reviews)</span>
+                                    </div>
+                                    <p class="text-xs text-brand-ink/50 italic">
+                                        Detailed reviews are being migrated. Buyers can still rate products after purchase.
                                     </p>
                                 <?php else: ?>
-                                    <p class="mb-2 text-gray-300">No reviews yet. Be the first to review this product!</p>
+                                    <p class="text-brand-ink/40 italic">No reviews yet. Be the first to share your experience!</p>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -476,32 +509,37 @@ $in_cart = false;
 
             <!-- Related products -->
             <?php if (!empty($relatedProducts)): ?>
-            <section class="mt-10 sm:mt-14 border-t border-white/10 pt-6 sm:pt-8">
+            <section class="mt-16 sm:mt-20 border-t border-brand-forest/10 pt-10">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg sm:text-xl font-semibold">You may also like</h2>
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-lg sm:text-2xl font-bold text-brand-forest">You may also like</h2>
+                            <span class="block h-1 w-12 bg-brand-orange mt-2 rounded-full"></span>
+                        </div>
                         <a href="marketplace.php?category=<?php echo urlencode($product['category']); ?>" 
-                           class="text-xs text-orange-400 hover:underline">View more in <?php echo htmlspecialchars($product['category']); ?></a>
+                           class="text-xs font-bold text-brand-orange hover:underline uppercase tracking-wider">
+                           Explore Category
+                        </a>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
                         <?php foreach ($relatedProducts as $rp): ?>
                             <a href="product.php?id=<?php echo $rp['id']; ?>" 
-                               class="bg-[#111111] border border-white/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-2 hover:border-orange-400/50 transition">
-                                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-black">
+                               class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 flex flex-col gap-3 transition-all shadow-sm hover:shadow-xl group">
+                                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/5">
                                     <img src="<?php echo htmlspecialchars($rp['main_image'] ?: 'https://via.placeholder.com/400x300?text=Product'); ?>" 
                                          alt="<?php echo htmlspecialchars($rp['name']); ?>"
-                                         class="w-full h-full object-cover">
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 </div>
-                                <p class="text-sm font-semibold truncate">
+                                <p class="text-sm font-bold text-brand-forest line-clamp-1">
                                     <?php echo htmlspecialchars($rp['name']); ?>
                                 </p>
-                                <p class="text-sm text-orange-400 font-semibold">
+                                <p class="text-sm text-brand-forest font-bold pb-1 border-b border-brand-forest/5">
                                     ₦<?php echo number_format($rp['price']); ?>
                                 </p>
-                                <span class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5 text-center">
-                                    View product
-                                </span>
+                                <button class="mt-auto text-[11px] px-3 py-1.5 rounded-full bg-brand-orange text-white font-bold transition-all shadow-sm shadow-brand-orange/10 group-hover:scale-105">
+                                    View Product
+                                </button>
                             </a>
                         <?php endforeach; ?>
                     </div>
@@ -511,32 +549,37 @@ $in_cart = false;
 
             <!-- More from this brand -->
             <?php if (!empty($moreBrandProducts)): ?>
-            <section class="mt-10 sm:mt-14 border-t border-white/10 pt-6 sm:pt-8">
+            <section class="mt-16 sm:mt-20 border-t border-brand-forest/10 pt-10">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg sm:text-xl font-semibold">More from <?php echo htmlspecialchars($product['brand_name']); ?></h2>
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-lg sm:text-2xl font-bold text-brand-forest">More from <?php echo htmlspecialchars($product['brand_name']); ?></h2>
+                            <span class="block h-1 w-12 bg-brand-orange mt-2 rounded-full"></span>
+                        </div>
                         <a href="store.php?slug=<?php echo urlencode($product['brand_slug']); ?>" 
-                           class="text-xs text-orange-400 hover:underline">Visit store</a>
+                           class="text-xs font-bold text-brand-orange hover:underline uppercase tracking-wider">
+                           Visit Store
+                        </a>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
                         <?php foreach ($moreBrandProducts as $mp): ?>
                             <a href="product.php?id=<?php echo $mp['id']; ?>" 
-                               class="bg-[#111111] border border-white/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-2 hover:border-orange-400/50 transition">
-                                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-black">
+                               class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 flex flex-col gap-3 transition-all shadow-sm hover:shadow-xl group">
+                                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/5">
                                     <img src="<?php echo htmlspecialchars($mp['main_image'] ?: 'https://via.placeholder.com/400x300?text=Product'); ?>" 
                                          alt="<?php echo htmlspecialchars($mp['name']); ?>"
-                                         class="w-full h-full object-cover">
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 </div>
-                                <p class="text-sm font-semibold truncate">
+                                <p class="text-sm font-bold text-brand-forest line-clamp-1">
                                     <?php echo htmlspecialchars($mp['name']); ?>
                                 </p>
-                                <p class="text-sm text-orange-400 font-semibold">
+                                <p class="text-sm text-brand-forest font-bold pb-1 border-b border-brand-forest/5">
                                     ₦<?php echo number_format($mp['price']); ?>
                                 </p>
-                                <span class="mt-auto text-[11px] px-2 py-1 rounded-full bg-white/5 text-center">
-                                    View product
-                                </span>
+                                <button class="mt-auto text-[11px] px-3 py-1.5 rounded-full bg-brand-orange text-white font-bold transition-all shadow-sm shadow-brand-orange/10 group-hover:scale-105">
+                                    View Product
+                                </button>
                             </a>
                         <?php endforeach; ?>
                     </div>
@@ -546,28 +589,27 @@ $in_cart = false;
         </main>
 
         <!-- Footer -->
-        <footer class="border-t border-white/10 bg-black mt-8">
+        <footer class="border-t border-brand-forest/10 bg-brand-cream/30 mt-12 py-8">
             <div
-                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-xs text-gray-400 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-brand-ink/50 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <p>© <span id="year"></span> LocalTrade. All rights reserved.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="hover:text-orange-400">Privacy</a>
-                    <a href="#" class="hover:text-orange-400">Terms</a>
-                    <a href="#" class="hover:text-orange-400">Support</a>
+                <div class="flex gap-6 font-medium">
+                    <a href="#" class="hover:text-brand-orange transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Terms</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Support</a>
                 </div>
             </div>
         </footer>
     </div>
 
     <!-- Messages container -->
-    <div id="messageContainer" class="fixed top-4 right-4 z-50 max-w-sm"></div>
+    <div id="messageContainer" class="fixed top-4 right-5 z-50 max-w-sm"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Footer year
             document.getElementById('year').textContent = new Date().getFullYear();
 
-            // --- UI Interaction Setup --- //
             
             // Image gallery interactions
             const mainImage = document.getElementById('mainImage');
@@ -576,8 +618,12 @@ $in_cart = false;
                 btn.addEventListener('click', () => {
                     const src = btn.getAttribute('data-src');
                     mainImage.src = src;
-                    thumbs.forEach(b => b.classList.remove('border-orange-500'));
-                    btn.classList.add('border-orange-500');
+                    thumbs.forEach(b => {
+                        b.classList.remove('border-brand-orange', 'border-2');
+                        b.classList.add('border-brand-forest/10');
+                    });
+                    btn.classList.add('border-brand-orange', 'border-2');
+                    btn.classList.remove('border-brand-forest/10');
                 });
             });
 
@@ -590,13 +636,13 @@ $in_cart = false;
                     
                     // Reset all tabs to inactive state
                     tabButtons.forEach(b => {
-                        b.classList.remove('border-orange-400');
-                        b.classList.add('border-transparent');
+                        b.classList.remove('border-brand-orange', 'text-brand-forest');
+                        b.classList.add('border-transparent', 'text-brand-ink/40');
                     });
                     
                     // Activate clicked tab
-                    btn.classList.remove('border-transparent');
-                    btn.classList.add('border-orange-400');
+                    btn.classList.remove('border-transparent', 'text-brand-ink/40');
+                    btn.classList.add('border-brand-orange', 'text-brand-forest');
                     
                     // Show content
                     tabContents.forEach(c => {
@@ -649,9 +695,11 @@ $in_cart = false;
                     
                     // UI Update for Variants
                     document.querySelectorAll(`.variant-btn[data-type="${type}"]`).forEach(b => {
-                        b.classList.remove('border-orange-400', 'bg-orange-400/10');
+                        b.classList.remove('border-brand-orange', 'bg-brand-orange/5');
+                        b.classList.add('border-brand-forest/10');
                     });
-                    btn.classList.add('border-orange-400', 'bg-orange-400/10');
+                    btn.classList.add('border-brand-orange', 'bg-brand-orange/5');
+                    btn.classList.remove('border-brand-forest/10');
                     
                     // Logic Update
                     selectedVariants[type] = value;
@@ -679,17 +727,8 @@ $in_cart = false;
                 }
 
                 // Verify Variants (Optional: Check if all required variants are selected)
-                // Assuming all variants shown are required.
                 const requiredVariantTypes = new Set([...document.querySelectorAll('.variant-btn')].map(b => b.dataset.type));
                 const selectedVariantTypes = new Set(Object.keys(selectedVariants));
-                
-                // Note: If you want to enforce variant selection, uncomment below:
-                /*
-                if (requiredVariantTypes.size > 0 && selectedVariantTypes.size < requiredVariantTypes.size) {
-                    showMessage('Please select all options', 'error');
-                    return;
-                }
-                */
 
                 const quantity = parseInt(qtyInput.value) || 1;
                 

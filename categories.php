@@ -35,27 +35,29 @@ $categoryImages = [
 ];
 
 // Helper function to get image for category
-function getImageForCategory($categoryName) {
+function getImageForCategory($categoryName)
+{
     global $categoryImages;
     $categoryName = trim($categoryName);
-    
+
     // First check for exact match
     if (isset($categoryImages[$categoryName])) {
         return $categoryImages[$categoryName];
     }
-    
+
     // Check for partial matches
     foreach ($categoryImages as $key => $image) {
         if (stripos($categoryName, $key) !== false) {
             return $image;
         }
     }
-    
+
     // Default image
     return 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80';
 }
 
-function getShortDescription($categoryName) {
+function getShortDescription($categoryName)
+{
     $descriptions = [
         'Fashion' => 'Streetwear, Ankara, accessories',
         'Beauty' => 'Skincare, haircare, self-care',
@@ -84,17 +86,18 @@ function getShortDescription($categoryName) {
         'Prints' => 'Art prints and posters',
         'Sculptures' => 'Handmade sculptures',
     ];
-    
+
     foreach ($descriptions as $key => $desc) {
         if (stripos($categoryName, $key) !== false) {
             return $desc;
         }
     }
-    
+
     return 'Local Nigerian products';
 }
 
-function getTagsForCategory($categoryName) {
+function getTagsForCategory($categoryName)
+{
     $categoryName = strtolower(trim($categoryName));
     $tagMap = [
         'fashion' => ['Hoodies', 'Tees', 'Bags'],
@@ -125,13 +128,13 @@ function getTagsForCategory($categoryName) {
         'prints' => ['Digital', 'Posters', 'Artwork'],
         'sculptures' => ['Wood', 'Clay', 'Metal'],
     ];
-    
+
     foreach ($tagMap as $key => $tags) {
         if (strpos($categoryName, $key) !== false) {
             return $tags;
         }
     }
-    
+
     return ['Local', 'Nigerian', 'Quality'];
 }
 
@@ -178,7 +181,7 @@ if (isset($conn) && $conn) {
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
             $categoryName = $row['category'];
-            
+
             // Count active brands in this category
             $brandCountStmt = $conn->prepare('SELECT COUNT(*) as brand_count FROM Brand WHERE category = ? AND status = "active"');
             $brandCountStmt->bind_param('s', $categoryName);
@@ -186,7 +189,7 @@ if (isset($conn) && $conn) {
             $brandCountResult = $brandCountStmt->get_result();
             $brandCountRow = $brandCountResult->fetch_assoc();
             $brandCountStmt->close();
-            
+
             if ($brandCountRow['brand_count'] > 0) {
                 $brandCategories[] = [
                     'name' => $categoryName,
@@ -209,20 +212,37 @@ if (isset($conn) && $conn) {
     <meta charset="UTF-8">
     <title>Categories | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-forest': '#1E3932',
+                        'brand-orange': '#F36A1D',
+                        'brand-parchment': '#FCFBF7',
+                        'brand-ink': '#1A1A1A',
+                        'brand-cream': '#F3F0E6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
+            --lt-forest: #1E3932;
             --lt-orange: #F36A1D;
-            --lt-black: #0D0D0D;
+            --lt-parchment: #FCFBF7;
+            --lt-ink: #1A1A1A;
+            --lt-cream: #F3F0E6;
         }
-        
+
         .category-image {
             background-size: cover;
             background-position: center;
             position: relative;
         }
-        
+
         .category-image::before {
             content: '';
             position: absolute;
@@ -230,216 +250,220 @@ if (isset($conn) && $conn) {
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
-            border-radius: 0.75rem;
+            background: linear-gradient(to bottom, rgba(30, 57, 50, 0.1), rgba(30, 57, 50, 0.6));
+            border-radius: 1rem;
         }
-        
+
         .category-image-content {
             position: relative;
             z-index: 1;
             color: white;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 
-<body class="bg-[#0D0D0D] text-white">
+<body class="bg-brand-parchment text-brand-ink font-sans">
     <div class="min-h-screen flex flex-col">
 
         <!-- HEADER -->
-        <?php $currentPage = 'categories'; include 'header.php'; ?>
+        <?php $currentPage = 'categories';
+        include 'header.php'; ?>
 
         <!-- MAIN -->
         <main class="flex-1 py-6 sm:py-10">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <!-- Title + intro -->
-                <section class="mb-6 sm:mb-8">
-                    <h1 class="text-xl sm:text-2xl font-semibold mb-1">
+                <section class="mb-8">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 text-brand-forest">
                         Shop by category
                     </h1>
-                    <p class="text-xs sm:text-sm text-gray-300 max-w-2xl">
-                        Explore verified Nigerian brands across categories. Choose a category to see all products in the
-                        marketplace.
+                    <p class="text-xs sm:text-sm text-brand-ink/60 max-w-2xl leading-relaxed">
+                        Explore curated collections from verified Nigerian artisans. Select a category below to discover
+                        unique products in our marketplace.
                     </p>
                 </section>
 
                 <!-- Search/filter row -->
-                <section class="mb-5 sm:mb-7">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                        <div class="w-full md:w-80">
+                <section class="mb-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="w-full md:w-96">
                             <div
-                                class="bg-[#111111] border border-white/15 rounded-full px-3 py-1.5 flex items-center gap-2">
-                                <span class="text-gray-500 text-sm">🔍</span>
-                                <input id="categorySearch" type="text" placeholder="Search categories or brands..."
-                                    class="flex-1 bg-transparent border-0 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none" />
+                                class="bg-white border border-brand-forest/10 rounded-full px-4 py-2 flex items-center gap-2 shadow-sm focus-within:border-brand-orange/30 transition-all">
+                                <span class="text-brand-ink/40 text-sm">🔍</span>
+                                <input id="categorySearch" type="text"
+                                    placeholder="Search categories (e.g. Fashion, Art)..."
+                                    class="flex-1 bg-transparent border-0 text-xs sm:text-sm text-brand-ink placeholder-brand-ink/30 focus:outline-none" />
                             </div>
                         </div>
-                        <p id="categoryCount" class="text-xs text-gray-400">
-                            <span id="productCategoryCount"><?php echo count($productCategories); ?></span> product categories • 
-                            <span id="brandCategoryCount"><?php echo count($brandCategories); ?></span> brand categories
-                        </p>
+                        <div id="categoryCount"
+                            class="text-xs font-medium text-brand-forest/60 bg-brand-forest/5 px-4 py-2 rounded-full">
+                            <span id="productCategoryCount"><?php echo count($productCategories); ?></span> Collections
+                            •
+                            <span id="brandCategoryCount"><?php echo count($brandCategories); ?></span> Industries
+                        </div>
                     </div>
                 </section>
 
-                <!-- PRODUCT CATEGORIES GRID -->
                 <?php if (!empty($productCategories)): ?>
-                <section id="productCategoriesSection" class="mb-12">
-                    <h2 class="text-lg sm:text-xl font-semibold mb-4">Product Categories</h2>
-                    <div id="productCategoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                        <?php foreach ($productCategories as $cat): ?>
-                            <a href="marketplace?category=<?php echo urlencode($cat['name'] == 'All' ? '' : $cat['name']); ?>"
-                                class="product-category-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition group"
-                                data-name="<?php echo htmlspecialchars($cat['name']); ?>"
-                                data-tags="<?php echo htmlspecialchars(implode(' ', $cat['tags'])); ?>">
-                                <!-- Top: label + product count -->
-                                <div class="flex items-start justify-between gap-3">
-                                    <div>
-                                        <h2 class="text-sm sm:text-base font-semibold">
-                                            <?php echo htmlspecialchars($cat['name']); ?>
-                                        </h2>
-                                        <p class="text-[11px] sm:text-xs text-gray-400">
-                                            <?php echo htmlspecialchars($cat['short']); ?>
-                                        </p>
-                                    </div>
-                                    <span class="text-[11px] sm:text-xs px-2 py-1 rounded-full bg-white/5 text-gray-300">
-                                        <?php echo (int) $cat['product_count']; ?> items
-                                    </span>
-                                </div>
-
-                                <!-- Image thumbnail -->
-                                <div class="mt-2 aspect-[5/2] rounded-xl overflow-hidden category-image"
-                                     style="background-image: url('<?php echo htmlspecialchars($cat['image']); ?>')">
-                                    <div class="h-full flex items-center justify-center category-image-content p-4">
-                                        <div class="text-center">
-                                            <p class="text-[11px] font-medium">
-                                                Discover products from local Nigerian brands in
-                                                <span class="font-bold"><?php echo htmlspecialchars($cat['name']); ?></span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Tags -->
-                                <?php if (!empty($cat['tags'])): ?>
-                                    <div class="flex flex-wrap gap-1.5 mt-2">
-                                        <?php foreach ($cat['tags'] as $tag): ?>
-                                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-300">
-                                                <?php echo htmlspecialchars($tag); ?>
-                                            </span>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
-
-                                <!-- CTA -->
-                                <div class="mt-3 flex items-center justify-between text-[11px]">
-                                    <span class="text-orange-300 group-hover:text-orange-400 transition">Browse products</span>
-                                    <span class="text-orange-300 group-hover:text-orange-400 transition">→</span>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-                <?php endif; ?>
-
-                <!-- BRAND CATEGORIES GRID -->
-                <?php if (!empty($brandCategories)): ?>
-                <section id="brandCategoriesSection" class="mt-8 sm:mt-10 border-t border-white/10 pt-6 sm:pt-8">
-                    <div class="max-w-6xl mx-auto">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h2 class="text-lg sm:text-xl font-semibold">Browse Brands by Category</h2>
-                                <p class="text-[11px] sm:text-xs text-gray-400 mt-1">
-                                    Discover Nigerian brands organized by their specialties
-                                </p>
-                            </div>
-                            <a href="brands_page" class="text-xs text-orange-400 hover:underline">
-                                View all brands
-                            </a>
-                        </div>
-
-                        <!-- Brand Categories Grid -->
-                        <div id="brandCategoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                            <?php foreach ($brandCategories as $cat): ?>
-                                <a href="brands_page?category=<?php echo urlencode($cat['name']); ?>"
-                                    class="brand-category-card bg-[#111111] border border-white/10 hover:border-orange-500/70 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition group"
+                    <section id="productCategoriesSection" class="mb-12">
+                        <h2 class="text-lg sm:text-xl font-bold mb-6 text-brand-forest flex items-center gap-2">
+                            Product Categories
+                            <span class="h-px flex-1 bg-brand-forest/10 ml-2"></span>
+                        </h2>
+                        <div id="productCategoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <?php foreach ($productCategories as $cat): ?>
+                                <a href="marketplace?category=<?php echo urlencode($cat['name'] == 'All' ? '' : $cat['name']); ?>"
+                                    class="product-category-card bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-3xl p-5 flex flex-col gap-4 transition-all shadow-sm hover:shadow-xl group"
                                     data-name="<?php echo htmlspecialchars($cat['name']); ?>"
                                     data-tags="<?php echo htmlspecialchars(implode(' ', $cat['tags'])); ?>">
-                                    <!-- Top: label + brand count -->
+                                    <!-- Top: label + product count -->
                                     <div class="flex items-start justify-between gap-3">
-                                        <div>
-                                            <h2 class="text-sm sm:text-base font-semibold">
+                                        <div class="flex-1">
+                                            <h3
+                                                class="text-base sm:text-lg font-bold text-brand-forest group-hover:text-brand-orange transition-colors">
                                                 <?php echo htmlspecialchars($cat['name']); ?>
-                                            </h2>
-                                            <p class="text-[11px] sm:text-xs text-gray-400">
+                                            </h3>
+                                            <p class="text-[11px] sm:text-xs text-brand-ink/50 mt-0.5">
                                                 <?php echo htmlspecialchars($cat['short']); ?>
                                             </p>
                                         </div>
-                                        <span class="text-[11px] sm:text-xs px-2 py-1 rounded-full bg-white/5 text-gray-300">
-                                            <?php echo (int) $cat['brand_count']; ?> brands
+                                        <span
+                                            class="text-[10px] font-bold px-2 py-1 rounded-full bg-brand-forest/5 text-brand-forest">
+                                            <?php echo (int) $cat['product_count']; ?>
                                         </span>
                                     </div>
 
                                     <!-- Image thumbnail -->
-                                    <div class="mt-2 aspect-[5/2] rounded-xl overflow-hidden category-image"
-                                         style="background-image: url('<?php echo htmlspecialchars($cat['image']); ?>')">
-                                        <div class="h-full flex items-center justify-center category-image-content p-4">
-                                            <div class="text-center">
-                                                <p class="text-[11px] font-medium">
-                                                    Discover local Nigerian brands in
-                                                    <span class="font-bold"><?php echo htmlspecialchars($cat['name']); ?></span>
-                                                </p>
-                                            </div>
+                                    <div class="aspect-[5/2.5] rounded-2xl overflow-hidden category-image border border-brand-forest/5"
+                                        style="background-image: url('<?php echo htmlspecialchars($cat['image']); ?>')">
+                                        <div
+                                            class="h-full flex items-center justify-center category-image-content p-4 text-center">
+                                            <p
+                                                class="text-[11px] font-bold px-3 py-1.5 bg-brand-forest/40 backdrop-blur-sm rounded-full border border-white/20">
+                                                Explore <?php echo htmlspecialchars($cat['name']); ?>
+                                            </p>
                                         </div>
                                     </div>
 
                                     <!-- Tags -->
                                     <?php if (!empty($cat['tags'])): ?>
-                                        <div class="flex flex-wrap gap-1.5 mt-2">
+                                        <div class="flex flex-wrap gap-2">
                                             <?php foreach ($cat['tags'] as $tag): ?>
-                                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-300">
-                                                    <?php echo htmlspecialchars($tag); ?>
+                                                <span
+                                                    class="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-brand-parchment text-brand-forest border border-brand-forest/5">
+                                                    #<?php echo htmlspecialchars($tag); ?>
                                                 </span>
                                             <?php endforeach; ?>
                                         </div>
                                     <?php endif; ?>
 
                                     <!-- CTA -->
-                                    <div class="mt-3 flex items-center justify-between text-[11px]">
-                                        <span class="text-orange-300 group-hover:text-orange-400 transition">Browse brands</span>
-                                        <span class="text-orange-300 group-hover:text-orange-400 transition">→</span>
+                                    <div
+                                        class="mt-auto pt-4 border-t border-brand-forest/5 flex items-center justify-between text-[11px] font-bold text-brand-orange">
+                                        <span>Browse Collection</span>
+                                        <span
+                                            class="w-6 h-6 rounded-full bg-brand-orange/10 flex items-center justify-center group-hover:bg-brand-orange group-hover:text-white transition-all">→</span>
                                     </div>
                                 </a>
                             <?php endforeach; ?>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                <?php endif; ?>
+
+                <?php if (!empty($brandCategories)): ?>
+                    <section id="brandCategoriesSection" class="mt-12 pt-10 border-t border-brand-forest/10">
+                        <div class="max-w-6xl mx-auto">
+                            <div class="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 class="text-lg sm:text-xl font-bold text-brand-forest">Browse Brands by Category
+                                    </h2>
+                                    <p class="text-[11px] sm:text-xs text-brand-ink/50 mt-1">
+                                        Discover curated Nigerian businesses organized by their craft
+                                    </p>
+                                </div>
+                                <a href="brands_page"
+                                    class="text-xs font-bold text-brand-orange hover:underline uppercase tracking-wider">
+                                    View all brands
+                                </a>
+                            </div>
+
+                            <!-- Brand Categories Grid -->
+                            <div id="brandCategoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <?php foreach ($brandCategories as $cat): ?>
+                                    <a href="brands_page?category=<?php echo urlencode($cat['name'] == 'All' ? '' : $cat['name']); ?>"
+                                        class="brand-category-card bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-3xl p-5 flex flex-col gap-4 transition-all shadow-sm hover:shadow-xl group"
+                                        data-name="<?php echo htmlspecialchars($cat['name']); ?>"
+                                        data-tags="<?php echo htmlspecialchars(implode(' ', $cat['tags'])); ?>">
+                                        <!-- Top: label + brand count -->
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex-1">
+                                                <h3
+                                                    class="text-base sm:text-lg font-bold text-brand-forest group-hover:text-brand-orange transition-colors">
+                                                    <?php echo htmlspecialchars($cat['name']); ?>
+                                                </h3>
+                                                <p class="text-[11px] sm:text-xs text-brand-ink/50 mt-0.5">
+                                                    <?php echo htmlspecialchars($cat['short']); ?>
+                                                </p>
+                                            </div>
+                                            <span
+                                                class="text-[10px] font-bold px-2 py-1 rounded-full bg-brand-forest/5 text-brand-forest">
+                                                <?php echo (int) $cat['brand_count']; ?>
+                                            </span>
+                                        </div>
+
+                                        <!-- Image thumbnail -->
+                                        <div class="aspect-[5/2.5] rounded-2xl overflow-hidden category-image border border-brand-forest/5"
+                                            style="background-image: url('<?php echo htmlspecialchars($cat['image']); ?>')">
+                                            <div
+                                                class="h-full flex items-center justify-center category-image-content p-4 text-center">
+                                                <p
+                                                    class="text-[11px] font-bold px-3 py-1.5 bg-brand-forest/40 backdrop-blur-sm rounded-full border border-white/20">
+                                                    Local <?php echo htmlspecialchars($cat['name']); ?> Brands
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- CTA -->
+                                        <div
+                                            class="mt-auto pt-4 border-t border-brand-forest/5 flex items-center justify-between text-[11px] font-bold text-brand-orange">
+                                            <span>Explore Brands</span>
+                                            <span
+                                                class="w-6 h-6 rounded-full bg-brand-orange/10 flex items-center justify-center group-hover:bg-brand-orange group-hover:text-white transition-all">→</span>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </section>
                 <?php endif; ?>
 
                 <?php if (empty($productCategories) && empty($brandCategories)): ?>
-                <section class="text-center py-12">
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-8 sm:p-12">
-                        <div class="text-4xl mb-4">📦</div>
-                        <h3 class="text-lg sm:text-xl font-semibold mb-2">No categories available</h3>
-                        <p class="text-sm text-gray-400 mb-6">There are no active categories in the marketplace yet.</p>
-                        <a href="marketplace" class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full text-sm font-medium transition">
-                            Browse all products
-                        </a>
-                    </div>
-                </section>
+                    <section class="text-center py-20">
+                        <div class="bg-white border border-brand-forest/5 rounded-3xl p-8 sm:p-12 shadow-sm">
+                            <div class="text-5xl mb-6">📦</div>
+                            <h3 class="text-lg sm:text-xl font-bold mb-3 text-brand-forest">No collections found</h3>
+                            <p class="text-sm text-brand-ink/50 mb-8 max-w-sm mx-auto">We couldn't find any active
+                                categories at the moment. Please check back later.</p>
+                            <a href="marketplace"
+                                class="inline-block bg-brand-orange text-white px-8 py-3 rounded-full text-sm font-bold shadow-lg shadow-brand-orange/20 transition-all hover:scale-[1.02]">
+                                Browse Marketplace
+                            </a>
+                        </div>
+                    </section>
                 <?php endif; ?>
             </div>
         </main>
 
         <!-- FOOTER -->
-        <footer class="border-t border-white/10 bg-black mt-6">
+        <footer class="border-t border-brand-forest/10 bg-brand-cream/30 mt-12 py-8">
             <div
-                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-xs text-gray-400 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-brand-ink/50 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <p>© <span id="year"></span> LocalTrade. All rights reserved.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="hover:text-orange-400">Privacy</a>
-                    <a href="#" class="hover:text-orange-400">Terms</a>
-                    <a href="#" class="hover:text-orange-400">Support</a>
+                <div class="flex gap-6 font-medium">
+                    <a href="#" class="hover:text-brand-orange transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Terms</a>
+                    <a href="#" class="hover:text-brand-orange transition-colors">Support</a>
                 </div>
             </div>
         </footer>
@@ -450,7 +474,7 @@ if (isset($conn) && $conn) {
         document.getElementById('year').textContent = new Date().getFullYear();
 
         const searchInput = document.getElementById('categorySearch');
-        
+
         function applyCategoryFilter() {
             const term = (searchInput.value || '').toLowerCase().trim();
             let visibleProductCategories = 0;
@@ -489,7 +513,7 @@ if (isset($conn) && $conn) {
             // Show/hide section headers based on visibility
             const productSection = document.getElementById('productCategoriesSection');
             const brandSection = document.getElementById('brandCategoriesSection');
-            
+
             if (productSection) {
                 if (visibleProductCategories === 0) {
                     productSection.classList.add('hidden');
@@ -497,7 +521,7 @@ if (isset($conn) && $conn) {
                     productSection.classList.remove('hidden');
                 }
             }
-            
+
             if (brandSection) {
                 if (visibleBrandCategories === 0) {
                     brandSection.classList.add('hidden');
@@ -515,7 +539,7 @@ if (isset($conn) && $conn) {
 
         if (searchInput) {
             searchInput.addEventListener('input', applyCategoryFilter);
-            
+
             // Initialize the filter on page load
             applyCategoryFilter();
         }

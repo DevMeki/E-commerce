@@ -54,15 +54,24 @@ $defaultShipping = $brandData['location'] ?? '';
     <title><?= $isEdit ? 'Edit Product' : 'Add Product' ?> | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --lt-orange: #F36A1D;
-            --lt-black: #0D0D0D;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-forest': '#1E3932',
+                        'brand-orange': '#F36A1D',
+                        'brand-parchment': '#FCFBF7',
+                        'brand-ink': '#1A1A1A',
+                        'brand-cream': '#F3F0E6',
+                    }
+                }
+            }
         }
-    </style>
+    </script>
 </head>
 
-<body class="bg-[#0D0D0D] text-white min-h-screen flex flex-col">
+<body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">
 
     <!-- HEADER -->
     <?php
@@ -76,12 +85,14 @@ $defaultShipping = $brandData['location'] ?? '';
             <!-- Title row -->
             <div class="flex items-center justify-between mb-5 sm:mb-7">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-semibold"><?= $isEdit ? 'Edit product' : 'Add new product' ?></h1>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1">
+                    <h1 class="text-xl sm:text-2xl font-semibold text-brand-forest">
+                        <?= $isEdit ? 'Edit product' : 'Add new product' ?>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-brand-ink/50 mt-1">
                         <?= $isEdit ? 'Update your product details and availability.' : 'Create a new product listing for your LocalTrade store.' ?>
                     </p>
                 </div>
-                <a href="products" class="text-xs text-gray-300 hover:text-orange-400">
+                <a href="products" class="text-xs text-brand-ink/60 hover:text-brand-orange transition-colors">
                     ← Back to Products
                 </a>
             </div>
@@ -102,37 +113,41 @@ $defaultShipping = $brandData['location'] ?? '';
                 <!-- LEFT: Product details -->
                 <section class="space-y-5">
                     <!-- Basic info -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4 text-sm">
-                        <h2 class="text-sm font-semibold mb-1">Product details</h2>
+                    <div
+                        class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 space-y-4 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-1 text-brand-forest">Product details</h2>
 
                         <div>
-                            <label class="block text-xs mb-1">Product name *</label>
+                            <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Product name *</label>
                             <input type="text" name="name" required
                                 value="<?= htmlspecialchars($productData['name'] ?? $_POST['name'] ?? '') ?>"
-                                class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                 placeholder="e.g. Ankara Panel Hoodie">
                         </div>
 
                         <div>
-                            <label class="block text-xs mb-1">Product URL slug (optional)</label>
+                            <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Product URL slug
+                                (optional)</label>
                             <div class="flex items-center gap-2 text-xs">
-                                <span class="bg-[#0B0B0B] border border-white/20 rounded-xl px-2 py-2 text-gray-500">
+                                <span
+                                    class="bg-brand-parchment border border-brand-forest/10 rounded-xl px-2 py-2 text-brand-ink/40">
                                     localtrade.ng/product/
                                 </span>
-                                <input type="text" name="slug" value="<?= htmlspecialchars($productData['slug'] ?? $_POST['slug'] ?? '') ?>"
-                                    class="flex-1 bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                <input type="text" name="slug"
+                                    value="<?= htmlspecialchars($productData['slug'] ?? $_POST['slug'] ?? '') ?>"
+                                    class="flex-1 bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="ankara-panel-hoodie">
                             </div>
-                            <p class="mt-1 text-[10px] text-gray-500">
+                            <p class="mt-1 text-[10px] text-brand-ink/40">
                                 Only letters, numbers and hyphens. Leave blank to auto-generate.
                             </p>
                         </div>
 
                         <div class="grid sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs mb-1">Category *</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Category *</label>
                                 <select name="category" id="categorySelect" required
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink focus:outline-none focus:ring-1 focus:ring-brand-orange">
                                     <option value="">Select a category</option>
                                     <?php
                                     $categories = [
@@ -202,57 +217,61 @@ $defaultShipping = $brandData['location'] ?? '';
                             </div>
 
                             <div>
-                                <label class="block text-xs mb-1">SKU (optional)</label>
-                                <input type="text" name="sku" value="<?= htmlspecialchars($productData['sku'] ?? $_POST['sku'] ?? '') ?>"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">SKU (optional)</label>
+                                <input type="text" name="sku"
+                                    value="<?= htmlspecialchars($productData['sku'] ?? $_POST['sku'] ?? '') ?>"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="Internal stock code">
                             </div>
                         </div>
                     </div>
 
                     <!-- Pricing / inventory -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4 text-sm">
-                        <h2 class="text-sm font-semibold mb-1">Pricing & inventory</h2>
+                    <div
+                        class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 space-y-4 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-1 text-brand-forest">Pricing & inventory</h2>
 
                         <div class="grid sm:grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs mb-1">Price (₦) *</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Price (₦) *</label>
                                 <input type="number" name="price" required min="0" step="0.01"
                                     value="<?= htmlspecialchars($productData['price'] ?? $_POST['price'] ?? '') ?>"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="18500">
                             </div>
                             <div>
-                                <label class="block text-xs mb-1">Compare at price (optional)</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Compare at price
+                                    (optional)</label>
                                 <input type="number" name="compare_at_price" min="0" step="0.01"
                                     value="<?= htmlspecialchars($productData['compare_at_price'] ?? $_POST['compare_at_price'] ?? '') ?>"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="e.g. 22000">
                             </div>
                             <div>
-                                <label class="block text-xs mb-1">Stock *</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Stock *</label>
                                 <input type="number" name="stock" required min="0"
                                     value="<?= htmlspecialchars($productData['stock'] ?? $_POST['stock'] ?? '') ?>"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="e.g. 25">
                             </div>
                         </div>
 
                         <div class="grid sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs mb-1">Status</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Status</label>
                                 <select name="status"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink focus:outline-none focus:ring-1 focus:ring-brand-orange">
                                     <option value="active" <?= ($productData['status'] ?? $_POST['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>Active</option>
                                     <option value="draft" <?= ($productData['status'] ?? $_POST['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                                     <option value="archived" <?= ($productData['status'] ?? $_POST['status'] ?? '') === 'archived' ? 'selected' : '' ?>>Archived</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs mb-1">Visibility</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Visibility</label>
                                 <select name="visibility"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-                                    <option value="public" <?= ($productData['visibility'] ?? $_POST['visibility'] ?? 'public') === 'public' ? 'selected' : '' ?>>Public (visible in marketplace)</option>
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-xs text-brand-ink focus:outline-none focus:ring-1 focus:ring-brand-orange">
+                                    <option value="public" <?= ($productData['visibility'] ?? $_POST['visibility'] ?? 'public') === 'public' ? 'selected' : '' ?>>Public (visible in marketplace)
+                                    </option>
                                     <option value="private" <?= ($productData['visibility'] ?? $_POST['visibility'] ?? '') === 'private' ? 'selected' : '' ?>>Private (only via direct link)</option>
                                 </select>
                             </div>
@@ -260,53 +279,57 @@ $defaultShipping = $brandData['location'] ?? '';
                     </div>
 
                     <!-- Descriptions -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4 text-sm">
-                        <h2 class="text-sm font-semibold mb-1">Descriptions</h2>
+                    <div
+                        class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 space-y-4 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-1 text-brand-forest">Descriptions</h2>
 
                         <div>
-                            <label class="block text-xs mb-1">Short description *</label>
+                            <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Short description *</label>
                             <textarea name="short_desc" rows="2" required
-                                class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                 placeholder="One or two lines that summarise the product..."><?= htmlspecialchars($productData['short_desc'] ?? $_POST['short_desc'] ?? '') ?></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-xs mb-1">Detailed description</label>
+                            <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Detailed description</label>
                             <textarea name="long_desc" rows="5"
-                                class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                 placeholder="Materials, sizing, care instructions, what makes it unique..."><?= htmlspecialchars($productData['long_desc'] ?? $_POST['long_desc'] ?? '') ?></textarea>
-                            <p class="mt-1 text-[10px] text-gray-500">
+                            <p class="mt-1 text-[10px] text-brand-ink/40">
                                 Use short paragraphs and bullet points for readability.
                             </p>
                         </div>
                     </div>
 
                     <!-- Shipping -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4 text-sm">
-                        <h2 class="text-sm font-semibold mb-1">Shipping</h2>
+                    <div
+                        class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 space-y-4 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-1 text-brand-forest">Shipping</h2>
 
                         <div class="grid sm:grid-cols-3 gap-3">
                             <div class="sm:col-span-2">
-                                <label class="block text-xs mb-1">Ships from *</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Ships from *</label>
                                 <input type="text" name="ships_from" required
                                     value="<?= htmlspecialchars($productData['ships_from'] ?? $_POST['ships_from'] ?? $defaultShipping) ?>"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="e.g. Lagos, Nigeria">
                             </div>
                             <div>
-                                <label class="block text-xs mb-1">Base shipping fee (₦)</label>
+                                <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Base shipping fee
+                                    (₦)</label>
                                 <input type="number" name="shipping_fee" min="0" step="0.01"
                                     value="<?= htmlspecialchars($productData['shipping_fee'] ?? $_POST['shipping_fee'] ?? '') ?>"
-                                    class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                     placeholder="e.g. 2500">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs mb-1">Processing time (optional)</label>
+                            <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Processing time
+                                (optional)</label>
                             <input type="text" name="processing_time"
                                 value="<?= htmlspecialchars($productData['processing_time'] ?? $_POST['processing_time'] ?? '') ?>"
-                                class="w-full sm:w-64 bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                class="w-full sm:w-64 bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                                 placeholder="e.g. 2–4 business days">
                         </div>
                     </div>
@@ -315,37 +338,39 @@ $defaultShipping = $brandData['location'] ?? '';
                 <!-- RIGHT: Images, variants, actions -->
                 <aside class="space-y-5">
                     <!-- Images -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 text-sm">
-                        <h2 class="text-sm font-semibold mb-2">Product images</h2>
-                        <p class="text-[11px] text-gray-400 mb-3">
+                    <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-2 text-brand-forest">Product images</h2>
+                        <p class="text-[11px] text-brand-ink/40 mb-3">
                             Upload at least one clear photo. Add more angles if possible.
                         </p>
 
                         <!-- Main image preview -->
                         <div class="flex flex-col gap-3">
                             <div id="mainImagePreview"
-                                class="w-full aspect-[4/3] rounded-2xl bg-[#0B0B0B] border border-white/20 flex items-center justify-center text-[11px] text-gray-400 overflow-hidden"
+                                class="w-full aspect-[4/3] rounded-2xl bg-brand-parchment border border-brand-forest/10 flex items-center justify-center text-[11px] text-brand-ink/40 overflow-hidden"
                                 style="<?= $isEdit && !empty($productData['main_image']) ? "background-image: url('../{$productData['main_image']}'); background-size: cover; background-position: center;" : "border-style: dashed;" ?>">
                                 <?= $isEdit && !empty($productData['main_image']) ? '' : 'Main image preview' ?>
                             </div>
                             <input type="file" id="mainImageInput" name="main_image" accept="image/*" <?= $isEdit ? '' : 'required' ?>
-                                class="block w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-orange-500 file:text-black hover:file:bg-orange-400">
+                                class="block w-full text-xs text-brand-ink/40 file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-orange file:text-white hover:file:bg-brand-orange/90 cursor-pointer">
                         </div>
 
                         <!-- Gallery images -->
                         <div class="mt-4">
-                            <label class="block text-xs mb-1">Additional images (optional)</label>
+                            <label class="block text-xs mb-1 text-brand-ink/70 font-medium">Additional images
+                                (optional)</label>
                             <input type="file" id="galleryInput" name="gallery[]" accept="image/*" multiple
-                                class="block w-full text-xs text-gray-300 file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-orange-500 file:text-black hover:file:bg-orange-400">
-                            <p class="mt-1 text-[10px] text-gray-500">
+                                class="block w-full text-xs text-brand-ink/40 file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-orange file:text-white hover:file:bg-brand-orange/90 cursor-pointer">
+                            <p class="mt-1 text-[10px] text-brand-ink/40">
                                 You can upload up to 8 additional images.
                             </p>
                             <div id="existingGalleryPreview" class="mt-2 grid grid-cols-4 gap-2">
                                 <?php foreach ($galleryImages as $img): ?>
-                                    <div id="gallery-img-<?= $img['id'] ?>" class="relative w-full aspect-square rounded-xl overflow-hidden bg-[#0B0B0B] border border-white/10">
+                                    <div id="gallery-img-<?= $img['id'] ?>"
+                                        class="relative w-full aspect-square rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/10">
                                         <img src="../<?= $img['image_url'] ?>" class="w-full h-full object-cover">
                                         <button type="button" onclick="deleteExistingImage(<?= $img['id'] ?>)"
-                                            class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/80 text-white text-sm flex items-center justify-center border border-white/40 hover:bg-red-600 hover:border-red-400 transition-colors">
+                                            class="absolute top-1 right-1 w-6 h-6 rounded-full bg-brand-forest/80 text-white text-sm flex items-center justify-center border border-white/20 hover:bg-red-600 transition-colors">
                                             ×
                                         </button>
                                     </div>
@@ -356,67 +381,65 @@ $defaultShipping = $brandData['location'] ?? '';
 
                         <script>
                             async function deleteExistingImage(imgId) {
-                                showModal({
-                                    title: 'Confirm Delete',
-                                    message: 'Are you sure you want to delete this gallery image?',
-                                    onConfirm: async () => {
-                                        try {
-                                            const formData = new FormData();
-                                            formData.append('image_id', imgId);
-                                            formData.append('action', 'delete_image');
-                                            
-                                            const response = await fetch('process/process-product-action.php', {
-                                                method: 'POST',
-                                                body: formData
-                                            });
-                                            const data = await response.json();
-                                            
-                                            if (data.success) {
-                                                const el = document.getElementById(`gallery-img-${imgId}`);
-                                                if (el) el.remove();
-                                            } else {
-                                                showModal({ title: 'Error', message: data.message || 'Failed to delete image.', type: 'error' });
-                                            }
-                                        } catch (error) {
-                                            showModal({ title: 'Error', message: 'Error connecting to server.', type: 'error' });
+                                if (confirm('Are you sure you want to delete this gallery image?')) {
+                                    try {
+                                        const formData = new FormData();
+                                        formData.append('image_id', imgId);
+                                        formData.append('action', 'delete_image');
+
+                                        const response = await fetch('process/process-product-action.php', {
+                                            method: 'POST',
+                                            body: formData
+                                        });
+                                        const data = await response.json();
+
+                                        if (data.success) {
+                                            const el = document.getElementById(`gallery-img-${imgId}`);
+                                            if (el) el.remove();
+                                        } else {
+                                            alert(data.message || 'Failed to delete image.');
                                         }
+                                    } catch (error) {
+                                        alert('Error connecting to server.');
                                     }
-                                });
+                                }
                             }
                         </script>
                     </div>
 
                     <!-- Variants -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 text-sm">
-                        <h2 class="text-sm font-semibold mb-2">Variants (optional)</h2>
-                        <p class="text-[11px] text-gray-400 mb-3">
+                    <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-2 text-brand-forest">Variants (optional)</h2>
+                        <p class="text-[11px] text-brand-ink/40 mb-3">
                             Use this field to note sizes, colours, etc.
                         </p>
                         <textarea name="variants_text" rows="3"
-                            class="w-full bg-[#0B0B0B] border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            class="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-3 py-2 text-sm text-brand-ink placeholder-brand-ink/40 focus:outline-none focus:ring-1 focus:ring-brand-orange"
                             placeholder="e.g. Sizes: S, M, L, XL · Colours: Black, White, Orange"><?= htmlspecialchars($productData['variants_text'] ?? $_POST['variants_text'] ?? '') ?></textarea>
                     </div>
 
                     <!-- Submit -->
-                    <div class="bg-[#111111] border border-white/10 rounded-2xl p-4 sm:p-5 text-sm">
-                        <h2 class="text-sm font-semibold mb-2"><?= $isEdit ? 'Update product' : 'Save product' ?></h2>
-                        <p class="text-[11px] text-gray-400 mb-3">
+                    <div class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 sm:p-5 text-sm shadow-sm">
+                        <h2 class="text-sm font-semibold mb-2 text-brand-forest">
+                            <?= $isEdit ? 'Update product' : 'Save product' ?>
+                        </h2>
+                        <p class="text-[11px] text-brand-ink/40 mb-3">
                             <?= $isEdit ? 'Save your changes to update the live product.' : 'You can always edit this product later from your dashboard.' ?>
                         </p>
 
                         <div class="flex flex-col gap-2">
                             <button type="submit" id="submitBtn"
-                                class="w-full px-4 py-2.5 rounded-full text-sm font-semibold bg-orange-500 text-black hover:bg-orange-600">
+                                class="w-full px-4 py-2.5 rounded-full text-sm font-bold bg-brand-orange text-white hover:bg-brand-orange/90 shadow-sm shadow-brand-orange/20 transition-all">
                                 <?= $isEdit ? 'Save changes' : 'Publish product' ?>
                             </button>
                             <button type="button" id="draftBtn"
-                                class="w-full px-4 py-2.5 rounded-full text-sm font-semibold bg-[#0B0B0B] border border-white/15 hover:border-orange-400">
+                                class="w-full px-4 py-2.5 rounded-full text-sm font-semibold bg-white border border-brand-forest/10 text-brand-forest hover:border-brand-orange transition-all">
                                 Save as draft
                             </button>
                         </div>
 
-                        <p class="mt-3 text-[10px] text-gray-500">
-                            Products marked as <span class="text-gray-300 font-semibold">Draft</span> will not be
+                        <p class="mt-3 text-[10px] text-brand-ink/40">
+                            Products marked as <span class="text-brand-forest font-semibold">Draft</span> will not be
                             visible in the marketplace.
                         </p>
                     </div>
