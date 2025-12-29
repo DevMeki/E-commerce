@@ -344,7 +344,7 @@
                             class="px-8 py-3 rounded-full text-sm font-bold bg-brand-orange text-white hover:opacity-90 transition-all shadow-lg shadow-brand-orange/20">
                             Start selling
                         </a>
-                        <a href="Brands/brand-help.php">
+                        <a href="help">
                             <button
                                 class="px-8 py-3 rounded-full text-sm border border-white/30 hover:bg-white/10 transition-colors font-medium">
                                 Learn how it works
