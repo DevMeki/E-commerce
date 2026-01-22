@@ -21,12 +21,7 @@ $currentUser = $_SESSION['user'] ?? null;
 
                 <!-- Logo -->
                 <a href="index" class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-lg flex items-center justify-center shadow-md bg-brand-parchment">
-                        <div class="w-4 h-3 border-2 border-brand-forest border-b-0 rounded-sm relative">
-                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 left-0.5"></span>
-                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 right-0.5"></span>
-                        </div>
-                    </div>
+                    <img src="./Assets/LocalTrade/logo dark.png" alt="LocalTrade Logo" class="w-8 h-8 object-contain" />
                     <span class="font-bold tracking-tight text-xl text-white">
                         LocalTrade
                     </span>
@@ -41,35 +36,35 @@ $currentUser = $_SESSION['user'] ?? null;
                     <!-- Home -->
                     <a href="index" class="<?= $currentPage === 'home'
                         ? 'text-white font-bold border-b-2 border-brand-orange py-1'
-                        : 'text-white/70 hover:text-white font-medium transition-colors'; ?>">
+                        : 'text-white/70 hover:text-white font-normal transition-colors'; ?>">
                         Home
                     </a>
 
                     <!-- Marketplace -->
                     <a href="marketplace" class="<?= $currentPage === 'marketplace'
                         ? 'text-white font-bold border-b-2 border-brand-orange py-1'
-                        : 'text-white/70 hover:text-white font-medium transition-colors'; ?>">
+                        : 'text-white/70 hover:text-white font-normal transition-colors'; ?>">
                         Marketplace
                     </a>
 
                     <!-- Categories -->
                     <a href="categories" class="<?= $currentPage === 'categories'
                         ? 'text-white font-bold border-b-2 border-brand-orange py-1'
-                        : 'text-white/70 hover:text-white font-medium transition-colors'; ?>">
+                        : 'text-white/70 hover:text-white transition-colors'; ?>">
                         Categories
                     </a>
 
                     <!-- Brands -->
                     <a href="brands_page" class="<?= $currentPage === 'brands_page'
                         ? 'text-white font-bold border-b-2 border-brand-orange py-1'
-                        : 'text-white/70 hover:text-white font-medium transition-colors'; ?>">
+                        : 'text-white/70 hover:text-white font-normal transition-colors'; ?>">
                         Brands
                     </a>
 
                     <!-- Help -->
                     <a href="help" class="<?= $currentPage === 'help'
                         ? 'text-white font-bold border-b-2 border-brand-orange py-1'
-                        : 'text-white/40 hover:text-white font-medium transition-colors'; ?>">
+                        : 'text-white/40 hover:text-white font-normal transition-colors'; ?>">
                         Help
                     </a>
                 </nav>

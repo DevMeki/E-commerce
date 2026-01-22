@@ -50,23 +50,8 @@ $currency = '₦';
     <meta charset="UTF-8">
     <title>Marketplace | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./style.css" rel="stylesheet">
+
     <style>
         :root {
             --lt-forest: #1E3932;
@@ -195,7 +180,7 @@ $currency = '₦';
                                     data-price="<?php echo (int) $p['price']; ?>">
                                     <!-- Image wrapper -->
                                     <div
-                                        class="aspect-[4/3] rounded-xl bg-brand-parchment flex items-center justify-center text-[11px] text-center px-2 overflow-hidden border border-brand-forest/5">
+                                        class="aspect-4/3 rounded-xl bg-brand-parchment flex items-center justify-center text-[11px] text-center px-2 overflow-hidden border border-brand-forest/5">
                                         <?php if (!empty($p['main_image'])): ?>
                                             <img src="<?php echo htmlspecialchars($p['main_image']); ?>"
                                                 alt="<?php echo htmlspecialchars($p['name']); ?>"

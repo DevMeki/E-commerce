@@ -15,12 +15,8 @@ $config = file_exists($brandConfigPath) ? include $brandConfigPath : [];
             <!-- LEFT: Logo -->
             <div class="flex items-center gap-4">
                 <a href="brand-dashboard" class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-lg flex items-center justify-center shadow-md bg-brand-parchment">
-                        <div class="w-4 h-3 border-2 border-brand-forest border-b-0 rounded-sm relative">
-                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 left-0.5"></span>
-                            <span class="w-1 h-1 bg-brand-forest rounded-full absolute -bottom-1 right-0.5"></span>
-                        </div>
-                    </div>
+                    <img src="../Assets/LocalTrade/logo dark.png" alt="LocalTrade Logo"
+                        class="w-8 h-8 object-contain" />
                     <div class="flex flex-col leading-none">
                         <span class="font-bold tracking-tight text-xl text-white">
                             LocalTrade

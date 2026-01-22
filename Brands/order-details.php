@@ -15,7 +15,7 @@ $orders = [
         'when_label' => '2h ago',
         'total' => 18500,
         'subtotal' => 16000,
-        'shipping' => 2500,
+        'shipping_cost' => 2500,
         'payment' => [
             'method' => 'Card',
             'reference' => 'PAY-9XK12345',
@@ -57,7 +57,7 @@ $orders = [
         'when_label' => '5h ago',
         'total' => 7500,
         'subtotal' => 6000,
-        'shipping' => 1500,
+        'shipping_cost' => 1500,
         'payment' => [
             'method' => 'Card',
             'reference' => 'PAY-ABCD5678',
@@ -159,23 +159,8 @@ function statusBadgeClass(string $status): string
     <meta charset="UTF-8">
     <title>Order Details | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-   <script>
-         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="../style.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">
@@ -462,13 +447,13 @@ function statusBadgeClass(string $status): string
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-separate border-spacing-y-2.5">
-                            <thead class="text-[10px] text-brand-ink/40 uppercase tracking-[0.1em] font-bold">
+                            <thead class="text-[10px] text-brand-ink/40 uppercase tracking-widest font-bold">
                                 <tr>
                                     <th class="text-left pr-3 pb-2 pl-2">Product</th>
                                     <th class="text-left pr-3 pb-2">Variant</th>
                                     <th class="text-left pr-3 pb-2">Qty</th>
                                     <th class="text-left pr-3 pb-2">Unit price</th>
-                                    <th class="text-left pb-2 pr-2 text-right">Subtotal</th>
+                                    <th class="pb-2 pr-2 text-right">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>

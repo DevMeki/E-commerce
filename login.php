@@ -10,23 +10,8 @@ ini_set('display_errors', 1);
     <meta charset="UTF-8">
     <title>Login | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./style.css" rel="stylesheet">
+
     <style>
         :root {
             --lt-forest: #1E3932;

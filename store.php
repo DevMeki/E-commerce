@@ -138,23 +138,8 @@ if (isset($conn) && $conn instanceof mysqli) {
     <meta charset="UTF-8">
     <title><?php echo htmlspecialchars($store['name']); ?> – Store | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./style.css" rel="stylesheet">
+
     <style>
         :root {
             --lt-forest: #1E3932;
@@ -241,7 +226,7 @@ if (isset($conn) && $conn instanceof mysqli) {
                         </div>
 
                         <!-- Right: actions -->
-                        <div class="flex flex-col gap-3 min-w-[160px]">
+                        <div class="flex flex-col gap-3 min-w-40">
                             <button id="followBtn"
                                 class="w-full px-6 py-3 rounded-full font-bold text-sm transition-all shadow-lg <?php echo $isFollowing ? 'bg-brand-parchment text-brand-forest border border-brand-forest/10' : 'bg-brand-orange text-white shadow-brand-orange/20 hover:scale-[1.02]'; ?>"
                                 data-brand-id="<?php echo $store['id']; ?>">
@@ -315,7 +300,7 @@ if (isset($conn) && $conn instanceof mysqli) {
                                     data-category="<?php echo htmlspecialchars($p['category']); ?>"
                                     data-price="<?php echo (int) $p['price']; ?>">
                                     <div
-                                        class="aspect-[4/3] rounded-xl bg-brand-parchment flex items-center justify-center border border-brand-forest/5 overflow-hidden">
+                                        class="aspect-4/3 rounded-xl bg-brand-parchment flex items-center justify-center border border-brand-forest/5 overflow-hidden">
                                         <?php if (!empty($p['main_image'])): ?>
                                             <img src="<?php echo htmlspecialchars($p['main_image']); ?>"
                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />

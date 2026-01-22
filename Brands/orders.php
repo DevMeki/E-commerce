@@ -115,23 +115,8 @@ foreach ($orders as $o) {
     <meta charset="UTF-8">
     <title>Orders | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="../style.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">
@@ -198,7 +183,7 @@ foreach ($orders as $o) {
                     </div>
 
                     <!-- Search -->
-                    <div class="flex items-center gap-2 w-full md:w-auto md:min-w-[260px]">
+                    <div class="flex items-center gap-2 w-full md:w-auto md:min-w-65">
                         <input type="hidden" name="status" value="<?= htmlspecialchars($statusFilter); ?>">
                         <input type="text" name="q" value="<?= htmlspecialchars($search); ?>"
                             placeholder="Search by order ID or customer"
@@ -262,7 +247,7 @@ foreach ($orders as $o) {
 
                                         <!-- Customer -->
                                         <td class="px-3 py-2 align-top">
-                                            <div class="flex flex-col max-w-[160px] sm:max-w-[220px]">
+                                            <div class="flex flex-col max-w-40 sm:max-w-55">
                                                 <span class="text-brand-forest truncate">
                                                     <?= htmlspecialchars($order['customer']); ?>
                                                 </span>

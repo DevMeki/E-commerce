@@ -5,23 +5,8 @@
     <meta charset="UTF-8" />
     <title>LocalTrade – Buy Local. Sell Global.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./style.css" rel="stylesheet">
+
     <style>
         /* Brand helpers (optional) */
         :root {
@@ -153,7 +138,7 @@
                     </div>
 
 
-                    <div class="lg:justify-self-end w-full max-w-[400px]">
+                    <div class="lg:justify-self-end w-full max-w-100">
                         <div
                             class="bg-brand-forest border border-white/10 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-brand-forest/30">
                             <p class="text-xs text-brand-orange mb-4 font-bold uppercase tracking-[0.2em]">Trending this
@@ -164,7 +149,7 @@
                                         <a href="product?id=<?= $product['id'] ?>"
                                             class="bg-green-50 rounded-2xl p-3 flex flex-col gap-2 hover:scale-[1.02] transition-all group shadow-sm">
                                             <div
-                                                class="aspect-[4/3] rounded-xl bg-brand-forest/5 flex items-center justify-center text-[10px] font-semibold text-brand-forest/30 overflow-hidden">
+                                                class="aspect-4/3 rounded-xl bg-brand-forest/5 flex items-center justify-center text-[10px] font-semibold text-brand-forest/30 overflow-hidden">
                                                 <?php if (!empty($product['main_image'])): ?>
                                                     <img src="<?= htmlspecialchars($product['main_image']) ?>"
                                                         alt="<?= htmlspecialchars($product['name']) ?>"
@@ -221,7 +206,7 @@
                         <?php if (!empty($categories)): ?>
                             <?php foreach ($categories as $category): ?>
                                 <a href="marketplace?category=<?= urlencode($category) ?>"
-                                    class="bg-green-50 hover:bg-brand-parchment border border-brand-forest/5 rounded-2xl p-3 flex flex-col items-start gap-1 block text-left transition-all shadow-sm hover:shadow-md">
+                                    class="bg-green-50 hover:bg-brand-parchment border border-brand-forest/5 rounded-2xl p-3 flex flex-col items-start gap-1 text-left transition-all shadow-sm hover:shadow-md">
                                     <span
                                         class="text-sm font-semibold text-brand-forest"><?= htmlspecialchars($category) ?></span>
                                     <span class="text-[11px] text-brand-ink/40">Explore products</span>
@@ -253,7 +238,7 @@
                                 <a href="product?id=<?= $product['id'] ?>"
                                     class="bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-2xl p-3 sm:p-4 flex flex-col gap-2 transition-all shadow-sm hover:shadow-lg group">
                                     <div
-                                        class="aspect-[4/3] rounded-xl bg-gradient-to-br from-brand-forest/5 to-brand-orange/5
+                                        class="aspect-4/3 rounded-xl bg-linear-to-br from-brand-forest/5 to-brand-orange/5
                                     flex items-center justify-center text-[11px] font-semibold text-brand-forest/30 overflow-hidden">
                                         <?php if (!empty($product['main_image'])): ?>
                                             <img src="<?= htmlspecialchars($product['main_image']) ?>"

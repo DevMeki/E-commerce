@@ -126,23 +126,8 @@ if (isset($conn) && $conn) {
     <meta charset="UTF-8">
     <title>Products | LocalTrade Brand</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="../style.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">
@@ -228,7 +213,7 @@ if (isset($conn) && $conn) {
                     </div>
 
                     <!-- Search -->
-                    <div class="flex items-center gap-2 w-full md:w-auto md:min-w-[260px]">
+                    <div class="flex items-center gap-2 w-full md:w-auto md:min-w-65">
                         <input type="hidden" name="status" value="<?= htmlspecialchars($statusFilter); ?>">
                         <input type="text" name="q" value="<?= htmlspecialchars($search); ?>"
                             placeholder="Search by name, SKU or category"
@@ -293,13 +278,13 @@ if (isset($conn) && $conn) {
                                             <div class="flex items-center gap-3">
                                                 <?php if (!empty($p['main_image'])): ?>
                                                     <div
-                                                        class="w-10 h-10 rounded-lg overflow-hidden bg-brand-parchment border border-brand-forest/5 flex-shrink-0">
+                                                        class="w-10 h-10 rounded-lg overflow-hidden bg-brand-parchment border border-brand-forest/5 shrink-0">
                                                         <img src="../<?= htmlspecialchars($p['main_image']); ?>"
                                                             class="w-full h-full object-cover">
                                                     </div>
                                                 <?php else: ?>
                                                     <div
-                                                        class="w-10 h-10 rounded-lg bg-brand-forest/5 border border-brand-forest/5 flex-shrink-0 flex items-center justify-center text-[10px] text-brand-ink/30">
+                                                        class="w-10 h-10 rounded-lg bg-brand-forest/5 border border-brand-forest/5 shrink-0 flex items-center justify-center text-[10px] text-brand-ink/30">
                                                         No img
                                                     </div>
                                                 <?php endif; ?>

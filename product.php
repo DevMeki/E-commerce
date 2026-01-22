@@ -173,23 +173,8 @@ $in_cart = false;
     <meta charset="UTF-8">
     <title>LocalTrade – <?php echo htmlspecialchars($product['name']); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="./style.css" rel="stylesheet">
+
     <style>
         :root {
             --lt-forest: #1E3932;
@@ -526,7 +511,7 @@ $in_cart = false;
                         <?php foreach ($relatedProducts as $rp): ?>
                             <a href="product.php?id=<?php echo $rp['id']; ?>" 
                                class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 flex flex-col gap-3 transition-all shadow-sm hover:shadow-xl group">
-                                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/5">
+                                <div class="aspect-4/3 rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/5">
                                     <img src="<?php echo htmlspecialchars($rp['main_image'] ?: 'https://via.placeholder.com/400x300?text=Product'); ?>" 
                                          alt="<?php echo htmlspecialchars($rp['name']); ?>"
                                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
@@ -566,7 +551,7 @@ $in_cart = false;
                         <?php foreach ($moreBrandProducts as $mp): ?>
                             <a href="product.php?id=<?php echo $mp['id']; ?>" 
                                class="bg-green-50 border border-brand-forest/5 rounded-2xl p-4 flex flex-col gap-3 transition-all shadow-sm hover:shadow-xl group">
-                                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/5">
+                                <div class="aspect-4/3 rounded-xl overflow-hidden bg-brand-parchment border border-brand-forest/5">
                                     <img src="<?php echo htmlspecialchars($mp['main_image'] ?: 'https://via.placeholder.com/400x300?text=Product'); ?>" 
                                          alt="<?php echo htmlspecialchars($mp['name']); ?>"
                                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">

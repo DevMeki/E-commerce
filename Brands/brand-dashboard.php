@@ -291,23 +291,8 @@ function humanTiming($time)
     <meta charset="UTF-8">
     <title>Brand Dashboard | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="../style.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">

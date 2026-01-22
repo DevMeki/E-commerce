@@ -53,22 +53,8 @@ $defaultShipping = $brandData['location'] ?? '';
     <meta charset="UTF-8">
     <title><?= $isEdit ? 'Edit Product' : 'Add Product' ?> | LocalTrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-forest': '#1E3932',
-                        'brand-orange': '#F36A1D',
-                        'brand-parchment': '#FCFBF7',
-                        'brand-ink': '#1A1A1A',
-                        'brand-cream': '#F3F0E6',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="../style.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-brand-parchment text-brand-ink min-h-screen flex flex-col">
@@ -347,7 +333,7 @@ $defaultShipping = $brandData['location'] ?? '';
                         <!-- Main image preview -->
                         <div class="flex flex-col gap-3">
                             <div id="mainImagePreview"
-                                class="w-full aspect-[4/3] rounded-2xl bg-brand-parchment border border-brand-forest/10 flex items-center justify-center text-[11px] text-brand-ink/40 overflow-hidden"
+                                class="w-full aspect-4/3 rounded-2xl bg-brand-parchment border border-brand-forest/10 flex items-center justify-center text-[11px] text-brand-ink/40 overflow-hidden"
                                 style="<?= $isEdit && !empty($productData['main_image']) ? "background-image: url('../{$productData['main_image']}'); background-size: cover; background-position: center;" : "border-style: dashed;" ?>">
                                 <?= $isEdit && !empty($productData['main_image']) ? '' : 'Main image preview' ?>
                             </div>
