@@ -21,7 +21,7 @@ $currentUser = $_SESSION['user'] ?? null;
 
                 <!-- Logo -->
                 <a href="index" class="flex items-center gap-2.5">
-                    <img src="./Assets/LocalTrade/logo dark.png" alt="LocalTrade Logo" class="w-8 h-8 object-contain" />
+                    <img src="./Assets/LocalTrade/10.png" alt="LocalTrade Logo" class="w-8 h-8 object-contain" />
                     <span class="font-bold tracking-tight text-xl text-white">
                         LocalTrade
                     </span>

@@ -28,8 +28,6 @@ ini_set('display_errors', 1);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.8s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
         }
 
         @keyframes spin {

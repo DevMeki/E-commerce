@@ -132,27 +132,28 @@ if (isset($conn) && $conn instanceof mysqli && isset($user['id'])) {
                         </div>
                     </div>
 
-                    <div class="pt-8 border-t border-brand-forest/5 flex flex-wrap gap-4">
-                        <button type="submit"
-                            class="px-8 py-3 rounded-full text-sm font-bold bg-brand-orange text-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-brand-orange/20">
-                            Save Changes
-                        </button>
-                        <form action="process/logout.php" method="post" class="inline-block" aria-label="Logout form">
-                            <button type="submit"
-                                class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-bold border border-red-100 text-red-500 hover:bg-red-50 transition-all"
-                                aria-describedby="logoutDesc">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1" />
-                                </svg>
-                                <span>Sign Out</span>
-                            </button>
-                            <p id="logoutDesc" class="sr-only">This will sign you out of your account and return you to
-                                the homepage.</p>
-                        </form>
-                    </div>
                 </form>
+
+                <div class="pt-8 border-t border-brand-forest/5 flex flex-wrap gap-4">
+                    <button type="submit" form="accountForm"
+                        class="px-8 py-3 rounded-full text-sm font-bold bg-brand-orange text-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-brand-orange/20">
+                        Save Changes
+                    </button>
+                    <form action="process/logout.php" method="post" class="inline-block" aria-label="Logout form">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-bold border border-red-100 text-red-500 hover:bg-red-50 transition-all"
+                            aria-describedby="logoutDesc">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1" />
+                            </svg>
+                            <span>Sign Out</span>
+                        </button>
+                        <p id="logoutDesc" class="sr-only">This will sign you out of your account and return you to
+                            the homepage.</p>
+                    </form>
+                </div>
             </div>
 
             <!-- Followed Brands Section -->

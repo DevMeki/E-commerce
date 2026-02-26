@@ -191,7 +191,6 @@ $in_cart = false;
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.8s linear infinite;
-            display: inline-block;
         }
         
         @keyframes spin {
@@ -750,11 +749,11 @@ $in_cart = false;
                             window.location.href = result.redirect;
                         } else {
                             if (!isBuyNow) {
-                                cartButtonText.textContent = '✅ Added to Cart';
+                                cartButtonText.textContent = 'Added to Cart ✅';
                                 cartSpinner.classList.add('hidden');
                                 // Reset button after 2 seconds
                                 setTimeout(() => {
-                                    cartButtonText.textContent = '🛒 Add to Cart';
+                                    cartButtonText.textContent = 'Add to Cart';
                                     btn.disabled = false;
                                 }, 3000);
                             }
