@@ -1,4 +1,18 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.php -f
-RewriteRule ^(.*)$ $1.php [NC,L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /LocalTrade/
+
+    # If the request is already for public/, don't rewrite again
+    RewriteCond %{REQUEST_URI} ^/LocalTrade/public/
+    RewriteRule ^ - [L]
+
+    # If the file exists in the public directory, rewrite to it
+    RewriteCond %{DOCUMENT_ROOT}/LocalTrade/public/$1 -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/LocalTrade/public/$1 -d
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Otherwise, if it's not a physical file/directory in the current root, send to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
