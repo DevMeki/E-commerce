@@ -35,7 +35,7 @@ export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: a
                         </div>
                         <h2 className="text-xl font-bold text-brand-forest mb-2">Your cart is feeling light</h2>
                         <p className="text-brand-ink/50 mb-8">It seems you haven't added anything to your cart yet.</p>
-                        <Link href={route('marketplace')} className="inline-flex px-8 py-3 bg-brand-orange text-white rounded-full font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all" style={{ backgroundColor: 'var(--lt-orange)' }}>
+                        <Link href={route('marketplace')} className="bg-brand-orange inline-flex px-8 py-3 bg-brand-orange text-white rounded-full font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
                             Start Exploring
                         </Link>
                     </div>
@@ -124,7 +124,7 @@ export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: a
                                 </div>
                             </dl>
 
-                            <button onClick={() => alert('Checkout not yet implemented.')} className="w-full py-4 rounded-full text-sm font-bold bg-brand-orange text-white shadow-lg shadow-brand-orange/30 hover:scale-[1.02] active:scale-[0.98] transition-all" style={{ backgroundColor: 'var(--lt-orange)' }}>
+                            <button onClick={() => alert('Checkout not yet implemented.')} className="w-full bg-brand-orange py-4 rounded-full text-sm font-bold bg-brand-orange text-white shadow-lg shadow-brand-orange/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
                                 Proceed to checkout
                             </button>
 

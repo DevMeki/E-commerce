@@ -10,7 +10,7 @@ interface FlashProps {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const { auth, flash } = usePage().props as any;
-    const { url } = usePage();
+    const { component } = usePage();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
     const [isNavigating, setIsNavigating] = useState(false);
@@ -61,10 +61,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const user = auth?.user;
     const isLoggedIn = !!user;
 
-    const isActive = (path: string) => url === path || url.startsWith(path + '/');
+    const isActive = (routeName: string) => {
+        const componentMap: { [key: string]: string[] } = {
+            'home': ['Home'],
+            'marketplace': ['Marketplace'],
+            'categories': ['Categories'],
+            'brands': ['BrandsPage'],
+            'brand.help': ['BrandHelp'],
+        };
+        
+        const componentsForRoute = componentMap[routeName] || [];
+        return componentsForRoute.includes(component as string);
+    };
 
-    const navLinkClass = (path: string, mobile: boolean = false) => {
-        const active = isActive(path);
+    const navLinkClass = (routeName: string, mobile: boolean = false) => {
+        const active = isActive(routeName);
         if (mobile) {
             return `text-sm font-medium ${active ? 'text-white font-bold' : 'text-white/70'}`;
         }
@@ -75,21 +86,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="bg-brand-parchment text-brand-ink min-h-screen flex flex-col font-sans">
-            {/* LOADING PROGRESS BAR */}
+            {/* FULLSCREEN LOADING OVERLAY */}
             {isNavigating && (
-                <>
-                    <div
-                        className="fixed top-0 left-0 z-[60] h-[3px] bg-brand-orange shadow-sm shadow-brand-orange/50 transition-all duration-200 ease-out"
-                        style={{ width: `${progress}%` }}
-                    />
-                    <div className="fixed top-4 right-4 z-[60] flex items-center gap-2 rounded-full bg-brand-forest/90 px-3 py-1.5 backdrop-blur-sm shadow-lg">
-                        <svg className="h-3.5 w-3.5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                        </svg>
-                        <span className="text-[10px] font-bold text-white/80 tracking-wider">Loading…</span>
+                <div className="fixed inset-0 z-[70] bg-brand-forest/95 backdrop-blur-sm flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="relative">
+                            <svg className="h-12 w-12 animate-spin text-brand-orange" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                            <div className="absolute inset-0 rounded-full border-2 border-brand-orange/30 animate-pulse"></div>
+                        </div>
+                        <div className="text-center">
+                            {/* <p className="text-white font-semibold text-lg">Loading...</p> */}
+                            <div className="mt-2 w-48 h-1 bg-white/20 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-brand-orange transition-all duration-300 ease-out rounded-full"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
+                        </div>
                     </div>
-                </>
+                </div>
             )}
 
             {/* NOTIFICATIONS */}
@@ -128,11 +146,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         {/* MIDDLE: Desktop Nav */}
                         <div className="flex items-center gap-2 sm:gap-3">
                             <nav className="hidden md:flex items-center gap-6 text-sm">
-                                <Link href={route('home')} className={navLinkClass(route('home'))}>Home</Link>
-                                <Link href={route('marketplace')} className={navLinkClass(route('marketplace'))}>Marketplace</Link>
-                                <Link href={route('categories')} className={navLinkClass(route('categories'))}>Categories</Link>
-                                <Link href={route('brands')} className={navLinkClass(route('brands'))}>Brands</Link>
-                                <Link href={route('brand.help')} className={navLinkClass(route('brand.help'))}>Help</Link>
+                                <Link href={route('home')} className={navLinkClass('home')}>Home</Link>
+                                <Link href={route('marketplace')} className={navLinkClass('marketplace')}>Marketplace</Link>
+                                <Link href={route('categories')} className={navLinkClass('categories')}>Categories</Link>
+                                <Link href={route('brands')} className={navLinkClass('brands')}>Brands</Link>
+                                <Link href={route('brand.help')} className={navLinkClass('brand.help')}>Help</Link>
                             </nav>
                         </div>
 
@@ -157,7 +175,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             ) : (
                                 <>
                                     <Link href={route('login')} className="hidden sm:inline-flex items-center px-4 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white transition-colors">Login</Link>
-                                    <Link href={route('register')} className="hidden sm:inline-flex items-center px-5 py-2 rounded-full text-xs font-bold text-white shadow-md shadow-brand-orange/20 transition-all hover:scale-[1.02]" style={{ backgroundColor: 'var(--lt-orange)' }}>Sign up</Link>
+                                    <Link href={route('register')} className="bg-brand-orange hidden sm:inline-flex items-center px-5 py-2 rounded-full text-xs font-bold text-dark shadow-md shadow-brand-orange/20 transition-all hover:scale-[1.02]">Sign up</Link>
                                 </>
                             )}
 
@@ -170,13 +188,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     {isMobileMenuOpen && (
                         <div className="md:hidden border-t border-white/5 mt-2 py-4 space-y-4">
                             <nav className="flex flex-col gap-3 px-2">
-                                <Link href={route('home')} className={navLinkClass(route('home'), true)}>Home</Link>
-                                <Link href={route('marketplace')} className={navLinkClass(route('marketplace'), true)}>Marketplace</Link>
-                                <Link href={route('categories')} className={navLinkClass(route('categories'), true)}>Categories</Link>
-                                <Link href={route('brands')} className={navLinkClass(route('brands'), true)}>Brands</Link>
-                                <Link href={route('brand.help')} className={navLinkClass(route('brand.help'), true)}>Help / Support</Link>
+                                <Link href={route('home')} className={navLinkClass('home', true)}>Home</Link>
+                                <Link href={route('marketplace')} className={navLinkClass('marketplace', true)}>Marketplace</Link>
+                                <Link href={route('categories')} className={navLinkClass('categories', true)}>Categories</Link>
+                                <Link href={route('brands')} className={navLinkClass('brands', true)}>Brands</Link>
+                                <Link href={route('brand.help')} className={navLinkClass('brand.help', true)}>Help / Support</Link>
                             </nav>
                         </div>
+                        
                     )}
                 </div>
             </header>

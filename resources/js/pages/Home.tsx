@@ -27,11 +27,11 @@ export default function Home({ featuredProducts, totalProducts, categories, feat
                             Nigeria · Marketplace
                         </p>
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-brand-forest">
-                            Buy from real Nigerian brands.<br className="hidden sm:block" />
+                            Shop authentic Nigerian brands. <br className="hidden sm:block" />
                             <span className="text-brand-orange">Support local. Shop global.</span>
                         </h1>
                         <p className="text-sm sm:text-base text-brand-ink/70 mb-6">
-                            LocalTrade connects you with authentic Nigerian sellers—from fashion and beauty
+                            LocalTrade connects you with authentic Nigerian sellers, from fashion and beauty
                             to tech and home essentials. Discover trusted brands, secure payments, and fast delivery.
                         </p>
 
@@ -46,8 +46,7 @@ export default function Home({ featuredProducts, totalProducts, categories, feat
                             />
                             <button
                                 type="submit"
-                                className="px-4 py-2 rounded-full text-sm font-semibold text-white shadow-md shadow-brand-orange/20"
-                                style={{ backgroundColor: 'var(--lt-orange)' }}
+                                className="bg-brand-orange px-4 py-2 rounded-full text-sm font-semibold text-white shadow-md shadow-brand-orange/20"
                             >
                                 Search
                             </button>
