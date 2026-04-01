@@ -14,6 +14,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
 
     const [isAddingToCart, setIsAddingToCart] = useState(false);
     const [isBuyNow, setIsBuyNow] = useState(false);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'inc' && quantity < product.stock) {
@@ -31,11 +32,17 @@ export default function Product({ product = {}, seller = {}, images = [], relate
     };
 
     const handleAddToCart = (buyNow: boolean = false) => {
-        // Block brand accounts from buying
-        if (user && user.type === 'brand') {
-            alert('Brand accounts cannot purchase products. Please use a buyer account.');
+        // Show login prompt for guests instead of hard redirect
+        if (!user) {
+            setShowLoginPrompt(true);
             return;
         }
+
+        // Block brand accounts from buying
+        // if (user.type === 'brand') {
+        //     alert('Brand accounts cannot purchase products. Please use a buyer account.');
+        //     return;
+        // }
 
         if (buyNow) setIsBuyNow(true);
         else setIsAddingToCart(true);
@@ -430,6 +437,43 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                     </section>
                 )}
             </div>
+            {/* Login Prompt Modal */}
+            {showLoginPrompt && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center px-4" onClick={() => setShowLoginPrompt(false)}>
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+                    <div
+                        className="relative w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl text-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-forest/5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-brand-forest">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+                        </div>
+                        <h2 className="text-brand-forest mb-2 text-xl font-bold">Sign in to continue</h2>
+                        <p className="text-brand-ink/50 mb-6 text-sm">You need an account to add items to your cart or make a purchase.</p>
+                        <div className="flex flex-col gap-3">
+                            <Link
+                                href={route('login')}
+                                className="w-full bg-brand-orange rounded-full py-3 text-sm font-bold text-white shadow-lg shadow-brand-orange/20 transition-all hover:scale-[1.02]">
+                                Log in
+                            </Link>
+                            <Link
+                                href={route('register')}
+                                className="border-brand-forest/10 text-brand-forest w-full rounded-full border py-3 text-sm font-bold transition-all hover:bg-brand-forest/5"
+                            >
+                                Create an account
+                            </Link>
+                            <button
+                                onClick={() => setShowLoginPrompt(false)}
+                                className="text-brand-ink/40 mt-1 text-xs hover:text-brand-ink transition-colors"
+                            >
+                                Maybe later
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Layout>
     );
 }

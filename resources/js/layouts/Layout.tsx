@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 
 interface FlashProps {
     success?: string;
@@ -13,6 +13,36 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { url } = usePage();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
+    const [isNavigating, setIsNavigating] = useState(false);
+    const [progress, setProgress] = useState(0);
+
+    // Global navigation loading indicator
+    useEffect(() => {
+        let progressTimer: ReturnType<typeof setInterval>;
+
+        const startNav = router.on('start', () => {
+            setIsNavigating(true);
+            setProgress(10);
+            progressTimer = setInterval(() => {
+                setProgress((p) => (p < 85 ? p + Math.random() * 8 : p));
+            }, 200);
+        });
+
+        const finishNav = router.on('finish', () => {
+            clearInterval(progressTimer);
+            setProgress(100);
+            setTimeout(() => {
+                setIsNavigating(false);
+                setProgress(0);
+            }, 350);
+        });
+
+        return () => {
+            startNav();
+            finishNav();
+            clearInterval(progressTimer);
+        };
+    }, []);
 
     useEffect(() => {
         const msg = flash?.success || flash?.error || flash?.warning || flash?.info;
@@ -45,6 +75,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="bg-brand-parchment text-brand-ink min-h-screen flex flex-col font-sans">
+            {/* LOADING PROGRESS BAR */}
+            {isNavigating && (
+                <>
+                    <div
+                        className="fixed top-0 left-0 z-[60] h-[3px] bg-brand-orange shadow-sm shadow-brand-orange/50 transition-all duration-200 ease-out"
+                        style={{ width: `${progress}%` }}
+                    />
+                    <div className="fixed top-4 right-4 z-[60] flex items-center gap-2 rounded-full bg-brand-forest/90 px-3 py-1.5 backdrop-blur-sm shadow-lg">
+                        <svg className="h-3.5 w-3.5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        <span className="text-[10px] font-bold text-white/80 tracking-wider">Loading…</span>
+                    </div>
+                </>
+            )}
+
             {/* NOTIFICATIONS */}
             {notification && (
                 <div className="fixed top-20 right-4 z-50 animate-in fade-in slide-in-from-right-4 duration-300">
