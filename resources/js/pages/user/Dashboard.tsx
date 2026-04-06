@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { Heart, Package } from 'lucide-react';
 
 interface DashboardProps {
     user?: {
@@ -61,7 +62,7 @@ export default function Dashboard({ user }: DashboardProps) {
                         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-10">
                             <Link href={route('purchases')} className="bg-white border border-brand-forest/5 rounded-3xl p-6 hover:border-brand-orange/30 transition-all shadow-sm group">
                                 <div className="w-12 h-12 rounded-xl bg-brand-parchment text-brand-forest flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                                    📦
+                                    <Package className="h-6 w-6" />
                                 </div>
                                 <h3 className="text-base font-bold text-brand-forest mb-1">My Purchases</h3>
                                 <p className="text-xs text-brand-ink/50">Track, return, or buy items again</p>
@@ -69,7 +70,7 @@ export default function Dashboard({ user }: DashboardProps) {
 
                             <Link href={route('wishlist')} className="bg-white border border-brand-forest/5 rounded-3xl p-6 hover:border-brand-orange/30 transition-all shadow-sm group">
                                 <div className="w-12 h-12 rounded-xl bg-brand-parchment text-brand-forest flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                                    ❤️
+                                    <Heart className="h-6 w-6" />
                                 </div>
                                 <h3 className="text-base font-bold text-brand-forest mb-1">Saved Items</h3>
                                 <p className="text-xs text-brand-ink/50">View your wishlist</p>

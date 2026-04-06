@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { ShoppingCart } from 'lucide-react';
 
 export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: any) {
 
@@ -31,7 +32,7 @@ export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: a
                 {!cartItems || cartItems.length === 0 ? (
                     <div className="bg-green-50 border border-brand-forest/5 rounded-3xl p-12 text-center shadow-sm">
                         <div className="w-20 h-20 bg-brand-forest/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <span className="text-4xl text-brand-forest">🛒</span>
+                            <ShoppingCart className="h-10 w-10 text-brand-forest" />
                         </div>
                         <h2 className="text-xl font-bold text-brand-forest mb-2">Your cart is feeling light</h2>
                         <p className="text-brand-ink/50 mb-8">It seems you haven't added anything to your cart yet.</p>

@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
+import { Archive, Pencil, Trash2, Undo2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Products({ products, stats, filters }: any) {
@@ -34,7 +35,7 @@ export default function Products({ products, stats, filters }: any) {
                         <h1 className="text-2xl font-bold text-brand-forest">Products</h1>
                         <p className="text-xs text-brand-ink/50 mt-1">Manage your storefront listings.</p>
                     </div>
-                    <Link href={route('brand.products.add')} className="bg-brand-orange text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-center">
+                    <Link href={route('brand.products.create')} className="bg-brand-orange text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-center">
                         + Add Product
                     </Link>
                 </div>
@@ -142,18 +143,18 @@ export default function Products({ products, stats, filters }: any) {
                                         <td className="px-4 py-4 last:rounded-r-2xl border-y border-brand-forest/5 border-r">
                                             <div className="flex gap-2">
                                                 <Link href={route('brand.products.edit', { id: p.id })} className="p-1 text-brand-forest/50 hover:text-brand-forest transition-colors">
-                                                    ✏️
+                                                    <Pencil className="h-4 w-4" />
                                                 </Link>
                                                 <button onClick={() => handleAction(p.id, 'delete')} className="p-1 text-brand-forest/50 hover:text-red-500 transition-colors">
-                                                    🗑️
+                                                    <Trash2 className="h-4 w-4" />
                                                 </button>
                                                 {p.status === 'archived' ? (
                                                     <button onClick={() => handleAction(p.id, 'unarchive')} className="p-1 text-brand-forest/50 hover:text-emerald-500 transition-colors" title="Unarchive">
-                                                        🔓
+                                                        <Undo2 className="h-4 w-4" />
                                                     </button>
                                                 ) : (
                                                     <button onClick={() => handleAction(p.id, 'archive')} className="p-1 text-brand-forest/50 hover:text-amber-500 transition-colors" title="Archive">
-                                                        📁
+                                                        <Archive className="h-4 w-4" />
                                                     </button>
                                                 )}
                                             </div>

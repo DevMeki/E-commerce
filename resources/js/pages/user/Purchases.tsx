@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { Package } from 'lucide-react';
 
 export default function Purchases({ orders, auth }: any) {
     const user = auth.user;
@@ -59,7 +60,7 @@ export default function Purchases({ orders, auth }: any) {
                     ) : (
                         <div className="text-center py-16">
                             <div className="w-20 h-20 bg-brand-forest/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <span className="text-4xl filter grayscale">📦</span>
+                                <Package className="h-10 w-10 text-brand-forest/70" />
                             </div>
                             <h2 className="text-lg font-bold text-brand-forest mb-2">No purchase history found</h2>
                             <p className="text-brand-ink/40 text-sm mb-8">Items you buy will appear here.</p>

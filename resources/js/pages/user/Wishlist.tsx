@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { Tags } from 'lucide-react';
 
 export default function Wishlist({ wishlist, auth }: any) {
     return (
@@ -55,7 +56,7 @@ export default function Wishlist({ wishlist, auth }: any) {
                     ) : (
                         <div className="text-center py-16">
                             <div className="w-20 h-20 bg-brand-forest/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <span className="text-4xl filter grayscale">🏷️</span>
+                                <Tags className="h-10 w-10 text-brand-forest/70" />
                             </div>
                             <h2 className="text-lg font-bold text-brand-forest mb-2">Your wishlist is empty</h2>
                             <p className="text-brand-ink/40 text-sm mb-8">Save items you like to see them here later.</p>

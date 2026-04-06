@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { ArrowRight, MapPin, Search, Star } from 'lucide-react';
 import { useState, useMemo } from 'react';
 
 const GRADIENTS = [
@@ -50,7 +51,7 @@ export default function BrandsPage({ brands }: any) {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                         <div className="w-full md:w-80">
                             <div className="bg-white border border-brand-forest/10 rounded-md px-3 py-2 flex items-center gap-2">
-                                <span className="text-brand-ink/50 text-sm">🔍</span>
+                                <Search className="h-4 w-4 text-brand-ink/50" />
                                 <input 
                                     type="text" 
                                     placeholder="Search brands..." 
@@ -87,11 +88,13 @@ export default function BrandsPage({ brands }: any) {
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
                                             <h2 className="text-sm sm:text-base font-semibold text-brand-forest">{b.brand_name}</h2>
-                                            <p className="text-[11px] sm:text-xs text-brand-ink/40">📍 {b.location || 'Nigeria'}</p>
+                                            <p className="text-[11px] sm:text-xs text-brand-ink/40 inline-flex items-center gap-1">
+                                                <MapPin className="h-3.5 w-3.5" /> {b.location || 'Nigeria'}
+                                            </p>
                                             <p className="mt-1 text-[11px] sm:text-xs text-brand-ink/40">Since {new Date(b.created_at).getFullYear()}</p>
                                         </div>
                                         <div className="text-right text-[11px] sm:text-xs text-brand-ink/50">
-                                            <p className="mb-1 text-brand-orange">⭐ {Number(b.rating || 0).toFixed(1)}</p>
+                                            <p className="mb-1 text-brand-orange inline-flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-current" /> {Number(b.rating || 0).toFixed(1)}</p>
                                             {/* Products count would be via a relation if we want to show it */}
                                         </div>
                                     </div>
@@ -110,7 +113,7 @@ export default function BrandsPage({ brands }: any) {
 
                                     <div className="mt-3 flex items-center justify-between text-[11px] text-brand-orange font-bold">
                                         <span>Visit store</span>
-                                        <span>→</span>
+                                        <ArrowRight className="h-4 w-4" />
                                     </div>
                                 </Link>
                             );

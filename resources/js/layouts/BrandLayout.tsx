@@ -1,16 +1,18 @@
 import { Link, usePage } from '@inertiajs/react';
+import { BarChart3, Box, MessageCircle, Settings, ShoppingCart } from 'lucide-react';
 import { ReactNode } from 'react';
 
 export default function BrandLayout({ children }: { children: ReactNode }) {
-    const { auth, url } = usePage().props as any;
+    const { props, url } = usePage() as any;
+    const { auth } = props ?? {};
     const brand = auth?.user;
 
     const navItems = [
-        { name: 'Dashboard', href: route('brand.dashboard'), icon: '📊' },
-        { name: 'Products', href: route('brand.products'), icon: '📦' },
-        { name: 'Orders', href: route('brand.orders'), icon: '🛒' },
-        { name: 'Messages', href: '#', icon: '💬' }, // Placeholder for now
-        { name: 'Settings', href: route('brand.onboarding'), icon: '⚙️' },
+        { name: 'Dashboard', href: route('brand.dashboard'), icon: <BarChart3 className="h-4 w-4" /> },
+        { name: 'Products', href: route('brand.products'), icon: <Box className="h-4 w-4" /> },
+        { name: 'Orders', href: route('brand.orders'), icon: <ShoppingCart className="h-4 w-4" /> },
+        { name: 'Messages', href: '#', icon: <MessageCircle className="h-4 w-4" /> }, // Placeholder for now
+        { name: 'Settings', href: route('brand.onboarding'), icon: <Settings className="h-4 w-4" /> },
     ];
 
     return (
@@ -48,7 +50,7 @@ export default function BrandLayout({ children }: { children: ReactNode }) {
                                 key={item.name} 
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
-                                    url.startsWith(item.href) 
+                                    (url ?? '').startsWith(item.href) 
                                         ? 'bg-brand-forest text-white shadow-md' 
                                         : 'bg-green-50 text-brand-forest hover:bg-brand-forest/5 border border-brand-forest/5'
                                 }`}

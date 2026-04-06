@@ -1,5 +1,6 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { ArrowUpRight, FileText, MapPin, Package, Star, Users } from 'lucide-react';
 import { useState, useMemo } from 'react';
 
 export default function Store({ store, products, categories, isFollowing }: any) {
@@ -92,19 +93,19 @@ export default function Store({ store, products, categories, isFollowing }: any)
                                 </h1>
                                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs font-medium text-brand-ink/60">
                                     <div className="flex items-center gap-1.5">
-                                        <span className="text-brand-orange text-lg">★</span>
+                                        <Star className="h-4 w-4 text-brand-orange fill-current" />
                                         <span className="text-brand-forest font-bold">{Number(store.rating || 0).toFixed(1)}</span>
                                         <span className="text-brand-ink/20">·</span>
                                         <span>{store.total_reviews || 0} reviews</span>
                                     </div>
                                     <span className="text-brand-ink/20 hidden sm:inline">·</span>
                                     <div className="flex items-center gap-1.5">
-                                        <span className="text-brand-forest/30">📦</span>
+                                        <Package className="h-4 w-4 text-brand-forest/40" />
                                         <span>{products?.length || 0} products</span>
                                     </div>
                                     <span className="text-brand-ink/20 hidden sm:inline">·</span>
                                     <div className="flex items-center gap-1.5">
-                                        <span className="text-brand-forest/30">👥</span>
+                                        <Users className="h-4 w-4 text-brand-forest/40" />
                                         <span>{followersCount} followers</span>
                                     </div>
                                 </div>
@@ -112,7 +113,7 @@ export default function Store({ store, products, categories, isFollowing }: any)
                                     {store.bio || `Welcome to ${store.brand_name}'s store.`}
                                 </p>
                                 <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-brand-forest/5 rounded-full text-[11px] font-bold text-brand-forest">
-                                    📍 {store.location || 'Nigeria'} • Since {new Date(store.created_at).getFullYear()}
+                                    <MapPin className="h-3.5 w-3.5" /> {store.location || 'Nigeria'} • Since {new Date(store.created_at).getFullYear()}
                                 </div>
                             </div>
                         </div>
@@ -130,7 +131,7 @@ export default function Store({ store, products, categories, isFollowing }: any)
                                 {following ? 'Following' : 'Follow Store'}
                             </button>
                             <button onClick={handleShare} className="w-full px-6 py-3 rounded-full border border-brand-forest/10 text-brand-forest font-bold text-sm hover:bg-brand-forest hover:text-white transition-all shadow-sm">
-                                ↗ Share Store
+                                <span className="inline-flex items-center gap-1.5"><ArrowUpRight className="h-4 w-4" /> Share Store</span>
                             </button>
                         </div>
                     </div>
@@ -232,7 +233,7 @@ export default function Store({ store, products, categories, isFollowing }: any)
                                 {Object.entries(policies).map(([label, policy]) => (
                                     <div key={label} className="bg-green-50 border border-brand-forest/5 rounded-3xl p-6 shadow-sm">
                                         <div className="w-10 h-10 bg-brand-forest/5 rounded-full flex items-center justify-center mb-4">
-                                            <span className="text-brand-forest">📜</span>
+                                            <FileText className="h-5 w-5 text-brand-forest" />
                                         </div>
                                         <dt className="font-bold text-brand-forest mb-2 uppercase tracking-wide text-xs">{label}</dt>
                                         <dd className="text-brand-ink/60 text-sm leading-relaxed">{policy}</dd>
@@ -246,7 +247,7 @@ export default function Store({ store, products, categories, isFollowing }: any)
                     {activeTab === 'reviews' && (
                         <div className="pt-8 text-center py-12">
                             <div className="inline-flex flex-col items-center">
-                                <div className="text-5xl mb-6">⭐</div>
+                                <div className="mb-6 rounded-full bg-brand-forest/5 p-4"><Star className="h-8 w-8 text-brand-orange fill-current" /></div>
                                 <h3 className="text-xl font-bold text-brand-forest mb-4">Trusted Presence</h3>
                                 <p className="text-brand-ink/50 max-w-sm mb-6">
                                     {store.brand_name} has maintained an average rating of <span className="font-bold text-brand-forest">{Number(store.rating || 0).toFixed(1)}</span> across <span className="font-bold text-brand-forest">{store.total_reviews || 0}</span> verified purchases.

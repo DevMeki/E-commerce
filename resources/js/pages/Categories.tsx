@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { Tags } from 'lucide-react';
 
 export default function Categories({ categories }: any) {
     const categoryList = Object.keys(categories || {}).sort();
@@ -24,7 +25,7 @@ export default function Categories({ categories }: any) {
                             className="bg-green-50 border border-brand-forest/5 hover:border-brand-orange/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 transition-all shadow-sm hover:shadow-md text-center group"
                         >
                             <div className="w-16 h-16 rounded-full bg-brand-forest/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                                🏷️
+                                <Tags className="h-8 w-8 text-brand-forest" />
                             </div>
                             <div>
                                 <h2 className="text-base font-bold text-brand-forest group-hover:text-brand-orange transition-colors">{cat}</h2>

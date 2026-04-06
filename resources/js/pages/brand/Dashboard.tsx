@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
+import { MapPin } from 'lucide-react';
 
 export default function Dashboard({ brand, stats, recentOrders }: any) {
     return (
@@ -17,15 +18,15 @@ export default function Dashboard({ brand, stats, recentOrders }: any) {
                             <div>
                                 <p className="text-[10px] uppercase tracking-[0.25em] text-brand-orange font-bold mb-1">Brand Dashboard</p>
                                 <h1 className="text-2xl font-bold text-brand-forest">{brand.brand_name}</h1>
-                                <p className="text-xs text-brand-ink/50 mt-1">
-                                    📍 {brand.location} · Since {new Date(brand.created_at).getFullYear()}
-                                </p>
+                                <div className="text-xs text-brand-ink/50 mt-1 inline-flex items-center gap-1.5">
+                                    <MapPin className="h-3.5 w-3.5" />
+                                    <span>{brand.location} · Since {new Date(brand.created_at).getFullYear()}</span>
+                                </div>
                             </div>
                         </div>
                         <Link 
-                            href={route('brand.products.add')} 
+                            href={route('brand.products.create')} 
                             className="bg-brand-orange text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-center"
-                            style={{ backgroundColor: 'var(--lt-orange)' }}
                         >
                             + Add New Product
                         </Link>

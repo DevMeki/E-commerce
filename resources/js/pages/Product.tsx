@@ -1,5 +1,6 @@
 import Layout from '@/layouts/Layout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { MapPin, Package, Star } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Product({ product = {}, seller = {}, images = [], relatedProducts = [], moreBrandProducts = [], variants = {} }: any) {
@@ -139,7 +140,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                             <h1 className="text-brand-forest mb-1 text-2xl font-bold sm:text-3xl">{product.name}</h1>
                             <div className="text-brand-ink/60 flex flex-wrap items-center gap-3 text-xs">
                                 <div className="flex items-center gap-1">
-                                    <span className="text-brand-orange">★</span>
+                                    <Star className="h-3.5 w-3.5 text-brand-orange fill-current" />
                                     <span className="text-brand-ink font-bold">{Number(product.rating || 0).toFixed(1)}</span>
                                     <span className="text-brand-ink/20">·</span>
                                     <span>{product.total_reviews || 0} reviews</span>
@@ -251,14 +252,16 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                                 <div className="min-w-[200px] flex-1">
                                     <p className="text-brand-ink/40 mb-2 text-[10px] font-bold tracking-[0.2em] uppercase">Verified Brand</p>
                                     <p className="text-brand-forest text-base font-bold">{seller.name}</p>
-                                    <p className="text-brand-ink/50 mt-1 text-xs">📍 {seller.location}</p>
+                                    <p className="text-brand-ink/50 mt-1 text-xs inline-flex items-center gap-1">
+                                        <MapPin className="h-3.5 w-3.5" /> {seller.location}
+                                    </p>
                                     <div className="text-brand-forest/70 mt-4 flex flex-wrap gap-4 text-xs font-medium">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="text-brand-orange">⭐</span>
+                                            <Star className="h-3.5 w-3.5 text-brand-orange fill-current" />
                                             <span>{Number(seller.rating || 0).toFixed(1)} rating</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
-                                            <span className="text-brand-forest/30">📦</span>
+                                            <Package className="h-3.5 w-3.5 text-brand-forest/40" />
                                             <span>{seller.total_products} products</span>
                                         </div>
                                     </div>
