@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,10 +35,10 @@ class RegisteredUserController extends Controller
         if ($accountType === 'brand') {
             $request->validate([
                 'fullname' => 'required|string|max:100',
-                'email' => 'required|string|lowercase|email|max:255|unique:'.\App\Models\Brand::class,
+                'email' => 'required|string|email|max:255|unique:'.\App\Models\Brand::class,
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'brand_name' => 'required|string|max:100',
-                'brand_slug' => 'required|string|max:100|unique:'.\App\Models\Brand::class,
+                'brand_slug' => ['required', 'string', 'max:100', Rule::unique('brand', 'slug')],
                 'brand_category' => 'required|string',
                 'brand_location' => 'required|string|max:100',
             ]);
@@ -60,7 +61,7 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'fullname' => 'required|string|max:100',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.\App\Models\Buyer::class,
+            'email' => 'required|string|email|max:255|unique:'.\App\Models\Buyer::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

@@ -1,7 +1,17 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 
-export default function Dashboard({ user }: any) {
+interface DashboardProps {
+    user?: {
+        name?: string;
+        fullname?: string;
+    };
+}
+
+export default function Dashboard({ user }: DashboardProps) {
+    const displayName = user?.name || user?.fullname || 'User';
+    const initials = displayName.charAt(0).toUpperCase();
+
     return (
         <Layout>
             <Head title="My Account | LocalTrade" />
@@ -14,10 +24,10 @@ export default function Dashboard({ user }: any) {
                         <div className="bg-green-50 rounded-3xl p-6 border border-brand-forest/5 shadow-sm sticky top-24">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-12 h-12 rounded-full bg-brand-forest text-white flex items-center justify-center text-lg font-bold shrink-0">
-                                    {user.name?.charAt(0) || user.fullname?.charAt(0) || 'U'}
+                                    {initials}
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-brand-forest line-clamp-1">{user.name || user.fullname}</p>
+                                    <p className="text-sm font-bold text-brand-forest line-clamp-1">{displayName}</p>
                                     <p className="text-[10px] text-brand-ink/40 uppercase tracking-widest mt-0.5">Verified Buyer</p>
                                 </div>
                             </div>
@@ -32,7 +42,7 @@ export default function Dashboard({ user }: any) {
                                 <Link href={route('wishlist')} className="px-4 py-3 rounded-xl text-sm font-bold text-brand-ink/60 hover:text-brand-forest hover:bg-brand-forest/5 transition-all">
                                     Saved Items
                                 </Link>
-                                <Link href={route('settings')} className="px-4 py-3 rounded-xl text-sm font-bold text-brand-ink/60 hover:text-brand-forest hover:bg-brand-forest/5 transition-all">
+                                <Link href={route('profile.edit')} className="px-4 py-3 rounded-xl text-sm font-bold text-brand-ink/60 hover:text-brand-forest hover:bg-brand-forest/5 transition-all">
                                     Settings
                                 </Link>
                                 <div className="h-px bg-brand-forest/5 my-2"></div>

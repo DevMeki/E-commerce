@@ -20,7 +20,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         let progressTimer: ReturnType<typeof setInterval>;
 
-        const startNav = router.on('start', () => {
+        const shouldShowFullPageLoader = (visit: any) => {
+            // only show on full-page GET navigations
+            return visit?.method?.toLowerCase() === 'get';
+        };
+
+        const startNav = router.on('start', (event: any) => {
+            if (!shouldShowFullPageLoader(event.detail.visit)) {
+                return;
+            }
+
             setIsNavigating(true);
             setProgress(10);
             progressTimer = setInterval(() => {
@@ -28,7 +37,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             }, 200);
         });
 
-        const finishNav = router.on('finish', () => {
+        const finishNav = router.on('finish', (event: any) => {
+            if (!shouldShowFullPageLoader(event.detail.visit)) {
+                return;
+            }
+
             clearInterval(progressTimer);
             setProgress(100);
             setTimeout(() => {
@@ -88,8 +101,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="bg-brand-parchment text-brand-ink min-h-screen flex flex-col font-sans">
             {/* FULLSCREEN LOADING OVERLAY */}
             {isNavigating && (
-                <div className="fixed inset-0 z-[70] bg-brand-forest/95 backdrop-blur-sm flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
+                <div className="fixed inset-0 z-[70] bg-brand-forest/10 backdrop-blur-sm flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4 bg-brand-forest/95 p-10 rounded-3xl">
                         <div className="relative">
                             <svg className="h-12 w-12 animate-spin text-brand-orange" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -194,6 +207,34 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 <Link href={route('brands')} className={navLinkClass('brands', true)}>Brands</Link>
                                 <Link href={route('brand.help')} className={navLinkClass('brand.help', true)}>Help / Support</Link>
                             </nav>
+                            <div className="px-2 pt-2 border-t border-white/10">
+                                {isLoggedIn ? (
+                                    user.type === 'brand' ? (
+                                        <Link
+                                            href={route('brand.dashboard')}
+                                            className="inline-flex w-full items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm font-bold text-white transition-colors hover:border-white"
+                                        >
+                                            Brand Dashboard
+                                        </Link>
+                                    ) : (
+                                        <Link
+                                            href={route('dashboard')}
+                                            className="inline-flex w-full items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm font-bold text-white transition-colors hover:border-white"
+                                        >
+                                            My Profile
+                                        </Link>
+                                    )
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <Link href={route('login')} className="inline-flex flex-1 items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm font-bold text-white/90 transition-colors hover:text-white">
+                                            Login
+                                        </Link>
+                                        <Link href={route('register')} className="inline-flex flex-1 items-center justify-center rounded-full bg-brand-orange px-4 py-2 text-sm font-bold text-dark transition-all hover:scale-[1.02]">
+                                            Sign up
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         
                     )}

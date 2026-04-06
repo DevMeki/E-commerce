@@ -13,7 +13,7 @@ class UserController extends Controller
     public function dashboard()
     {
         $buyer = Auth::guard('buyer')->user();
-        return Inertia::render('user/dashboard', [
+        return Inertia::render('user/Dashboard', [
             'user' => $buyer
         ]);
     }
@@ -26,7 +26,7 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('user/purchases', [
+        return Inertia::render('user/Purchases', [
             'orders' => $orders
         ]);
     }
@@ -38,7 +38,7 @@ class UserController extends Controller
             ->with('product.brand')
             ->get();
 
-        return Inertia::render('user/wishlist', [
+        return Inertia::render('user/Wishlist', [
             'wishlist' => $wishlist
         ]);
     }

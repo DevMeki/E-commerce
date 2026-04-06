@@ -1,9 +1,15 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
+
+type NigeriaLocations = Record<string, string[]>;
 
 export default function Register() {
     const [accountType, setAccountType] = useState<'buyer' | 'brand'>('buyer');
     const [showPassword, setShowPassword] = useState(false);
+    const [brandState, setBrandState] = useState('');
+    const [brandCity, setBrandCity] = useState('');
+    const [locationError, setLocationError] = useState('');
+    const [nigeriaLocations, setNigeriaLocations] = useState<NigeriaLocations>({});
 
     const { data, setData, post, processing, errors, reset } = useForm({
         account_type: 'buyer',
@@ -19,6 +25,15 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        if (accountType === 'brand') {
+            const validState = stateOptions.includes(brandState);
+            const validCity = validState && cityOptions.includes(brandCity);
+            if (!validState || !validCity) {
+                setLocationError('Please select a valid state and town/city from the suggested options.');
+                return;
+            }
+        }
+
         post(route('register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
@@ -27,7 +42,30 @@ export default function Register() {
     const handleAccountTypeChange = (type: 'buyer' | 'brand') => {
         setAccountType(type);
         setData('account_type', type);
+        setLocationError('');
     };
+
+    useEffect(() => {
+        let mounted = true;
+        const loadLocations = async () => {
+            try {
+                const appBasePath = new URL(route('home')).pathname.replace(/\/$/, '');
+                const response = await fetch(`${appBasePath}/data/nigeria-locations.json`);
+                if (!response.ok) return;
+                const json = (await response.json()) as NigeriaLocations;
+                if (mounted) setNigeriaLocations(json);
+            } catch {
+                // If loading fails, the form still works with free-text input.
+            }
+        };
+        void loadLocations();
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    const stateOptions = useMemo(() => Object.keys(nigeriaLocations), [nigeriaLocations]);
+    const cityOptions = useMemo(() => nigeriaLocations[brandState] ?? [], [nigeriaLocations, brandState]);
 
     return (
         <div className="min-h-screen bg-brand-parchment text-brand-ink flex flex-col font-sans">
@@ -65,7 +103,7 @@ export default function Register() {
                                     className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-widest border transition-all ${
                                         accountType === 'buyer' 
                                             ? 'bg-brand-orange border-brand-orange text-white shadow-lg shadow-brand-orange/20' 
-                                            : 'bg-white border-brand-forest/10 text-brand-ink/40 hover:bg-brand-parchment font-medium'
+                                            : 'bg-white border-brand-forest/10 text-brand-ink/90 hover:bg-brand-parchment font-medium'
                                     }`}
                                 >
                                     Buyer
@@ -76,7 +114,7 @@ export default function Register() {
                                     className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-widest border transition-all ${
                                         accountType === 'brand' 
                                             ? 'bg-brand-orange border-brand-orange text-white shadow-lg shadow-brand-orange/20' 
-                                            : 'bg-white border-brand-forest/10 text-brand-ink/40 hover:bg-brand-parchment font-medium'
+                                            : 'bg-white border-brand-forest/10 text-brand-ink/90 hover:bg-brand-parchment font-medium'
                                     }`}
                                 >
                                     Brand / Seller
@@ -233,16 +271,73 @@ export default function Register() {
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="block text-[10px] font-bold text-brand-ink/60 uppercase tracking-widest mb-2">City / State</label>
-                                                <input 
-                                                    type="text" 
+                                                <label className="block text-[10px] font-bold text-brand-ink/60 uppercase tracking-widest mb-2">State</label>
+                                                <input
+                                                    type="text"
+                                                    list="nigeria-states"
                                                     required={accountType === 'brand'}
-                                                    value={data.brand_location}
-                                                    onChange={e => setData('brand_location', e.target.value)}
+                                                    value={brandState}
+                                                    onChange={(e) => {
+                                                        const nextState = e.target.value;
+                                                        setBrandState(nextState);
+                                                        const nextCities = nigeriaLocations[nextState] ?? [];
+                                                        const keepCity = brandCity && nextCities.includes(brandCity);
+                                                        const nextCity = keepCity ? brandCity : '';
+                                                        if (!keepCity) setBrandCity('');
+                                                        setData('brand_location', nextCity ? `${nextCity}, ${nextState}` : nextState);
+                                                        setLocationError('');
+                                                    }}
+                                                    onBlur={() => {
+                                                        if (!brandState) return;
+                                                        if (!stateOptions.includes(brandState)) {
+                                                            setBrandState('');
+                                                            setBrandCity('');
+                                                            setData('brand_location', '');
+                                                            setLocationError('Please choose a state from the dropdown suggestions.');
+                                                        }
+                                                    }}
                                                     className="w-full rounded-xl bg-brand-parchment border border-brand-forest/10 px-4 py-3 text-sm focus:outline-none focus:border-brand-orange transition-all"
-                                                    placeholder="e.g. Lagos"
+                                                    disabled={stateOptions.length === 0}
+                                                    placeholder={stateOptions.length === 0 ? 'Loading states...' : 'Search state'}
                                                 />
+                                                <datalist id="nigeria-states">
+                                                    {stateOptions.map((state) => (
+                                                        <option key={state} value={state} />
+                                                    ))}
+                                                </datalist>
                                             </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-brand-ink/60 uppercase tracking-widest mb-2">Town / City</label>
+                                                <input
+                                                    type="text"
+                                                    list="nigeria-cities"
+                                                    required={accountType === 'brand'}
+                                                    value={brandCity}
+                                                    onChange={(e) => {
+                                                        const nextCity = e.target.value;
+                                                        setBrandCity(nextCity);
+                                                        setData('brand_location', brandState ? `${nextCity}, ${brandState}` : nextCity);
+                                                        setLocationError('');
+                                                    }}
+                                                    onBlur={() => {
+                                                        if (!brandState || !brandCity) return;
+                                                        if (!cityOptions.includes(brandCity)) {
+                                                            setBrandCity('');
+                                                            setData('brand_location', brandState);
+                                                            setLocationError('Please choose a town/city from the dropdown suggestions.');
+                                                        }
+                                                    }}
+                                                    className="w-full rounded-xl bg-brand-parchment border border-brand-forest/10 px-4 py-3 text-sm focus:outline-none focus:border-brand-orange transition-all"
+                                                    disabled={!brandState || cityOptions.length === 0}
+                                                    placeholder={!brandState ? 'Select a state first' : 'Search town / city'}
+                                                />
+                                                <datalist id="nigeria-cities">
+                                                    {cityOptions.map((city) => (
+                                                        <option key={city} value={city} />
+                                                    ))}
+                                                </datalist>
+                                            </div>
+                                            {locationError && <p className="sm:col-span-2 text-red-500 text-[10px] mt-1 font-bold">{locationError}</p>}
                                         </div>
                                     </div>
                                 )}
