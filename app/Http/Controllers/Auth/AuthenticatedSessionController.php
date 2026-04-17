@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('brand.dashboard', absolute: false));
         }
 
-        if (Auth::guard('buyer')->check()) {
+        if (Auth::guard('buyer')->check() || Auth::guard('web')->check()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
@@ -53,6 +53,8 @@ class AuthenticatedSessionController extends Controller
             Auth::guard('brand')->logout();
         } elseif (Auth::guard('buyer')->check()) {
             Auth::guard('buyer')->logout();
+        } elseif (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
         }
 
         $request->session()->invalidate();

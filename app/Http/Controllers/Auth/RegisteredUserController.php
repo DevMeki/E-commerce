@@ -60,19 +60,22 @@ class RegisteredUserController extends Controller
         }
 
         $request->validate([
-            'fullname' => 'required|string|max:100',
+            'fullname' => 'required_without:name|string|max:100',
+            'name' => 'required_without:fullname|string|max:100',
             'email' => 'required|string|email|max:255|unique:'.\App\Models\Buyer::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $buyerName = $request->input('fullname', $request->input('name'));
+
         $buyer = \App\Models\Buyer::create([
-            'fullname' => $request->fullname,
+            'fullname' => $buyerName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($buyer));
         Auth::guard('buyer')->login($buyer);
-        return to_route('home');
+        return to_route('dashboard');
     }
 }

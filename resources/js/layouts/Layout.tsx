@@ -111,7 +111,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <div className="absolute inset-0 rounded-full border-2 border-brand-orange/30 animate-pulse"></div>
                         </div>
                         <div className="text-center">
-                            {/* <p className="text-white font-semibold text-lg">Loading...</p> */}
+                            <p className="text-white font-semibold text-lg">Loading...</p>
                             <div className="mt-2 w-48 h-1 bg-white/20 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-brand-orange transition-all duration-300 ease-out rounded-full"
@@ -149,10 +149,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between gap-3">
                         {/* LEFT: Logo */}
-                        <div className="flex items-center gap-8">
-                            <Link href={route('home')} className="flex items-center gap-2.5">
-                                <img src={`${new URL(route('home')).pathname}/Assets/LocalTrade/10.png`.replace('//', '/')} alt="LocalTrade Logo" className="w-8 h-8 object-contain" />
-                                <span className="font-bold tracking-tight text-xl text-white">LocalTrade</span>
+                        <div className="flex items-center">
+                            <Link href={route('home')} className="flex items-center">
+                                <img src={`${new URL(route('home')).pathname}/Assets/LocalTrade/Text logo dark bg.png`.replace('//', '/')}
+                                    alt="LocalTrade Logo" className="w-auto h-8 md:h-12 object-contain" />
+                                {/* <span className="font-bold tracking-tight text-xl text-white">LocalTrade</span> */}
                             </Link>
                         </div>
 

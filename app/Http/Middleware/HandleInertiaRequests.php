@@ -45,15 +45,21 @@ class HandleInertiaRequests extends Middleware
         $authUser = $brandUser ?? $buyerUser ?? $defaultUser;
         $authType = $brandUser ? 'brand' : ($buyerUser ? 'buyer' : null);
 
-        if ($authUser && !isset($authUser->type) && $authType) {
-            $authUser->type = $authType;
+        $authUserData = null;
+
+        if ($authUser) {
+            $authUserData = $authUser->toArray();
+
+            if ($authType) {
+                $authUserData['type'] = $authType;
+            }
         }
 
         return array_merge(parent::share($request), [
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $authUser,
+                'user' => $authUserData,
             ],
             'flash' => [
                 'success' => session('success'),

@@ -23,9 +23,13 @@ export default function Login({ status, canResetPassword }: { status?: string; c
             {/* Header */}
             <header className="bg-brand-forest shadow-sm">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <Link href={route('home')} className="flex items-center gap-2 group">
-                        <img src={`${new URL(route('home')).pathname}/Assets/LocalTrade/10.png`.replace('//', '/')} alt="LocalTrade Logo" className="w-8 h-8 object-contain" />
-                        <span className="font-bold text-xl tracking-tight text-white">LocalTrade</span>
+                    <Link href={route('home')} className="flex items-center">
+                        <img
+                            src={`${new URL(route('home')).pathname}/Assets/LocalTrade/Text logo dark bg.png`.replace('//', '/')}
+                            alt="LocalTrade Logo"
+                            className="h-8 md:h-12 w-auto object-contain"
+                        />
+                        {/* <span className="font-bold tracking-tight text-xl text-white">LocalTrade</span> */}
                     </Link>
                     <Link href={route('home')} className="text-sm font-medium text-white/70 hover:text-white transition-colors">
                         Back to home

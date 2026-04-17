@@ -46,6 +46,11 @@ class LoginRequest extends FormRequest
             return;
         }
 
+        if (Auth::guard('web')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            RateLimiter::clear($this->throttleKey());
+            return;
+        }
+
         RateLimiter::hit($this->throttleKey());
 
         throw ValidationException::withMessages([

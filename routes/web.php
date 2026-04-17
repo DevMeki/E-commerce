@@ -16,8 +16,8 @@ Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->
 Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 
-Route::middleware(['auth:buyer'])->group(function () {
-    // Buyer only routes
+Route::middleware(['auth:web,buyer'])->group(function () {
+    // Buyer and web user routes
     Route::get('dashboard', [\App\Http\Controllers\UserController::class, 'dashboard'])->name('dashboard');
     Route::get('purchases', [\App\Http\Controllers\UserController::class, 'purchases'])->name('purchases');
     Route::get('wishlist', [\App\Http\Controllers\UserController::class, 'wishlist'])->name('wishlist');

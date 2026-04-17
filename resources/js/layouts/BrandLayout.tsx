@@ -20,12 +20,13 @@ export default function BrandLayout({ children }: { children: ReactNode }) {
             {/* Brand Header */}
             <header className="bg-brand-forest text-white sticky top-0 z-40 shadow-lg">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <Link href={route('brand.dashboard')} className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-brand-parchment flex items-center justify-center">
-                            <span className="text-brand-forest font-bold text-xs">LT</span>
-                        </div>
-                        <span className="font-bold tracking-tight text-lg">LocalTrade <span className="text-brand-orange">Seller</span></span>
-                    </Link>
+                    <div className="flex items-center">
+                            <Link href={route('home')} className="flex items-center">
+                                <img src={`${new URL(route('home')).pathname}/Assets/LocalTrade/Text logo dark bg.png`.replace('//', '/')} alt="LocalTrade Logo" className="w-auto h-8 md:h-12 object-contain" />
+                                {/* <span className="font-bold tracking-tight text-xl text-white">LocalTrade</span> */}
+                                <span className="text-brand-orange font-bold">Brand</span>
+                            </Link>
+                    </div>
 
                     <div className="flex items-center gap-4">
                         <Link href={route('store', { slug: brand?.slug })} className="hidden sm:block text-xs font-bold text-white/70 hover:text-white border border-white/20 px-3 py-1.5 rounded-full transition-all">

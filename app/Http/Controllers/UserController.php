@@ -12,9 +12,10 @@ class UserController extends Controller
 {
     public function dashboard()
     {
-        $buyer = Auth::guard('buyer')->user();
+        $user = Auth::guard('buyer')->user() ?? Auth::guard('web')->user();
+
         return Inertia::render('user/Dashboard', [
-            'user' => $buyer
+            'user' => $user,
         ]);
     }
 
