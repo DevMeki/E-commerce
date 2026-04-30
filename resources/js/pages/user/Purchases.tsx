@@ -3,7 +3,7 @@ import { Order, OrderItem, PurchasesProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Package } from 'lucide-react';
 
-export default function Purchases({ orders, auth }: PurchasesProps) {
+export default function Purchases({ orders }: PurchasesProps) {
 
     return (
         <Layout>

@@ -220,9 +220,6 @@ export interface BrandProductsProps {
 
 export interface PurchasesProps {
     orders: Order[];
-    auth: {
-        user: User;
-    };
 }
 
 export interface WishlistItem {
