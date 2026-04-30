@@ -10,8 +10,6 @@ class Brand extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'brand';
-
     protected $guarded = ['id'];
 
     protected $hidden = [

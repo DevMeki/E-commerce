@@ -9,7 +9,6 @@ class Order extends Model
 {
     use HasFactory;
     
-    protected $table = 'order';
     protected $guarded = ['id'];
 
     public function items()

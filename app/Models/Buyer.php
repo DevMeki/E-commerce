@@ -10,8 +10,6 @@ class Buyer extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'buyer';
-
     protected $guarded = ['id'];
 
     protected $hidden = [

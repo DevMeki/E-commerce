@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('buyers', function (Blueprint $table) {
             $table->id();
+            $table->string('fullname');
+            $table->string('email')->unique();
+            $table->string('password');
             $table->timestamps();
         });
     }
