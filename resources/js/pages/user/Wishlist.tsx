@@ -60,7 +60,7 @@ export default function Wishlist({ wishlist, auth }: any) {
                             </div>
                             <h2 className="text-lg font-bold text-brand-forest mb-2">Your wishlist is empty</h2>
                             <p className="text-brand-ink/40 text-sm mb-8">Save items you like to see them here later.</p>
-                            <Link href={route('marketplace')} className="inline-flex px-8 py-3 bg-brand-orange text-white rounded-full font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all" style={{ backgroundColor: 'var(--lt-orange)' }}>
+                            <Link href={route('marketplace')} className="inline-flex px-8 py-3 bg-brand-orange text-white rounded-full font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
                                 Browse Products
                             </Link>
                         </div>

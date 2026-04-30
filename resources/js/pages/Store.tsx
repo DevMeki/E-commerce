@@ -12,7 +12,7 @@ export default function Store({ store, products, categories, isFollowing }: any)
     const { auth } = usePage().props as any;
     const user = auth?.user;
 
-    const [followersCount, setFollowersCount] = useState(store.followers || 0);
+    const [followersCount, setFollowersCount] = useState<number>(store.followers || 0);
     const [following, setFollowing] = useState(isFollowing);
 
     const handleFollow = () => {

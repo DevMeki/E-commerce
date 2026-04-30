@@ -64,7 +64,7 @@ export default function Purchases({ orders, auth }: any) {
                             </div>
                             <h2 className="text-lg font-bold text-brand-forest mb-2">No purchase history found</h2>
                             <p className="text-brand-ink/40 text-sm mb-8">Items you buy will appear here.</p>
-                            <Link href={route('marketplace')} className="inline-flex px-8 py-3 bg-brand-orange text-white rounded-full font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all" style={{ backgroundColor: 'var(--lt-orange)' }}>
+                            <Link href={route('marketplace')} className="inline-flex px-8 py-3 bg-brand-orange text-white rounded-full font-bold shadow-lg shadow-brand-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
                                 Start Shopping
                             </Link>
                         </div>

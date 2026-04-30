@@ -153,7 +153,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <Link href={route('home')} className="flex items-center">
                                 <img src={`${new URL(route('home')).pathname}/Assets/LocalTrade/Text logo dark bg.png`.replace('//', '/')}
                                     alt="LocalTrade Logo" className="w-auto h-8 md:h-12 object-contain" />
-                                {/* <span className="font-bold tracking-tight text-xl text-white">LocalTrade</span> */}
                             </Link>
                         </div>
 
