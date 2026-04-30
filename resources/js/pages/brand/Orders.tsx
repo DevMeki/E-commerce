@@ -1,8 +1,9 @@
-import { Head, Link, router } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
+import { Order, OrdersProps } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Orders({ orders, statusCounts, filters }: any) {
+export default function Orders({ orders, statusCounts, filters }: OrdersProps) {
     const [search, setSearch] = useState(filters.q || '');
 
     const handleSearch = (e: React.FormEvent) => {
@@ -53,7 +54,7 @@ export default function Orders({ orders, statusCounts, filters }: any) {
                                     }`}
                                 >
                                     {label}
-                                    <span className="ml-2 text-[10px] opacity-40">{(statusCounts as any)[key]}</span>
+                                    <span className="ml-2 text-[10px] opacity-40">{statusCounts[key]}</span>
                                 </Link>
                             ))}
                         </div>
@@ -86,7 +87,7 @@ export default function Orders({ orders, statusCounts, filters }: any) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {orders.data.map((order: any) => (
+                                {orders.data.map((order: Order) => (
                                     <tr key={order.id} className="bg-white/50 hover:bg-white transition-colors group">
                                         <td className="px-4 py-4 first:rounded-l-2xl border-y border-brand-forest/5 border-l">
                                             <Link href={route('brand.orders.show', { id: order.id })} className="font-bold text-brand-forest hover:text-brand-orange transition-colors">

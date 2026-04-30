@@ -1,8 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { WishlistItem, WishlistProps } from '@/types';
+import { Head, Link } from '@inertiajs/react';
 import { Tags } from 'lucide-react';
 
-export default function Wishlist({ wishlist, auth }: any) {
+export default function Wishlist({ wishlist }: WishlistProps) {
     return (
         <Layout>
             <Head title="Saved Items | LocalTrade" />
@@ -21,7 +22,7 @@ export default function Wishlist({ wishlist, auth }: any) {
                 <div className="bg-green-50 border border-brand-forest/5 rounded-3xl p-6 sm:p-8 shadow-sm">
                     {wishlist && wishlist.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {wishlist.map((item: any) => (
+                            {wishlist.map((item: WishlistItem) => (
                                 <Link 
                                     key={item.id} 
                                     href={route('product.show', { id: item.product_id })}

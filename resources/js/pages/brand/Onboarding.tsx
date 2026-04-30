@@ -99,6 +99,7 @@ export default function Onboarding() {
                                                 className="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange transition-all"
                                                 placeholder="e.g. Lagos Streetwear Co."
                                             />
+                                            {errors.brand_name && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.brand_name}</p>}
                                         </div>
 
                                         <div>
@@ -113,6 +114,7 @@ export default function Onboarding() {
                                                     placeholder="lagos-streetwear"
                                                 />
                                             </div>
+                                            {errors.brand_slug && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.brand_slug}</p>}
                                         </div>
 
                                         <div className="grid sm:grid-cols-2 gap-4">
@@ -128,6 +130,7 @@ export default function Onboarding() {
                                                         <option key={cat} value={cat}>{cat}</option>
                                                     ))}
                                                 </select>
+                                                {errors.brand_category && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.brand_category}</p>}
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-brand-ink/70 mb-2 uppercase tracking-widest">City / State</label>
@@ -138,6 +141,7 @@ export default function Onboarding() {
                                                     className="w-full bg-brand-parchment border border-brand-forest/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange transition-all"
                                                     placeholder="e.g. Lagos, Nigeria"
                                                 />
+                                                {errors.brand_location && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.brand_location}</p>}
                                             </div>
                                         </div>
                                     </div>

@@ -1,15 +1,16 @@
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { Product, SharedData, StoreProps } from '@/types';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { ArrowUpRight, FileText, MapPin, Package, Star, Users } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-export default function Store({ store, products, categories, isFollowing }: any) {
+export default function Store({ store, products, categories, isFollowing }: StoreProps) {
     const [activeTab, setActiveTab] = useState('products');
     const [categoryFilter, setCategoryFilter] = useState('All');
     const [sortOrder, setSortOrder] = useState('featured');
     
     const { post, processing } = useForm();
-    const { auth } = usePage().props as any;
+    const { auth } = usePage<SharedData>().props;
     const user = auth?.user;
 
     const [followersCount, setFollowersCount] = useState<number>(store.followers || 0);
@@ -187,7 +188,7 @@ export default function Store({ store, products, categories, isFollowing }: any)
 
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
                                 {filteredAndSortedProducts.length > 0 ? (
-                                    filteredAndSortedProducts.map((p: any) => (
+                                    filteredAndSortedProducts.map((p: Product) => (
                                         <Link key={p.id} href={route('product.show', { id: p.id })} className="bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-2xl p-4 flex flex-col gap-3 transition-all shadow-sm hover:shadow-xl group">
                                             <div className="aspect-[4/3] rounded-xl bg-brand-parchment flex items-center justify-center border border-brand-forest/5 overflow-hidden">
                                                 {p.main_image ? (

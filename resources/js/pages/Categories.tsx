@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 import { Tags } from 'lucide-react';
 
-export default function Categories({ categories }: any) {
+export default function Categories({ categories }: { categories: Record<string, number> }) {
     const categoryList = Object.keys(categories || {}).sort();
 
     return (

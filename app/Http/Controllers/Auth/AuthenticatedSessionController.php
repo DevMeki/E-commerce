@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -37,7 +38,13 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('brand.dashboard', absolute: false));
         }
 
-        if (Auth::guard('buyer')->check() || Auth::guard('web')->check()) {
+        if (Auth::guard('buyer')->check()) {
+            // Merge any guest session cart into the buyer's database cart
+            CartController::mergeSessionCartToDb(Auth::guard('buyer')->id());
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        if (Auth::guard('web')->check()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 

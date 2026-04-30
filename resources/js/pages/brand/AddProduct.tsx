@@ -1,15 +1,37 @@
-import { Head, Link, useForm } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
-import { useState, useRef } from 'react';
+import { Product } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { useRef, useState } from 'react';
 
-export default function AddProduct({ product }: any) {
+interface AddProductForm {
+    [key: string]: string | number | boolean | File | File[] | null | undefined;
+    name: string;
+    slug: string;
+    category: string;
+    sku: string;
+    price: string | number;
+    compare_at_price: string | number;
+    stock: string | number;
+    status: string;
+    visibility: string;
+    short_desc: string;
+    long_desc: string;
+    ships_from: string;
+    shipping_fee: string | number;
+    processing_time: string;
+    variants_text: string;
+    main_image_file: File | null;
+    gallery: File[];
+}
+
+export default function AddProduct({ product }: { product?: Product }) {
     const isEdit = !!product;
     const mainImageRef = useRef<HTMLInputElement>(null);
     const galleryRef = useRef<HTMLInputElement>(null);
     
     const [mainImagePreview, setMainImagePreview] = useState(product?.main_image || null);
     const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
-
+ 
     const categories = [
         'Fashion', 'Beauty', 'Electronics', 'Home & Living', 'Food & Drinks', 
         'Art & Craft', 'Gadgets', 'Furniture', 'Paintings', 'Sculptures', 
@@ -17,8 +39,8 @@ export default function AddProduct({ product }: any) {
         'Skincare', 'Textiles', 'Fashion Accessories', 'Footwear', 
         'Decor', 'Toiletries', 'Cosmetics', 'Education', 'Other'
     ];
-
-    const { data, setData, post, processing, errors } = useForm({
+ 
+    const { data, setData, post, processing, errors } = useForm<AddProductForm>({
         name: product?.name || '',
         slug: product?.slug || '',
         category: product?.category || '',

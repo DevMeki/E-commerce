@@ -1,8 +1,9 @@
-import { Head, Link, router } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
+import { Order, OrderItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function OrderDetails({ order }: any) {
+export default function OrderDetails({ order }: { order: Order }) {
     const [processing, setProcessing] = useState(false);
 
     const updateStatus = (status: string) => {
@@ -89,7 +90,7 @@ export default function OrderDetails({ order }: any) {
                         <section className="bg-white border border-brand-forest/10 rounded-3xl p-6 sm:p-8 shadow-sm">
                             <h2 className="text-sm font-bold text-brand-forest uppercase tracking-widest mb-6">Items</h2>
                             <div className="space-y-4">
-                                {order.items.map((item: any) => (
+                                {order.items.map((item: OrderItem) => (
                                     <div key={item.id} className="flex items-center justify-between p-4 bg-green-50 rounded-2xl border border-brand-forest/5 group hover:bg-white transition-all">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-xl bg-white border border-brand-forest/5 flex items-center justify-center font-bold text-brand-forest text-xs">

@@ -1,10 +1,11 @@
 import Layout from '@/layouts/Layout';
+import { Product as ProductType, ProductPageProps, SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { MapPin, Package, Star } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Product({ product = {}, seller = {}, images = [], relatedProducts = [], moreBrandProducts = [], variants = {} }: any) {
-    const { auth } = usePage().props as any;
+export default function Product({ product, seller, images = [], relatedProducts = [], moreBrandProducts = [], variants = {} }: ProductPageProps) {
+    const { auth } = usePage<SharedData>().props;
     const user = auth?.user;
 
     const [mainImage, setMainImage] = useState(images?.[0] || 'https://via.placeholder.com/600x600?text=Product+Image');
@@ -75,7 +76,9 @@ export default function Product({ product = {}, seller = {}, images = [], relate
     };
 
     const discount =
-        product?.compare_at_price > product?.price ? Math.round(((product.compare_at_price - product.price) / product.compare_at_price) * 100) : 0;
+        (product.compare_at_price ?? 0) > product.price 
+            ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100) 
+            : 0;
 
     return (
         <Layout>
@@ -149,7 +152,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                                 <span className={product.stock > 0 ? 'text-brand-forest font-bold' : 'text-red-500'}>
                                     {product.stock > 0 ? `In stock (${product.stock} available)` : 'Out of stock'}
                                 </span>
-                                {product.total_sales > 0 && (
+                                {(product.total_sales ?? 0) > 0 && (
                                     <>
                                         <span className="text-brand-ink/20">·</span>
                                         <span>{product.total_sales} sold</span>
@@ -176,7 +179,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                         {variants && Object.keys(variants).length > 0 && (
                             <div className="border-brand-forest/5 rounded-2xl border bg-green-50 p-4 shadow-sm">
                                 <h3 className="text-brand-forest mb-4 text-sm font-bold tracking-wider uppercase">Options</h3>
-                                {Object.entries(variants).map(([vType, options]: any) => (
+                                {Object.entries(variants).map(([vType, options]: [string, string[]]) => (
                                     <div key={vType} className="mb-4 last:mb-0">
                                         <p className="text-brand-ink/40 mb-3 text-[11px] font-bold tracking-widest uppercase">Select {vType}</p>
                                         <div className="flex flex-wrap gap-2">
@@ -290,7 +293,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                                                 : 'text-brand-ink/40 hover:text-brand-forest border-transparent'
                                         }`}
                                     >
-                                        {tab === 'reviews' ? `Reviews (${product.total_reviews})` : tab}
+                                        {tab === 'reviews' ? `Reviews (${product.total_reviews ?? 0})` : tab}
                                     </button>
                                 ))}
                             </div>
@@ -332,7 +335,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                                 )}
                                 {activeTab === 'reviews' && (
                                     <div>
-                                        {product.total_reviews > 0 ? (
+                                        {(product.total_reviews ?? 0) > 0 ? (
                                             <>
                                                 <div className="mb-4 flex items-center gap-2">
                                                     <span className="text-brand-forest text-2xl font-bold">
@@ -370,7 +373,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                             </Link>
                         </div>
                         <div className="grid grid-cols-2 gap-4 sm:gap-6 text-xs lg:grid-cols-4">
-                            {relatedProducts.map((rp: any) => (
+                            {relatedProducts.map((rp: ProductType) => (
                                 <Link
                                     key={rp.id}
                                     href={route('product.show', { id: rp.id })}
@@ -414,7 +417,7 @@ export default function Product({ product = {}, seller = {}, images = [], relate
                             )}
                         </div>
                         <div className="grid grid-cols-2 gap-4 sm:gap-6 text-xs lg:grid-cols-4">
-                            {moreBrandProducts.map((mp: any) => (
+                            {moreBrandProducts.map((mp: ProductType) => (
                                 <Link
                                     key={mp.id}
                                     href={route('product.show', { id: mp.id })}

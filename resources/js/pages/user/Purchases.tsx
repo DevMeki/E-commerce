@@ -1,9 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
+import { Order, OrderItem, PurchasesProps } from '@/types';
+import { Head, Link } from '@inertiajs/react';
 import { Package } from 'lucide-react';
 
-export default function Purchases({ orders, auth }: any) {
-    const user = auth.user;
+export default function Purchases({ orders, auth }: PurchasesProps) {
 
     return (
         <Layout>
@@ -23,8 +23,8 @@ export default function Purchases({ orders, auth }: any) {
                 <div className="bg-green-50 border border-brand-forest/5 rounded-3xl p-6 sm:p-8 shadow-sm">
                     {orders && orders.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {orders.map((order: any) => (
-                                order.items.map((item: any) => (
+                            {orders.map((order: Order) => (
+                                order.items.map((item: OrderItem) => (
                                     <Link 
                                         key={`${order.id}-${item.id}`} 
                                         href={route('product.show', { id: item.product_id })}

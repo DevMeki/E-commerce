@@ -1,8 +1,9 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Brand, HomeProps, Product } from '@/types';
 import Layout from '@/layouts/Layout';
-import { useState, useEffect } from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { useState } from 'react';
 
-export default function Home({ featuredProducts, totalProducts, categories, featuredBrands }: any) {
+export default function Home({ featuredProducts, totalProducts, categories, featuredBrands }: HomeProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const { get } = useForm();
     
@@ -74,7 +75,7 @@ export default function Home({ featuredProducts, totalProducts, categories, feat
                             <p className="text-xs text-brand-orange mb-4 font-bold uppercase tracking-[0.2em]">Trending this week</p>
                             <div className="grid grid-cols-2 gap-3 text-xs">
                                 {featuredProducts && featuredProducts.length > 0 ? (
-                                    featuredProducts.map((product: any) => (
+                                    featuredProducts.map((product: Product) => (
                                         <Link key={product.id} href={route('product.show', { id: product.id })} className="bg-green-50 rounded-2xl p-3 flex flex-col gap-2 hover:scale-[1.02] transition-all group shadow-sm">
                                             <div className="aspect-[4/3] rounded-xl bg-brand-forest/5 flex items-center justify-center text-[10px] font-semibold text-brand-forest/30 overflow-hidden">
                                                 {product.main_image ? (
@@ -140,7 +141,7 @@ export default function Home({ featuredProducts, totalProducts, categories, feat
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
                         {featuredProducts && featuredProducts.length > 0 ? (
-                            featuredProducts.map((product: any) => (
+                            featuredProducts.map((product: Product) => (
                                 <Link key={`grid-${product.id}`} href={route('product.show', { id: product.id })} className="bg-green-50 border border-brand-forest/5 hover:border-brand-orange/30 rounded-2xl p-3 sm:p-4 flex flex-col gap-2 transition-all shadow-sm hover:shadow-lg group">
                                     <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-brand-forest/5 to-brand-orange/5 flex items-center justify-center text-[11px] font-semibold text-brand-forest/30 overflow-hidden">
                                         {product.main_image ? (
@@ -178,7 +179,7 @@ export default function Home({ featuredProducts, totalProducts, categories, feat
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                         {featuredBrands && featuredBrands.length > 0 ? (
-                            featuredBrands.map((brand: any) => (
+                            featuredBrands.map((brand: Brand) => (
                                 <Link key={brand.id} href={route('store', { slug: brand.slug })} className="bg-green-50 rounded-2xl p-4 border border-brand-forest/5 flex flex-col gap-2 hover:border-brand-forest/20 transition-all shadow-sm">
                                     {brand.logo ? (
                                         <img src={brand.logo} alt={brand.brand_name} className="w-12 h-12 rounded-lg object-cover mb-2 ring-1 ring-brand-forest/5" />

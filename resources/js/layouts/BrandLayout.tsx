@@ -1,10 +1,11 @@
 import { Link, usePage } from '@inertiajs/react';
 import { BarChart3, Box, MessageCircle, Settings, ShoppingCart } from 'lucide-react';
 import { ReactNode } from 'react';
+import { SharedData } from '@/types';
 
 export default function BrandLayout({ children }: { children: ReactNode }) {
-    const { props, url } = usePage() as any;
-    const { auth } = props ?? {};
+    const { props, url } = usePage<SharedData>();
+    const { auth } = props;
     const brand = auth?.user;
 
     const navItems = [

@@ -7,6 +7,7 @@ import { route as routeFn } from 'ziggy-js';
 import { initializeTheme } from './hooks/use-appearance';
 
 declare global {
+    // eslint-disable-next-line no-var
     var route: typeof routeFn;
 }
 

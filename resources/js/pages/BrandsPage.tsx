@@ -1,7 +1,8 @@
+import { Brand, Paginated } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 import { ArrowRight, MapPin, Search, Star } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 const GRADIENTS = [
     ['from-brand-forest/20', 'to-brand-forest/5'],
@@ -14,20 +15,20 @@ const GRADIENTS = [
     ['from-brand-orange/15', 'to-brand-forest/15'],
 ];
 
-export default function BrandsPage({ brands }: any) {
+export default function BrandsPage({ brands }: { brands: Paginated<Brand> }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
 
     const categories = useMemo(() => {
         const cats = new Set<string>();
-        brands.data?.forEach((b: any) => {
+        brands.data?.forEach((b: Brand) => {
             if (b.category) cats.add(b.category);
         });
         return ['All', ...Array.from(cats)].sort();
     }, [brands.data]);
 
     const filteredBrands = useMemo(() => {
-        return (brands.data || []).filter((b: any) => {
+        return (brands.data || []).filter((b: Brand) => {
             const matchesSearch = b.brand_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                                   b.location?.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesCategory = activeCategory === 'All' || b.category === activeCategory;
@@ -81,7 +82,7 @@ export default function BrandsPage({ brands }: any) {
 
                 <section>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                        {filteredBrands.map((b: any) => {
+                        {filteredBrands.map((b: Brand) => {
                             const grad = GRADIENTS[b.id % GRADIENTS.length];
                             return (
                                 <Link key={b.id} href={route('store', { slug: b.slug })} className="bg-green-50 border border-brand-forest/5 hover:border-brand-orange/50 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition">

@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { SharedData } from '@/types';
+import { GlobalEvent, Visit } from '@inertiajs/core';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 interface FlashProps {
     success?: string;
@@ -9,8 +11,8 @@ interface FlashProps {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const { auth, flash } = usePage().props as any;
-    const { component } = usePage();
+    const { auth, flash } = usePage<SharedData>().props as unknown as { auth: SharedData['auth']; flash: FlashProps };
+    const { component } = usePage<SharedData>();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
     const [isNavigating, setIsNavigating] = useState(false);
@@ -20,12 +22,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         let progressTimer: ReturnType<typeof setInterval>;
 
-        const shouldShowFullPageLoader = (visit: any) => {
+        const shouldShowFullPageLoader = (visit: Visit) => {
             // only show on full-page GET navigations
             return visit?.method?.toLowerCase() === 'get';
         };
 
-        const startNav = router.on('start', (event: any) => {
+        const startNav = router.on('start', (event: GlobalEvent<'start'>) => {
             if (!shouldShowFullPageLoader(event.detail.visit)) {
                 return;
             }
@@ -37,7 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             }, 200);
         });
 
-        const finishNav = router.on('finish', (event: any) => {
+        const finishNav = router.on('finish', (event: GlobalEvent<'finish'>) => {
             if (!shouldShowFullPageLoader(event.detail.visit)) {
                 return;
             }

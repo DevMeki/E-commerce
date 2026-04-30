@@ -1,10 +1,11 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { CartItem, CartProps } from '@/types';
 import Layout from '@/layouts/Layout';
+import { Head, Link, router } from '@inertiajs/react';
 import { ShoppingCart } from 'lucide-react';
 
-export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: any) {
+export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: CartProps) {
 
-    const updateQuantity = (cartId: number, currentQty: number, type: 'inc' | 'dec') => {
+    const updateQuantity = (cartId: string | number, currentQty: number, type: 'inc' | 'dec') => {
         let newQty = currentQty;
         if (type === 'inc') newQty++;
         else if (type === 'dec' && currentQty > 1) newQty--;
@@ -13,7 +14,7 @@ export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: a
         router.post(route('cart.update'), { cart_id: cartId, quantity: newQty }, { preserveScroll: true });
     };
 
-    const removeItem = (cartId: number) => {
+    const removeItem = (cartId: string | number) => {
         if (confirm("Are you sure you want to remove this item?")) {
             router.post(route('cart.remove'), { cart_id: cartId }, { preserveScroll: true });
         }
@@ -44,7 +45,7 @@ export default function Cart({ cartItems, subtotal, total, deliveryEstimate }: a
                     <div className="grid lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] gap-6 lg:gap-10">
                         {/* CART ITEMS */}
                         <section className="space-y-4">
-                            {cartItems.map((item: any) => (
+                            {cartItems.map((item: CartItem) => (
                                 <div key={item.id} className="cart-item bg-green-50 border border-brand-forest/5 rounded-3xl p-4 sm:p-5 flex gap-4 sm:gap-6 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-brand-parchment border border-brand-forest/5 flex items-center justify-center text-[10px] font-bold text-brand-forest/20 uppercase tracking-widest text-center overflow-hidden shrink-0">
                                         {item.main_image ? (

@@ -1,8 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
+import { BrandDashboardProps, Order } from '@/types';
+import { Head, Link } from '@inertiajs/react';
 import { MapPin } from 'lucide-react';
 
-export default function Dashboard({ brand, stats, recentOrders }: any) {
+export default function Dashboard({ brand, stats, recentOrders }: BrandDashboardProps) {
     return (
         <BrandLayout>
             <Head title="Brand Dashboard | LocalTrade" />
@@ -75,7 +76,7 @@ export default function Dashboard({ brand, stats, recentOrders }: any) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {recentOrders.map((order: any) => (
+                                {recentOrders.map((order: Order) => (
                                     <tr key={order.id} className="bg-white/50 hover:bg-white transition-colors group">
                                         <td className="px-4 py-4 first:rounded-l-2xl border-y border-brand-forest/5 border-l font-bold text-brand-forest">
                                             {order.order_number?.substring(0, 8)}

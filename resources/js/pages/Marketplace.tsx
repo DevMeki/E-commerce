@@ -1,8 +1,9 @@
 import Layout from '@/layouts/Layout';
+import { MarketplaceProps, Product } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
-export default function Marketplace({ products, categories, filters }: any) {
+export default function Marketplace({ products, categories, filters }: MarketplaceProps) {
     const [searchQuery, setSearchQuery] = useState(filters.q || '');
     const [activeCategory, setActiveCategory] = useState(filters.category || 'All');
     const [minPrice, setMinPrice] = useState('');
@@ -189,7 +190,7 @@ export default function Marketplace({ products, categories, filters }: any) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 text-xs sm:grid-cols-3 lg:grid-cols-4">
-                            {localProducts.map((p: any) => (
+                            {localProducts.map((p: Product) => (
                                 <Link
                                     key={p.id}
                                     href={route('product.show', { id: p.id })}

@@ -6,7 +6,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        remember: false,
+        remember: false as boolean,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -70,9 +70,11 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                             <div>
                                 <div className="flex items-center justify-between mb-1.5">
                                     <label className="block text-xs font-bold text-brand-ink/70 uppercase tracking-widest">Password</label>
-                                    <Link href={route('password.request')} className="text-[10px] text-brand-orange hover:underline font-bold uppercase tracking-tighter">
-                                        Forgot password?
-                                    </Link>
+                                    {canResetPassword && (
+                                        <Link href={route('password.request')} className="text-[10px] text-brand-orange hover:underline font-bold uppercase tracking-tighter">
+                                            Forgot password?
+                                        </Link>
+                                    )}
                                 </div>
                                 <div className="relative">
                                     <input 
@@ -109,7 +111,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                                     <input 
                                         type="checkbox" 
                                         checked={data.remember}
-                                        onChange={e => setData('remember', e.target.checked as any)}
+                                        onChange={e => setData('remember', e.target.checked)}
                                         className="w-4 h-4 rounded border-brand-forest/20 text-brand-orange focus:ring-brand-orange" 
                                     />
                                     <span className="text-xs text-brand-ink/50 font-bold uppercase tracking-tighter">Remember me</span>

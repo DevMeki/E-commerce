@@ -1,9 +1,10 @@
-import { Head, Link, router } from '@inertiajs/react';
 import BrandLayout from '@/layouts/BrandLayout';
+import { BrandProductsProps, Product } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
 import { Archive, Pencil, Trash2, Undo2 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Products({ products, stats, filters }: any) {
+export default function Products({ products, stats, filters }: BrandProductsProps) {
     const [search, setSearch] = useState(filters.q || '');
 
     const handleSearch = (e: React.FormEvent) => {
@@ -103,7 +104,7 @@ export default function Products({ products, stats, filters }: any) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {products.data.map((p: any) => (
+                                {products.data.map((p: Product) => (
                                     <tr key={p.id} className="bg-white/50 hover:bg-white transition-colors group">
                                         <td className="px-4 py-4 first:rounded-l-2xl border-y border-brand-forest/5 border-l">
                                             <div className="flex items-center gap-3">
